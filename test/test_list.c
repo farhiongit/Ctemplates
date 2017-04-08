@@ -1,0 +1,274 @@
+#define _GNU_SOURCE
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "defops.h"
+#include "list_impl.h"
+
+typedef char *pchar;
+typedef struct
+{
+  int min,max;
+} Range;
+
+typedef int16_t myint;
+
+/* *INDENT-OFF* */
+DECLARE_LIST (myint)
+DECLARE_LIST (pchar)
+DECLARE_LIST (Range)
+
+//DEFINE_DEFAULT_LESS_THAN_OPERATOR
+
+DEFINE_OPERATORS (myint)
+DEFINE_OPERATORS (pchar)
+DEFINE_OPERATORS (Range)
+
+DEFINE_LIST (myint)
+DEFINE_LIST (pchar)
+DEFINE_LIST (Range)
+/* *INDENT-ON* */
+
+static int
+print_node (LNODE (myint) * n, void *param)
+{
+  (void)param;
+  printf ("%p = " "%i" "\n", (void *) n, *BNODE_VALUE (n));
+  return EXIT_SUCCESS;
+}
+
+static void
+int_destroyer (myint val)
+{
+  printf ("%i" " destroyed.\n", val);
+}
+
+static myint
+int_copier (myint n)
+{
+  printf ("Copy of " "%i" ".\n", n);
+  return n;
+}
+
+// Standard is redefined other way round
+int
+greater_than_int (myint a, myint b)
+{
+  return a > b;                 //  other way round for test purpose !
+}
+
+int
+tens_less_than_int (myint a, myint b)
+{
+  return (a / 10) < (b / 10);
+}
+
+int
+less_than_range (Range a, Range b)
+{
+  return (a.min * a.min + a.max * a.max < b.min * b.min + b.max * b.max);
+}
+
+static int
+range_value (LNODE (myint) * n, void *param)
+{
+  return *BNODE_VALUE (n) < ((Range *) param)->min ? EXIT_FAILURE : *BNODE_VALUE (n) >=
+    ((Range *) param)->max ? EXIT_FAILURE : EXIT_SUCCESS;
+}
+
+int
+main (void)
+{
+  SET_DESTRUCTOR (myint, int_destroyer);
+  SET_COPY_CONSTRUCTOR (myint, int_copier);
+
+  //SET_LESS_THAN_OPERATOR (int, greater_than_int);
+
+  LIST (myint) * la = LIST_CREATE (myint);
+
+  //LIST_SET_LESS_THAN_OPERATOR (la, tens_less_than_int);
+
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  LIST_INSERT (la, LIST_END (la), 4);
+  LNODE (myint) * na = LIST_INSERT (la, LIST_LAST (la), 3333);
+
+  LIST_INSERT (la, na, 2);
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  printf ("%i peeked\n", *BNODE_VALUE (LIST_BEGIN (la)));
+
+  LIST_INSERT (la, LIST_BEGIN (la), 1);
+
+  printf ("%i peeked\n", *BNODE_VALUE (LIST_BEGIN (la)));
+
+  LIST_INSERT (la, LIST_END (la), 5);
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  //LNODE (int) *nb = LNODE_CREATE (int) ("Hello", 0, 0);   // NOK, type mismatch
+
+  LIST_REMOVE (la, na);
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  print_node (LIST_BEGIN (la), 0);
+  printf ("%i peeked\n", *BNODE_VALUE (LIST_LAST (la)));
+  printf ("Assign last to 99.\n");
+  BNODE_ASSIGN (LIST_LAST (la), 99);
+  printf ("%i peeked\n", *BNODE_VALUE (LIST_LAST (la)));
+
+  printf ("%i %c %i\n", *BNODE_VALUE (LIST_BEGIN (la)), BNODE_LESS_THAN_VALUE (LIST_BEGIN (la), LIST_LAST (la)) ? '<' : '>',
+          *BNODE_VALUE (LIST_LAST (la)));
+  printf ("%i %c %i\n", *BNODE_VALUE (LIST_LAST (la)), BNODE_LESS_THAN_VALUE (LIST_LAST (la), LIST_BEGIN (la)) ? '<' : '>',
+          *BNODE_VALUE (LIST_BEGIN (la)));
+  printf ("%i %c %i\n", *BNODE_VALUE (BNODE_NEXT (LIST_BEGIN (la))),
+          BNODE_LESS_THAN_VALUE (BNODE_NEXT (LIST_BEGIN (la)), BNODE_PREVIOUS (LIST_LAST (la))) ? '<' : '>',
+          *BNODE_VALUE (BNODE_PREVIOUS (LIST_LAST (la))));
+
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  for (int i = 17; i < 28; i++)
+  {
+    LIST_INSERT (la, LIST_BEGIN (la), 5 * i);
+    LIST_INSERT (la, LIST_BEGIN (la), 5 * i);
+    LIST_INSERT (la, LIST_BEGIN (la), 5 * i);
+    LIST_INSERT (la, LIST_END (la), 5 * i);
+  }
+
+  printf ("Print in reverse order.\n");
+  BNODE_FOR_EACH_REVERSE (LIST_LAST (la), LIST_END (la), print_node);
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  Range r = { 80, 95 };
+  for (LNODE (myint) * na = LIST_BEGIN (la); na && (na = BNODE_FIND (na, LIST_END (la), range_value, &r));
+       na = BNODE_NEXT (na))
+    printf ("%p = %i found.\n", (void *) na, *BNODE_VALUE (na));
+
+  for (LNODE (myint) * na = LIST_BEGIN (la); na && (na = BNODE_FIND_VALUE (na, 100)); na = BNODE_NEXT (na))
+    printf ("%p = %i found.\n", (void *) na, *BNODE_VALUE (na));
+
+  for (LNODE (myint) * na = LIST_LAST (la); na && (na = BNODE_FIND_VALUE_REVERSE (na, 105)); na = BNODE_PREVIOUS (na))
+    printf ("%p = %i found.\n", (void *) na, *BNODE_VALUE (na));
+
+  r.min = 135;
+  r.max = 140;
+  for (LNODE (myint) * na = LIST_LAST (la); na && (na = BNODE_FIND_REVERSE (na, range_value, &r));
+       na = BNODE_PREVIOUS (na))
+    printf ("%p = %i found.\n", (void *) na, *BNODE_VALUE (na));
+
+  printf ("%zi redundant elements removed.\n", LIST_UNIQUE (la));
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  printf ("Sort.\n");
+  LIST_SORT (la);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  printf ("%zi redundant elements removed.\n", LIST_UNIQUE (la, greater_than_int));
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  printf ("Sort again in descending order.\n");
+  LIST_SORT (la, greater_than_int);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Sort again by tens.\n");
+  LIST_SORT (la, tens_less_than_int);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  LNODE (myint) *aa = LIST_BEGIN (la);
+  LNODE (myint) *bb = LIST_LAST (la);
+  printf ("Move 1....\n");
+  LIST_MOVE (la, aa, la, bb);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+  printf ("....\n");
+  LIST_TRAVERSE (la, print_node);
+  printf ("Move 2....\n");
+  LIST_MOVE (la, LIST_END (la), la, aa);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+  printf ("....\n");
+  LIST_TRAVERSE (la, print_node);
+
+  printf ("Swap %p = %i and %p = %i.\n", (void *) LIST_BEGIN (la), *BNODE_VALUE (LIST_BEGIN (la)),
+          (void *) LIST_LAST (la), *BNODE_VALUE (LIST_LAST (la)));
+  LIST_SWAP (la, LIST_BEGIN (la), la, LIST_LAST (la));
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+  printf ("Size %li\n", LIST_SIZE (la));
+
+  LIST (myint) * lb = LIST_CREATE (myint);
+
+  LIST_INSERT (lb, LIST_BEGIN (lb), 1000);
+  LIST_INSERT (lb, LIST_END (lb), 2000);
+
+  printf ("Move %p = %i to the begining.\n", (void *) LIST_LAST (la), *BNODE_VALUE (LIST_LAST (la)));
+  LIST_MOVE (la, LIST_BEGIN (la), la, LIST_LAST (la));
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Move %p = %i to the second position.\n", (void *) LIST_LAST (la), *BNODE_VALUE (LIST_LAST (la)));
+  LIST_MOVE (la, BNODE_NEXT (LIST_BEGIN (la)), la, LIST_LAST (la));
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Swap %p = %i and %p = %i.\n", (void *) LIST_BEGIN (lb), *BNODE_VALUE (LIST_BEGIN (lb)),
+          (void *) LIST_BEGIN (la), *BNODE_VALUE (LIST_BEGIN (la)));
+  LIST_SWAP (la, LIST_BEGIN (la), lb, LIST_BEGIN (lb));
+  LIST_DESTROY (lb);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Rotate list to left.\n");
+  LIST_ROTATE_LEFT (la);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Reverse [%p, %p[.\n", (void *) BNODE_NEXT (LIST_BEGIN (la)), (void *) LIST_LAST (la));
+  LIST_REVERSE (la, BNODE_NEXT (LIST_BEGIN (la)), LIST_LAST (la));
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Reverse [%p, %p[.\n", (void *) BNODE_PREVIOUS(LIST_LAST (la)), (void *) BNODE_NEXT (LIST_BEGIN (la)));
+  LIST_REVERSE (la, BNODE_PREVIOUS(LIST_LAST (la)), BNODE_NEXT (LIST_BEGIN (la)));
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Reverse all.\n");
+  LIST_REVERSE (la);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Rotate list to right.\n");
+  LIST_ROTATE_RIGHT (la);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Swap %p = %i and %p = %i.\n", (void *) BNODE_NEXT(LIST_BEGIN (la)), *BNODE_VALUE (BNODE_NEXT(LIST_BEGIN (la))),
+          (void *) BNODE_PREVIOUS(LIST_LAST (la)), *BNODE_VALUE (BNODE_PREVIOUS(LIST_LAST (la))));
+  LIST_SWAP (la, BNODE_NEXT(LIST_BEGIN (la)), la, BNODE_PREVIOUS(LIST_LAST (la)));
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
+
+  printf ("Access through indexes.\n");
+  for (size_t i = 0 ; i < LIST_SIZE (la) ; i++)
+    (void)(printf ("%3zi: ", i) && print_node (LIST_INDEX (la, i), 0));
+
+  printf ("Is empty = %i\n", LIST_IS_EMPTY (la));
+  printf ("Clear.\n");
+  LIST_CLEAR (la);
+  printf ("Size %li\n", LIST_SIZE (la));
+  printf ("Is empty = %i\n", LIST_IS_EMPTY (la));
+
+  printf ("Destroy.\n");
+  LIST_DESTROY (la);
+
+  //LIST_TYPE(double) *da = LIST_CREATE (double);  // NOK, LIST(double) undeclared and undefined DECLARE_LIST (double) and DEFINE_LIST (double)
+
+  LIST (pchar) * ls = LIST_CREATE (pchar);
+  LIST_DESTROY (ls);
+
+  //SET_LESS_THAN_OPERATOR (Range, less_than_range);
+  LIST (Range) * lp = LIST_CREATE (Range);
+  Range p1 = { 1, 1 };
+  Range p2 = { 2, 2 };
+  Range p3 = { 3, 3 };
+  LIST_INSERT (lp, LIST_BEGIN (lp), p1);
+  LIST_INSERT (lp, LIST_BEGIN (lp), p3);
+  LIST_INSERT (lp, LIST_BEGIN (lp), p2);
+
+  printf ("-------- will abort here:\n");
+  LIST_SORT (lp);
+  LIST_DESTROY (lp);
+}
