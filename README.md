@@ -14,7 +14,7 @@ The solution is a combination of several techniques:
 - binary tree structure and operations
 - function overloading Overloading on number of arguments (but not type though)
 
-##Definition and declaration of template collections
+## Definition and declaration of template collections
 Prior to any usage of template collections,
 
 Header files should be included in source files :
@@ -46,7 +46,7 @@ If collections are intended to be used in a library,
 - Declarations of templates should appear in the library header file.
 - Definitions of operators and templates should appear in library source file.
 
-##Operators
+## Operators
 _Optional_ operators can be assigned to types managed by collections:
 
 - `SET_DESTRUCTOR(type, destructor)` where `destructor` is a pointer to function with type `void (*destructor) (type arg)`
@@ -55,15 +55,15 @@ _Optional_ operators can be assigned to types managed by collections:
 
 For basic standard types, standard operators are defined and used by default.
 
-##Lists
+## Lists
 
-##Sets
+## Sets
 
-##Maps
+## Maps
 
-##Algorithmic complexity
+## Algorithmic complexity
 
-##Tips and pitfalls
+## Tips and pitfalls
 Template declarations can not apply on compound types such as `char *`, `unsigned long` or `struct foo`.
 User defined types should be used to create such template collections.
 
@@ -72,7 +72,7 @@ User defined types should be used to create such template collections.
     typedef char * pchar; 
 
 Evaluated variables should not be used for the first parameter of template functions.
-Since mecro are extensively used, this would otherwise have unintended side effects [2] (at least as long as GNU C language extensions `__auto' and Statements and Declarations in Expressions are not part of the standard C language.)
+Since mecro are extensively used, this would otherwise have unintended side effects [2] (at least as long as GNU C language extensions `__auto` and Statements and Declarations in Expressions are not part of the standard C language.)
 
 Avoid
 
@@ -83,7 +83,7 @@ Prefer
     LNODE(int) b = LIST_BEGIN(list);
     LNODE_ASSIGN(b, 55);
 
-##Examples
+## Examples
 Look at unit testing files in directory `test` for examples.
 
 [1] Randy Gaul's Game Programming Blog - Generic Programming in C (http://www.randygaul.net/2012/08/10/generic-programming-in-c/)
