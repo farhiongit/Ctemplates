@@ -95,19 +95,19 @@ typedef int __set_dummy__ ;
 /// @param [in] listSelf pointer to map.
 /// @returns the first node in the map.
 #define SET_BEGIN( listSelf ) \
-  ((listSelf)->root ? BNODE_FIRST ((listSelf)->root) : 0)
+  ((listSelf)->root ? BNODE_FIRST ((listSelf)->root) : SET_END (listSelf))
 
 /// Gets the last node in a map.
 /// @param [in] listSelf pointer to map.
 /// @returns the last node in the map.
 #define SET_LAST( listSelf ) \
-  ((listSelf)->root ? BNODE_LAST ((listSelf)->root) : 0)
+  ((listSelf)->root ? BNODE_LAST ((listSelf)->root) : SET_END (listSelf))
 
 /// Gets the one-past-last node in a map.
 /// @param [in] listSelf pointer to map.
 /// @returns the one-past-last node in the map.
 #define SET_END( listSelf ) \
-  (0)
+  ((void*)0)
 
 /// Gets the number of elements in a map.
 /// @param [in] listSelf pointer to map.
@@ -177,7 +177,7 @@ typedef int __set_dummy__ ;
   do { (map)->LessThanValue = (lt) ; } while(0)
 
 #define SET_INDEX( map, index) \
-  ((map)->root ? BNODE_INDEX((map)->root, (index)): 0)
+  ((map)->root ? BNODE_INDEX((map)->root, (index)): (fflush (0), raise (SIGABRT), (void*)0))
 
 #define SNODE( K ) \
   BNODE_##K##___set_dummy__

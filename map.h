@@ -96,19 +96,19 @@
 /// @param [in] listSelf pointer to map.
 /// @returns the first node in the map.
 #define MAP_BEGIN( listSelf ) \
-  ((listSelf)->root ? BNODE_FIRST ((listSelf)->root) : 0)
+  ((listSelf)->root ? BNODE_FIRST ((listSelf)->root) : MAP_END( listSelf ))
 
 /// Gets the last node in a map.
 /// @param [in] listSelf pointer to map.
 /// @returns the last node in the map.
 #define MAP_LAST( listSelf ) \
-  ((listSelf)->root ? BNODE_LAST ((listSelf)->root) : 0)
+  ((listSelf)->root ? BNODE_LAST ((listSelf)->root) : MAP_END( listSelf ))
 
 /// Gets the one-past-last node in a map.
 /// @param [in] listSelf pointer to map.
 /// @returns the one-past-last node in the map.
 #define MAP_END( listSelf ) \
-  (0)
+  ((void*)0)
 
 /// Gets the number of elements in a map.
 /// @param [in] listSelf pointer to map.

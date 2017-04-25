@@ -14,6 +14,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <assert.h>
+#include <errno.h>
 
 #include "bnode.h"
 
@@ -95,7 +96,10 @@
   static void BNODE_DESTROY_##K##_##T( BNODE_##K##_##T *node ) \
   {                                                            \
     if (node->parent)                                          \
+    {                                                          \
+      errno = EINVAL;                                          \
       return;                                                  \
+    }                                                          \
                                                                \
     if (node->lower_child)                                     \
     {                                                          \
@@ -311,12 +315,25 @@
     }                                                                       \
   }                                                                         \
 \
-  static int BNODE_TREE_INSERT_BEFORE_##K##_##T(BNODE_##K##_##T *self,     \
-                                                 BNODE_##K##_##T *here,     \
-                                                 BNODE_##K##_##T *newNode)  \
+  static int BNODE_TREE_INSERT_BEFORE_##K##_##T(BNODE_##K##_##T *self,      \
+                                                BNODE_##K##_##T *here,      \
+                                                BNODE_##K##_##T *newNode)   \
   {                                                                         \
-    if (!newNode)                                                           \
-      return 0;                                                             \
+    if (newNode->parent || newNode == self)                                 \
+    {                                                                       \
+      errno = EINVAL;                                                       \
+      return EXIT_FAILURE;                                                  \
+    }                                                                       \
+                                                                            \
+    /* Go to root */                                                        \
+    BNODE_##K##_##T *n;                                                     \
+    for (n = here ; n && n->parent ; n = n->parent) /* nop */ ;             \
+    /* Check that herefrom is owned by from */                              \
+    if (here && n != self)                                                  \
+    {                                                                       \
+      errno = EINVAL;                                                       \
+      return EXIT_FAILURE;                                                  \
+    }                                                                       \
                                                                             \
     /* parent, higher_child, lower_child                              */    \
     if (!here)                                                              \
@@ -366,7 +383,7 @@
       }                                                                   \
     }                                                                     \
                                                                           \
-    return 1;                                                             \
+    return EXIT_SUCCESS;                                                  \
   }                                                                       \
 \
   static int BNODE_IS_LOWER_##K##_##T(K a, K b) {(void)a ; (void)b ; return 0;}                 \
@@ -376,8 +393,11 @@
                                       BNODE_##K##_##T *newNode,             \
                                       int (*lt)(K, K), int keep_subtree)    \
   {                                                                         \
-    if (!newNode)                                                           \
+    if (newNode->parent || newNode == self)                                 \
+    {                                                                       \
+      errno = EINVAL;                                                       \
       return 0;                                                             \
+    }                                                                       \
                                                                             \
     BNODE_##K##_##T *lower = newNode->lower_child;                          \
     BNODE_##K##_##T *higher = newNode->higher_child;                        \
@@ -444,11 +464,16 @@
     {                                                                       \
       /* Add leaves of newNode in the tree */                               \
       /* (allow to add a tree in a tree) */                                 \
-      /* TODO: convert tail recursion to iteration ?? */                    \
       if (lower)                                                            \
+      {                                                                     \
+        lower->parent = 0;                                                  \
         ret += BNODE_TREE_ADD_##K##_##T(self, lower, lt, keep_subtree);     \
+      }                                                                     \
       if (higher)                                                           \
+      {                                                                     \
+        higher->parent = 0;                                                 \
         ret += BNODE_TREE_ADD_##K##_##T(self, higher, lt, keep_subtree);    \
+      }                                                                     \
     }                                                                       \
     else if (0)  /* TODO: check this */                                     \
       ret += (lower ? lower->size : 0) + (higher ? higher->size : 0);       \
@@ -465,9 +490,15 @@
     if (node->lower_child && node->higher_child)                          \
     {                                                                     \
       if (node->lower_child->depth < node->higher_child->depth)           \
+      {                                                                   \
+        node->higher_child->parent = 0;                                   \
         BNODE_TREE_ADD_##K##_##T(ret = node->lower_child, node->higher_child, BNODE_IS_HIGHER_##K##_##T, 1); \
+      }                                                                   \
       else if (node->lower_child->depth >= node->higher_child->depth)     \
+      {                                                                   \
+        node->lower_child->parent = 0;                                    \
         BNODE_TREE_ADD_##K##_##T(ret = node->higher_child, node->lower_child, BNODE_IS_LOWER_##K##_##T, 1); \
+      }                                                                   \
     }                                                                     \
     else if (node->lower_child)                                           \
       ret = node->lower_child;                                            \

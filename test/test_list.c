@@ -61,7 +61,7 @@ greater_than_int (myint a, myint b)
 int
 tens_less_than_int (myint a, myint b)
 {
-  return (a / 10) < (b / 10);
+  return (((a / 10) - (b / 10)) * 10 - (a % 10 - b % 10)) < 0;
 }
 
 int
@@ -73,7 +73,7 @@ less_than_range (Range a, Range b)
 static int
 range_value (LNODE (myint) * n, void *param)
 {
-  return *BNODE_VALUE (n) < ((Range *) param)->min ? EXIT_FAILURE : *BNODE_VALUE (n) >=
+  return *BNODE_VALUE (n) < ((Range *) param)->min ? EXIT_FAILURE : *BNODE_VALUE (n) >
     ((Range *) param)->max ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
@@ -86,15 +86,29 @@ main (void)
   //SET_LESS_THAN_OPERATOR (int, greater_than_int);
 
   LIST (myint) * la = LIST_CREATE (myint);
+  LIST_REVERSE (la);
+  LIST_ROTATE_LEFT (la);
+  LIST_ROTATE_RIGHT (la);
+  LIST_SORT (la);
 
   //LIST_SET_LESS_THAN_OPERATOR (la, tens_less_than_int);
 
   printf ("Size %li\n", LIST_SIZE (la));
 
   LIST_INSERT (la, LIST_END (la), 4);
+  LIST_REVERSE (la);
+  LIST_ROTATE_LEFT (la);
+  LIST_ROTATE_RIGHT (la);
+  LIST_SORT (la);
+
   LNODE (myint) * na = LIST_INSERT (la, LIST_LAST (la), 3333);
+  LIST_REVERSE (la);
+  LIST_ROTATE_LEFT (la);
+  LIST_ROTATE_RIGHT (la);
+  LIST_SORT (la);
 
   LIST_INSERT (la, na, 2);
+  BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
   printf ("Size %li\n", LIST_SIZE (la));
 
   printf ("%i peeked\n", *BNODE_VALUE (LIST_BEGIN (la)));
@@ -130,32 +144,33 @@ main (void)
 
   for (int i = 17; i < 28; i++)
   {
-    LIST_INSERT (la, LIST_BEGIN (la), 5 * i);
-    LIST_INSERT (la, LIST_BEGIN (la), 5 * i);
-    LIST_INSERT (la, LIST_BEGIN (la), 5 * i);
-    LIST_INSERT (la, LIST_END (la), 5 * i);
+    int mulfactor = 3;
+    LIST_INSERT (la, LIST_BEGIN (la), mulfactor * i);
+    LIST_INSERT (la, LIST_BEGIN (la), mulfactor * i);
+    LIST_INSERT (la, LIST_BEGIN (la), mulfactor * i);
+    LIST_INSERT (la, LIST_END (la), mulfactor * i);
   }
 
   printf ("Print in reverse order.\n");
   BNODE_FOR_EACH_REVERSE (LIST_LAST (la), LIST_END (la), print_node);
   printf ("Size %li\n", LIST_SIZE (la));
 
-  Range r = { 80, 95 };
+  Range r = { 57, 63 };
   for (LNODE (myint) * na = LIST_BEGIN (la); na && (na = BNODE_FIND (na, LIST_END (la), range_value, &r));
        na = BNODE_NEXT (na))
-    printf ("%p = %i found.\n", (void *) na, *BNODE_VALUE (na));
+    printf ("%p = %i found *.\n", (void *) na, *BNODE_VALUE (na));
 
-  for (LNODE (myint) * na = LIST_BEGIN (la); na && (na = BNODE_FIND_VALUE (na, 100)); na = BNODE_NEXT (na))
-    printf ("%p = %i found.\n", (void *) na, *BNODE_VALUE (na));
+  for (LNODE (myint) * na = LIST_BEGIN (la); na && (na = LIST_FIND (la, na, 81)); na = BNODE_NEXT (na))
+    printf ("%p = %i found **.\n", (void *) na, *BNODE_VALUE (na));
 
-  for (LNODE (myint) * na = LIST_LAST (la); na && (na = BNODE_FIND_VALUE_REVERSE (na, 105)); na = BNODE_PREVIOUS (na))
-    printf ("%p = %i found.\n", (void *) na, *BNODE_VALUE (na));
+  for (LNODE (myint) * na = LIST_LAST (la); na && (na = BNODE_FIND_VALUE_REVERSE (na, 54)); na = BNODE_PREVIOUS (na))
+    printf ("%p = %i found ***.\n", (void *) na, *BNODE_VALUE (na));
 
-  r.min = 135;
-  r.max = 140;
+  r.min = 75;
+  r.max = 78;
   for (LNODE (myint) * na = LIST_LAST (la); na && (na = BNODE_FIND_REVERSE (na, range_value, &r));
        na = BNODE_PREVIOUS (na))
-    printf ("%p = %i found.\n", (void *) na, *BNODE_VALUE (na));
+    printf ("%p = %i found ****.\n", (void *) na, *BNODE_VALUE (na));
 
   printf ("%zi redundant elements removed.\n", LIST_UNIQUE (la));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
@@ -166,7 +181,7 @@ main (void)
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
   printf ("Size %li\n", LIST_SIZE (la));
 
-  printf ("%zi redundant elements removed.\n", LIST_UNIQUE (la, greater_than_int));
+  printf ("%zi redundant elements removed again.\n", LIST_UNIQUE (la, tens_less_than_int));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
   printf ("Size %li\n", LIST_SIZE (la));
 
@@ -180,12 +195,12 @@ main (void)
 
   LNODE (myint) *aa = LIST_BEGIN (la);
   LNODE (myint) *bb = LIST_LAST (la);
-  printf ("Move 1....\n");
+  printf ("Move end at the begining....\n");
   LIST_MOVE (la, aa, la, bb);
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
   printf ("....\n");
   LIST_TRAVERSE (la, print_node);
-  printf ("Move 2....\n");
+  printf ("Move 2nd at the end....\n");
   LIST_MOVE (la, LIST_END (la), la, aa);
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
   printf ("....\n");

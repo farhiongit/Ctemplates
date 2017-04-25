@@ -112,7 +112,8 @@ twice_trim (BNODE (pchar, double) * node, void *param)
 
   BNODE_ASSIGN (node, 2 * *BNODE_VALUE (node));
   if (*BNODE_VALUE (node) > 100)
-    MAP_REMOVE (m, node);
+    assert (MAP_REMOVE (m, node) == EXIT_SUCCESS);
+
   return EXIT_SUCCESS;
 }
 
@@ -233,9 +234,10 @@ MAP (pchar, double) *
   print_node (na, 0);
   printf ("\n");
 
+  assert (MAP_FIND_KEY (ma, "Raimonda") == 0);
   MAP_INSERT (ma, "Raimonda");
-  MAP_INSERT (ma, "Raimondo");
-  MAP_SET (ma, "Alberta", 22.2);
+  assert (MAP_FIND_KEY (ma, "Raimondo") == MAP_INSERT (ma, "Raimondo"));
+  MAP_SET (ma, "Alberta", 44.4);
   MAP_INSERT (ma, "Zu");
 
   printf ("Size=%zi\n", MAP_SIZE (ma));
@@ -268,16 +270,25 @@ MAP (pchar, double) *
   printf ("*\n");
 
   MAP_SET (ma, "C", 100);
-  MAP_SET (ma, "B", 1);
+  MAP_SET (ma, "B", 2);
   MAP_SET (ma, "A", 1);
-  MAP_SET (ma, "D", 1);
+  MAP_SET (ma, "D", 8);
   MAP_FOR_EACH (ma, print_node);
   printf ("\n");
+  assert (MAP_FIND_KEY (ma, "A") != 0);
+  assert (MAP_FIND_KEY (ma, "B") != 0);
+  assert (MAP_FIND_KEY (ma, "C") != 0);
+  assert (MAP_FIND_KEY (ma, "D") != 0);
   MAP_FOR_EACH (ma, twice_trim);        // MAP_FOR_EACH allows removing elements during traversing
+  MAP_FOR_EACH (ma, print_node);
+  printf ("\n");
+  assert (MAP_FIND_KEY (ma, "A") != 0);
+  assert (MAP_FIND_KEY (ma, "B") != 0);
   assert (MAP_FIND_KEY (ma, "C") == 0);
+  assert (MAP_FIND_KEY (ma, "D") != 0);
   assert (*BNODE_VALUE (MAP_GET (ma, "A")) == 2);
-  assert (*BNODE_VALUE (MAP_GET (ma, "B")) == 2);
-  assert (*BNODE_VALUE (MAP_GET (ma, "D")) == 2);
+  assert (*BNODE_VALUE (MAP_GET (ma, "B")) == 4);
+  assert (*BNODE_VALUE (MAP_GET (ma, "D")) == 16);
   MAP_FOR_EACH (ma, print_node);
   printf ("\n");
   MAP_CLEAR (ma);

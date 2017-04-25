@@ -110,7 +110,7 @@
     /* Go to root */                                                       \
     BNODE_##K##_##T *n;                                                    \
     for (n = node ; n->parent ; n = n->parent) /* nop */ ;                 \
-    /* Check that herefrom is owned by from */                             \
+    /* Check that node is owned by self */                                 \
     if (n != self->root)                                                   \
     {                                                                      \
       errno = EINVAL;                                                      \
@@ -125,9 +125,9 @@
       return EXIT_FAILURE;                                                 \
     }                                                                      \
                                                                            \
-    BNODE_##K##_##T *new_node = BNODE_REMOVE_##K##_##T(node);              \
+    BNODE_##K##_##T *new_root = BNODE_REMOVE_##K##_##T(node);              \
     if (self->root == node)                                                \
-      self->root = new_node;                                               \
+      self->root = new_root;                                               \
     BNODE_DESTROY_##K##_##T(node);                                         \
     return EXIT_SUCCESS;                                                   \
   }                                                                        \

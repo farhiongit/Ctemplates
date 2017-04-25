@@ -13,6 +13,8 @@
 
 #include "bnode.h"
 #include "vfunc.h"
+#include <stdio.h>
+#include <signal.h>
 
 typedef int __list_dummy__ ;
 
@@ -97,19 +99,19 @@ typedef int __list_dummy__ ;
 /// @param [in] listSelf pointer to list
 /// @returns the first node in the list.
 #define LIST_BEGIN( listSelf ) \
-  ((listSelf)->root ? BNODE_FIRST ((listSelf)->root) : 0)
+  ((listSelf)->root ? BNODE_FIRST ((listSelf)->root) : LIST_END (listSelf))
 
 /// Gets the last node in a list.
 /// @param [in] listSelf pointer to list
 /// @returns the last node in the list.
 #define LIST_LAST( listSelf ) \
-  ((listSelf)->root ? BNODE_LAST ((listSelf)->root) : 0)
+  ((listSelf)->root ? BNODE_LAST ((listSelf)->root) : LIST_END (listSelf))
 
 /// Gets the one-past-last node in a list.
 /// @param [in] listSelf pointer to list
 /// @returns the one-past-last node in the list.
 #define LIST_END( listSelf ) \
-  (0)
+  ((void*)0)
 
 /// Gets the number of elements in a list.
 /// @param [in] listSelf pointer to list.
@@ -155,8 +157,8 @@ typedef int __list_dummy__ ;
 #define LIST( TYPE ) \
   LIST_##TYPE
 
-#define LIST_FIND3( map, begin, value ) \
-  ((map)->root ? BNODE_FIND_VALUE3((begin), (value), (map)->LessThanValue): 0)
+#define LIST_FIND3( listSelf, begin, value ) \
+  ((listSelf)->root ? BNODE_FIND_VALUE3((begin), (value), (listSelf)->LessThan): 0)
 
 #define LIST_FIND2( map, value ) LIST_FIND3( map, BNODE_FIRST((map)->root), value )
 
@@ -197,15 +199,15 @@ typedef int __list_dummy__ ;
 /// Rotates the nodes of the list to the left.
 /// @param [in] listSelf Pointer to a list.
 #define LIST_ROTATE_LEFT( listSelf) \
-  do { LIST_MOVE(listSelf, LIST_END(listSelf), listSelf, LIST_BEGIN(listSelf)); } while(0)
+  do { if (LIST_SIZE(listSelf) > 1) LIST_MOVE(listSelf, LIST_END(listSelf), listSelf, LIST_BEGIN(listSelf)); } while(0)
 
 /// Rotates the nodes of the list to the right.
 /// @param [in] listSelf Pointer to a list.
 #define LIST_ROTATE_RIGHT( listSelf) \
-  do { LIST_MOVE(listSelf, LIST_BEGIN(listSelf), listSelf, LIST_LAST(listSelf)); } while(0)
+  do { if (LIST_SIZE(listSelf) > 1) LIST_MOVE(listSelf, LIST_BEGIN(listSelf), listSelf, LIST_LAST(listSelf)); } while(0)
 
 #define LIST_INDEX( map, index) \
-  ((map)->root ? BNODE_INDEX((map)->root, (index)): 0)
+  ((map)->root ? BNODE_INDEX((map)->root, (index)): (fflush (0), raise (SIGABRT), (void*)0))
 
 #define LIST_SWAP( la, nodea, lb, nodeb) \
   ((la)->vtable->Swap ((la), (nodea), (lb), (nodeb)))
