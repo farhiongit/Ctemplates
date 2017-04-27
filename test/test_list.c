@@ -269,9 +269,10 @@ main (void)
   printf ("Destroy.\n");
   LIST_DESTROY (la);
 
-  //LIST_TYPE(double) *da = LIST_CREATE (double);  // NOK, LIST(double) undeclared and undefined DECLARE_LIST (double) and DEFINE_LIST (double)
+  //LIST_TYPE(double) *da = LIST_CREATE (double);  // NOK, LIST(double) undeclared and undefined (DECLARE_LIST (double) and DEFINE_LIST (double))
 
   LIST (pchar) * ls = LIST_CREATE (pchar);
+  LIST_INSERT (ls, LIST_END (ls), "List temaplate");
   LIST_DESTROY (ls);
 
   //SET_LESS_THAN_OPERATOR (Range, less_than_range);

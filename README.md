@@ -64,8 +64,8 @@ For basic standard types, standard operators are defined and used by default.
 ## Algorithmic complexity
 
 ## Tips and pitfalls
-Template declarations can not apply on compound types such as `char *`, `unsigned long` or `struct foo`.
-User defined types should be used to create such template collections.
+Template declarations can not apply directly on compound types such as `char *`, `unsigned long` or `struct foo`.
+User defined types should be used to create template collections on such compound types.
 
     typedef unsigned long ulong;
     typedef struct foo foo;
@@ -84,7 +84,7 @@ Prefer
     LNODE_ASSIGN(b, 55);
 
 ## Examples
-Look at unit testing files in directory `test` for examples.
+Look at examples in directory `examples`.
 
 [1] Randy Gaul's Game Programming Blog - Generic Programming in C (http://www.randygaul.net/2012/08/10/generic-programming-in-c/)
 

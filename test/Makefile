@@ -5,7 +5,7 @@ CFLAGS += -fmacro-backtrace-limit=0
 #CFLAGS += -fdebug-cpp
 LDFLAGS += -pthread
 
-all: exe main
+all: tests main
 
 .PHONY: test_list.expand
 test_list.expand: test_list.c
@@ -24,16 +24,12 @@ test_tree.expand: test_tree.c
 	@$(CC) -E $< | indent | pygmentize -lC
 
 test_list.o: test_list.c ../defops.h ../list_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../list.h
-test_list:
 test_set.o: test_set.c ../set_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../set.h ../defops.h
-test_set:
 test_tree.o: test_tree.c ../defops.h ../bnode_impl.h ../bnode.h ../vfunc.h
-test_tree:
 test_map.o: test_map.c ../defops.h ../map_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../map.h
-test_map:
 
-.PHONY: exe
-exe: test_list test_set test_tree test_map
+.PHONY: tests
+tests: test_list test_set test_tree test_map
 	valgrind ./test_list || :
 	valgrind ./test_set || :
 	valgrind ./test_tree || :

@@ -207,7 +207,7 @@ typedef int __list_dummy__ ;
   do { if (LIST_SIZE(listSelf) > 1) LIST_MOVE(listSelf, LIST_BEGIN(listSelf), listSelf, LIST_LAST(listSelf)); } while(0)
 
 #define LIST_INDEX( map, index) \
-  ((map)->root ? BNODE_INDEX((map)->root, (index)): (fflush (0), raise (SIGABRT), (void*)0))
+  ((map)->root ? BNODE_INDEX((map)->root, (index)): (fprintf (stderr, "ERROR: " "List is empty.\nABORT\n"), fflush (0), raise (SIGABRT), (void*)0))
 
 #define LIST_SWAP( la, nodea, lb, nodeb) \
   ((la)->vtable->Swap ((la), (nodea), (lb), (nodeb)))
