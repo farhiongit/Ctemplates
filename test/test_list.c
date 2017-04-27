@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 
 #include "defops.h"
 #include "list_impl.h"
@@ -29,6 +30,12 @@ DEFINE_LIST (myint)
 DEFINE_LIST (pchar)
 DEFINE_LIST (Range)
 /* *INDENT-ON* */
+
+static void sigabort_handler(int signum)
+{
+  fprintf (stderr, "INFO:  " "Signal %i trapped and ignored.\n"
+                   "       " "Execution continued.\n", signum);
+}
 
 static int
 print_node (LNODE (myint) * n, void *param)
@@ -80,12 +87,16 @@ range_value (LNODE (myint) * n, void *param)
 int
 main (void)
 {
+  struct sigaction sa = {.sa_handler = sigabort_handler };
+  sigaction (SIGABRT, &sa, 0);  
+
   SET_DESTRUCTOR (myint, int_destroyer);
   SET_COPY_CONSTRUCTOR (myint, int_copier);
 
   //SET_LESS_THAN_OPERATOR (int, greater_than_int);
 
   LIST (myint) * la = LIST_CREATE (myint);
+  LIST_INDEX (la, 0);
   LIST_REVERSE (la);
   LIST_ROTATE_LEFT (la);
   LIST_ROTATE_RIGHT (la);
@@ -141,6 +152,7 @@ main (void)
 
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
   printf ("Size %li\n", LIST_SIZE (la));
+  LIST_INDEX (la, LIST_SIZE (la));
 
   for (int i = 17; i < 28; i++)
   {
