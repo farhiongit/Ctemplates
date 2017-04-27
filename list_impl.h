@@ -31,12 +31,13 @@ DEFINE_OPERATORS(__list_dummy__)
   static void LIST_CLEAR_##TYPE ( LIST_##TYPE *self );                                                               \
   static void LIST_DESTROY_##TYPE ( LIST_##TYPE *self );                                                             \
   static BNODE___list_dummy___##TYPE *LIST_INSERT_##TYPE ( LIST_##TYPE *self, BNODE___list_dummy___##TYPE *here, BNODE___list_dummy___##TYPE *node );             \
-  static int LIST_REMOVE_##TYPE ( LIST_##TYPE *self, BNODE___list_dummy___##TYPE *node );                           \
+  static int LIST_REMOVE_##TYPE ( LIST_##TYPE *self, BNODE___list_dummy___##TYPE *node );                            \
   static size_t LIST_UNIQUE_##TYPE ( LIST_##TYPE *self, int (*less_than) (TYPE, TYPE));                              \
   static void LIST_SORT_##TYPE ( LIST_##TYPE *self, int (*less_than) (TYPE, TYPE));                                  \
   static int LIST_MOVE_##TYPE ( LIST_##TYPE *to, BNODE___list_dummy___##TYPE *hereto, LIST_##TYPE *from, BNODE___list_dummy___##TYPE *herefrom ); \
   static int LIST_SWAP_##TYPE ( LIST_##TYPE *la, BNODE___list_dummy___##TYPE *nodea, LIST_##TYPE *lb, BNODE___list_dummy___##TYPE *nodeb ); \
   static int LIST_REVERSE_##TYPE ( LIST_##TYPE *self, BNODE___list_dummy___##TYPE *nodea, BNODE___list_dummy___##TYPE *nodeb ); \
+  static BNODE___list_dummy___##TYPE *LIST_END_##TYPE ( LIST_##TYPE *self );                                         \
 \
   static BNODE___list_dummy___##TYPE LIST_NULL_##TYPE = { .vtable = &BNODE_VTABLE___list_dummy___##TYPE };           \
 \
@@ -52,6 +53,7 @@ DEFINE_OPERATORS(__list_dummy__)
     LIST_MOVE_##TYPE,                                    \
     LIST_SWAP_##TYPE,                                    \
     LIST_REVERSE_##TYPE,                                 \
+    LIST_END_##TYPE,                                     \
   };                                                     \
 \
   LIST_##TYPE *LIST_CREATE_##TYPE( int (*less_than_operator) (TYPE, TYPE) )   \
@@ -268,6 +270,12 @@ DEFINE_OPERATORS(__list_dummy__)
     }                                                                      \
                                                                            \
     return EXIT_SUCCESS;                                                   \
+  }                                                                        \
+\
+  static BNODE___list_dummy___##TYPE *LIST_END_##TYPE ( LIST_##TYPE *self ) \
+  {                                                                        \
+    (void)self;                                                            \
+    return 0;                                                              \
   }                                                                        \
 
 #endif

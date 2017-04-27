@@ -59,7 +59,8 @@ DEFINE_MAP (pchar, double)
 DEFINE_MAP (Point, int)
 /* *INDENT-ON* */
 
-static void int_destroyer (int val)
+static void
+int_destroyer (int val)
 {
   printf ("%i destroyed.\n", val);
 }
@@ -100,7 +101,7 @@ string_copier (char *val)
 static int
 print_node (BNODE (pchar, double) * node, void *param)
 {
-  (void)param;
+  (void) param;
   printf ("%s=%g ; ", *BNODE_KEY (node), *BNODE_VALUE (node));
   return EXIT_SUCCESS;
 }
@@ -304,19 +305,19 @@ MAP (pchar, double) *
   //MAP_INDEX (ma, 10);
   MAP_CLEAR (ma);
 
-  MAP (int, int) *mi = MAP_CREATE (int, int);
+  MAP (int, int) * mi = MAP_CREATE (int, int);
 
   MAP_SET (mi, 25, 25);
-  for (int i = 0 ; i < 50 ; i++)
-    MAP_SET (mi, rand() % 100, -rand() % 100);
+  for (int i = 0; i < 50; i++)
+    MAP_SET (mi, rand () % 100, -rand () % 100);
   MAP_SET (mi, 75, 75);
-  for (int i = 0 ; i < 50 ; i++)
-    MAP_SET (mi, rand() % 100, -rand() % 100);
+  for (int i = 0; i < 50; i++)
+    MAP_SET (mi, rand () % 100, -rand () % 100);
   MAP_SET (mi, 75, 750);
   MAP_SET (mi, 25, 250);
   MAP_REMOVE (mi, MAP_FIND_KEY (mi, 25));
   MAP_REMOVE (mi, MAP_FIND_KEY (mi, 75));
-  for (BNODE (int, int) * n = MAP_BEGIN (mi) ; n ; n = BNODE_NEXT (n))
+  for (BNODE (int, int) * n = MAP_BEGIN (mi); n; n = BNODE_NEXT (n))
     printf ("%i=%i ; ", *BNODE_KEY (n), *BNODE_VALUE (n));
   printf ("\n");
 

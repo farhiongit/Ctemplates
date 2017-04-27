@@ -102,7 +102,7 @@ typedef enum {
 /// @param [in] self Pointer to the node which value is to be modified.
 /// @param [in] value Value to assign to the node.
 #define BNODE_ASSIGN( self, value ) \
-  do { (self)->vtable->Assign ((self), (value)) ; } while (0)
+  ((self)->vtable->Assign ((self), (value)))
 
 /// Yields the previous node.
 /// @param [in] self Pointer to a node.

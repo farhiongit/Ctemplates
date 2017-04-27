@@ -10,7 +10,7 @@
 typedef char *pchar;
 typedef struct
 {
-  int min,max;
+  int min, max;
 } Range;
 
 typedef int16_t myint;
@@ -31,16 +31,16 @@ DEFINE_LIST (pchar)
 DEFINE_LIST (Range)
 /* *INDENT-ON* */
 
-static void sigabort_handler(int signum)
+static void
+sigabort_handler (int signum)
 {
-  fprintf (stderr, "INFO:  " "Signal %i trapped and ignored.\n"
-                   "       " "Execution continued.\n", signum);
+  fprintf (stderr, "INFO:  " "Signal %i trapped and ignored.\n" "       " "Execution continued.\n", signum);
 }
 
 static int
 print_node (LNODE (myint) * n, void *param)
 {
-  (void)param;
+  (void) param;
   printf ("%p = " "%i" "\n", (void *) n, *BNODE_VALUE (n));
   return EXIT_SUCCESS;
 }
@@ -88,7 +88,7 @@ int
 main (void)
 {
   struct sigaction sa = {.sa_handler = sigabort_handler };
-  sigaction (SIGABRT, &sa, 0);  
+  sigaction (SIGABRT, &sa, 0);
 
   SET_DESTRUCTOR (myint, int_destroyer);
   SET_COPY_CONSTRUCTOR (myint, int_copier);
@@ -96,6 +96,7 @@ main (void)
   //SET_LESS_THAN_OPERATOR (int, greater_than_int);
 
   LIST (myint) * la = LIST_CREATE (myint);
+  printf ("-------- will abort here:\n");
   LIST_INDEX (la, 0);
   LIST_REVERSE (la);
   LIST_ROTATE_LEFT (la);
@@ -142,21 +143,23 @@ main (void)
   BNODE_ASSIGN (LIST_LAST (la), 99);
   printf ("%i peeked\n", *BNODE_VALUE (LIST_LAST (la)));
 
-  printf ("%i %c %i\n", *BNODE_VALUE (LIST_BEGIN (la)), BNODE_LESS_THAN_VALUE (LIST_BEGIN (la), LIST_LAST (la)) ? '<' : '>',
-          *BNODE_VALUE (LIST_LAST (la)));
-  printf ("%i %c %i\n", *BNODE_VALUE (LIST_LAST (la)), BNODE_LESS_THAN_VALUE (LIST_LAST (la), LIST_BEGIN (la)) ? '<' : '>',
-          *BNODE_VALUE (LIST_BEGIN (la)));
+  printf ("%i %c %i\n", *BNODE_VALUE (LIST_BEGIN (la)),
+          BNODE_LESS_THAN_VALUE (LIST_BEGIN (la), LIST_LAST (la)) ? '<' : '>', *BNODE_VALUE (LIST_LAST (la)));
+  printf ("%i %c %i\n", *BNODE_VALUE (LIST_LAST (la)),
+          BNODE_LESS_THAN_VALUE (LIST_LAST (la), LIST_BEGIN (la)) ? '<' : '>', *BNODE_VALUE (LIST_BEGIN (la)));
   printf ("%i %c %i\n", *BNODE_VALUE (BNODE_NEXT (LIST_BEGIN (la))),
           BNODE_LESS_THAN_VALUE (BNODE_NEXT (LIST_BEGIN (la)), BNODE_PREVIOUS (LIST_LAST (la))) ? '<' : '>',
           *BNODE_VALUE (BNODE_PREVIOUS (LIST_LAST (la))));
 
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
   printf ("Size %li\n", LIST_SIZE (la));
+  printf ("-------- will abort here:\n");
   LIST_INDEX (la, LIST_SIZE (la));
 
   for (int i = 17; i < 28; i++)
   {
     int mulfactor = 3;
+
     LIST_INSERT (la, LIST_BEGIN (la), mulfactor * i);
     LIST_INSERT (la, LIST_BEGIN (la), mulfactor * i);
     LIST_INSERT (la, LIST_BEGIN (la), mulfactor * i);
@@ -205,8 +208,8 @@ main (void)
   LIST_SORT (la, tens_less_than_int);
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
-  LNODE (myint) *aa = LIST_BEGIN (la);
-  LNODE (myint) *bb = LIST_LAST (la);
+  LNODE (myint) * aa = LIST_BEGIN (la);
+  LNODE (myint) * bb = LIST_LAST (la);
   printf ("Move end at the begining....\n");
   LIST_MOVE (la, aa, la, bb);
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
@@ -251,8 +254,8 @@ main (void)
   LIST_REVERSE (la, BNODE_NEXT (LIST_BEGIN (la)), LIST_LAST (la));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
-  printf ("Reverse [%p, %p[.\n", (void *) BNODE_PREVIOUS(LIST_LAST (la)), (void *) BNODE_NEXT (LIST_BEGIN (la)));
-  LIST_REVERSE (la, BNODE_PREVIOUS(LIST_LAST (la)), BNODE_NEXT (LIST_BEGIN (la)));
+  printf ("Reverse [%p, %p[.\n", (void *) BNODE_PREVIOUS (LIST_LAST (la)), (void *) BNODE_NEXT (LIST_BEGIN (la)));
+  LIST_REVERSE (la, BNODE_PREVIOUS (LIST_LAST (la)), BNODE_NEXT (LIST_BEGIN (la)));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
   printf ("Reverse all.\n");
@@ -263,14 +266,15 @@ main (void)
   LIST_ROTATE_RIGHT (la);
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
-  printf ("Swap %p = %i and %p = %i.\n", (void *) BNODE_NEXT(LIST_BEGIN (la)), *BNODE_VALUE (BNODE_NEXT(LIST_BEGIN (la))),
-          (void *) BNODE_PREVIOUS(LIST_LAST (la)), *BNODE_VALUE (BNODE_PREVIOUS(LIST_LAST (la))));
-  LIST_SWAP (la, BNODE_NEXT(LIST_BEGIN (la)), la, BNODE_PREVIOUS(LIST_LAST (la)));
+  printf ("Swap %p = %i and %p = %i.\n", (void *) BNODE_NEXT (LIST_BEGIN (la)),
+          *BNODE_VALUE (BNODE_NEXT (LIST_BEGIN (la))), (void *) BNODE_PREVIOUS (LIST_LAST (la)),
+          *BNODE_VALUE (BNODE_PREVIOUS (LIST_LAST (la))));
+  LIST_SWAP (la, BNODE_NEXT (LIST_BEGIN (la)), la, BNODE_PREVIOUS (LIST_LAST (la)));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
   printf ("Access through indexes.\n");
-  for (size_t i = 0 ; i < LIST_SIZE (la) ; i++)
-    (void)(printf ("%3zi: ", i) && print_node (LIST_INDEX (la, i), 0));
+  for (size_t i = 0; i < LIST_SIZE (la); i++)
+    (void) (printf ("%3zi: ", i) && print_node (LIST_INDEX (la, i), 0));
 
   printf ("Is empty = %i\n", LIST_IS_EMPTY (la));
   printf ("Clear.\n");

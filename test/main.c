@@ -5,14 +5,17 @@
 
 #include "mylib.h"
 
-int main (void)
+int
+main (void)
 {
-  SET(int) *ps;
+  SET (int) * ps;
+
   libfunction (&ps);
   SET_INSERT (ps, 3);
 
-  SNODE(int) *b = SET_BEGIN(ps);
-  printf ("%i\n", *SNODE_KEY(b));
+  SNODE (int) * b = SET_BEGIN (ps);
+
+  printf ("%i\n", *SNODE_KEY (b));
 
   SET_DESTROY (ps);
 }

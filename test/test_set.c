@@ -28,7 +28,7 @@ DEFINE_SET (pchar)
 static int
 print_node (SNODE (int) * n, void *param)
 {
-  (void)param;
+  (void) param;
   printf ("%p = %i\n", (void *) n, *BNODE_KEY (n));
   return 1;
 }

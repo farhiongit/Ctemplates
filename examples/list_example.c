@@ -15,6 +15,10 @@ typedef char *T;
 DECLARE_LIST (T)
 DEFINE_OPERATORS (T)
 DEFINE_LIST (T)
+
+DECLARE_LIST (int)
+DEFINE_OPERATORS (int)
+DEFINE_LIST (int)
 /* *INDENT-ON* */
 
 // Define a copy constructor allowing the list to manage its memory independantly of the caller
@@ -64,6 +68,24 @@ static int
 Tlt (T a, T b)
 {
   return strlen (a) < strlen (b) ? 1 : (strlen (a) == strlen (b) ? (strcoll (a, b) < 0 ? 1 : 0) : 0);
+}
+
+int
+skim (LNODE (int) * n, void *arg)
+{
+  int threshold = 88;
+
+  LIST (int) * li = arg;
+
+  if (*LNODE_VALUE (n) + 10 > threshold)
+  {
+    printf ("-(%i)-;", *LNODE_VALUE (n));
+    LIST_REMOVE (li, n);
+  }
+  else
+    printf ("%i;", *LNODE_VALUE (LNODE_ASSIGN (n, *LNODE_VALUE (n) + 10)));
+
+  return EXIT_SUCCESS;
 }
 
 int
@@ -143,6 +165,7 @@ main (void)
 
   // Remove conjoint identical elements (using an optionally defined specific less than operator)
   LIST_UNIQUE (mylist, Tlt);
+
   list_print (mylist);
 
   // Reverse list
@@ -182,4 +205,17 @@ main (void)
 
   // Destroy (and deallocate resources to avoid memory leaks) after usage.
   LIST_DESTROY (mylist);
+
+  LIST (int) * li = LIST_CREATE (int);
+
+  for (int i = 0; i < 110; i++)
+    LIST_INSERT (li, LIST_END (li), i);
+
+  // Apply skim for each element from 1 to 108 included.
+  // skim removes some elements from the list.
+  // Unlike LIST_TRAVERSE, LIST_FOR_EACH allows to remove or insert elements in the list while processing, 
+  LIST_FOR_EACH (li, LIST_INDEX (li, 1), LNODE_PREVIOUS (LIST_LAST (li)), skim, li, EXIT_FAILURE);
+  printf ("\n");
+
+  LIST_DESTROY (li);
 }

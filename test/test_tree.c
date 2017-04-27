@@ -21,7 +21,7 @@ DEFINE_BNODE (pchar, int)
 static int
 print_node_key (BNODE (pchar, int) * node, void *param)
 {
-  (void)param;
+  (void) param;
   printf ("%s ; ", *BNODE_KEY (node));
   return EXIT_SUCCESS;
 }
@@ -29,14 +29,13 @@ print_node_key (BNODE (pchar, int) * node, void *param)
 static int
 print_node_full (BNODE (pchar, int) * n, void *param)
 {
-  (void)param;
+  (void) param;
   printf ("%s %i,\t\t>%s <%s ^%s,\t\t>>%s <<%s\t\tsize=%zi, depth=%zi\n", *BNODE_KEY (n), *BNODE_VALUE (n),
           n->lower_child ? *BNODE_KEY (n->lower_child) : "(null)",
           n->higher_child ? *BNODE_KEY (n->higher_child) : "(null)",
           n->parent ? *BNODE_KEY (n->parent) : "(null)",
           n->lowest_child ? *BNODE_KEY (n->lowest_child) : "(null)",
-          n->highest_child ? *BNODE_KEY (n->highest_child) : "(null)",
-          n->size, n->depth);
+          n->highest_child ? *BNODE_KEY (n->highest_child) : "(null)", n->size, n->depth);
   return EXIT_SUCCESS;
 }
 
@@ -73,6 +72,7 @@ main (void)
   BNODE_TREE_ADD (tree2, BNODE_CREATE (pchar, int) ("Z", unique), 0);
 
   BNODE (pchar, int) * newRoot = BNODE_REMOVE (tree2);
+
   BNODE_TRAVERSE (newRoot, print_node_full, 0, EXIT_FAILURE);
   BNODE_DESTROY (newRoot);
 
@@ -133,10 +133,11 @@ main (void)
   for (BNODE (pchar, int) * n = BNODE_FIRST (tree); n; n = BNODE_NEXT (n))
   {
     char alien[100];
+
     snprintf (alien, sizeof (alien) / sizeof (*alien), "_alien_[%s]", *BNODE_KEY (n));
-    BNODE_TREE_INSERT_BEFORE (tree, n, BNODE_CREATE (pchar, int) (strdup(alien), unique));
+    BNODE_TREE_INSERT_BEFORE (tree, n, BNODE_CREATE (pchar, int) (strdup (alien), unique));
   }
-  BNODE_TREE_INSERT_BEFORE (tree, 0,  BNODE_CREATE (pchar, int) ("_alien_end", unique));
+  BNODE_TREE_INSERT_BEFORE (tree, 0, BNODE_CREATE (pchar, int) ("_alien_end", unique));
   BNODE_TREE_INSERT_BEFORE (tree, BNODE_FIRST (tree), BNODE_CREATE (pchar, int) ("_alien_begining", unique));
 
   BNODE_TRAVERSE (tree, print_node_full, 0, EXIT_FAILURE);

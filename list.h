@@ -40,6 +40,7 @@ typedef int __list_dummy__ ;
     int (*Move) ( struct _LIST_##TYPE *to, BNODE___list_dummy___##TYPE *hereto, struct _LIST_##TYPE *from, BNODE___list_dummy___##TYPE *herefrom );     \
     int (*Swap) ( struct _LIST_##TYPE *la, BNODE___list_dummy___##TYPE *nodea, struct _LIST_##TYPE *lb, BNODE___list_dummy___##TYPE *nodeb );     \
     int (*Reverse) ( struct _LIST_##TYPE *self, BNODE___list_dummy___##TYPE *nodea, BNODE___list_dummy___##TYPE *nodeb );     \
+    BNODE___list_dummy___##TYPE * (*End) ( struct _LIST_##TYPE *self );                              \
   } _LIST_VTABLE_##TYPE;                                                                             \
 \
   typedef struct _LIST_##TYPE          \
@@ -111,7 +112,7 @@ typedef int __list_dummy__ ;
 /// @param [in] listSelf pointer to list
 /// @returns the one-past-last node in the list.
 #define LIST_END( listSelf ) \
-  ((void*)0)
+  (listSelf->vtable->End ((listSelf)))
 
 /// Gets the number of elements in a list.
 /// @param [in] listSelf pointer to list.
@@ -207,7 +208,7 @@ typedef int __list_dummy__ ;
   do { if (LIST_SIZE(listSelf) > 1) LIST_MOVE(listSelf, LIST_BEGIN(listSelf), listSelf, LIST_LAST(listSelf)); } while(0)
 
 #define LIST_INDEX( map, index) \
-  ((map)->root ? BNODE_INDEX((map)->root, (index)): (fprintf (stderr, "ERROR: " "List is empty.\nABORT\n"), fflush (0), raise (SIGABRT), (void*)0))
+  ((map)->root ? BNODE_INDEX((map)->root, (index)): (fprintf (stderr, "ERROR: " "List is empty.\nABORT\n"), fflush (0), raise (SIGABRT), LIST_END(map)))
 
 #define LIST_SWAP( la, nodea, lb, nodeb) \
   ((la)->vtable->Swap ((la), (nodea), (lb), (nodeb)))
@@ -225,5 +226,6 @@ typedef int __list_dummy__ ;
 #define LNODE_COPY(n) BNODE_COPY(n)
 #define LNODE_ASSIGN(n,v) BNODE_ASSIGN(n,v)
 #define LNODE_VALUE(n) BNODE_VALUE(n)
+#define LNODE_FOR_EACH(...) BNODE_FOR_EACH(__VA_ARGS__)
 
 #endif
