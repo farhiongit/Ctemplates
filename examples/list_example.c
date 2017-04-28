@@ -22,20 +22,6 @@ DEFINE_OPERATORS (int)
 DEFINE_LIST (int)
 /* *INDENT-ON* */
 
-// Define a copy constructor allowing the list to manage its memory independantly of the caller
-static T
-Tcopy (T v)
-{
-  return strdup (v);
-}
-
-// Defines a destructor
-static void
-Tfree (T v)
-{
-  free (v);
-}
-
 // Prints the content of a node
 int
 print_node (LNODE (T) * n, void *arg)
@@ -92,11 +78,6 @@ skim (LNODE (int) * n, void *arg)
 int
 main (void)
 {
-  // Set copy constructor for type T. This is not required if T does not allocate memory.
-  SET_COPY_CONSTRUCTOR (T, Tcopy);
-  // Set destructor for type T. This is not required if T does not allocate memory.
-  SET_DESTRUCTOR (T, Tfree);
-
   // Create a list which type is a pointer to LIST(T).
   // A predefined 'less than' operator is used here but could have been declaraed as a second argument to LIST_CREATE.
   LIST (T) * mylist = LIST_CREATE (T);

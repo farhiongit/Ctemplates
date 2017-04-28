@@ -18,18 +18,6 @@ DEFINE_OPERATORS (int)
 DEFINE_BNODE (pchar, int)
 /* *INDENT-ON* */
 
-static pchar
-pchar_copy (pchar v)
-{
-  return strdup (v);
-}
-
-static void
-pchar_free (pchar v)
-{
-  free (v);
-}
-
 static void
 sigabort_handler (int signum)
 {
@@ -62,9 +50,6 @@ main (void)
 {
   struct sigaction sa = {.sa_handler = sigabort_handler };
   sigaction (SIGABRT, &sa, 0);
-
-  SET_DESTRUCTOR (pchar, pchar_free);
-  SET_COPY_CONSTRUCTOR (pchar, pchar_copy);
 
   setlocale (LC_ALL, "");
 

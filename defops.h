@@ -9,14 +9,32 @@
 #ifndef __DEFOPS_H__
 #define __DEFOPS_H__
 
+static char*
+__str_copy__ (char* v)
+{
+  if (!v)
+    return 0;
+
+  return strdup (v);
+}
+
+static void
+__str_free__ (char* v)
+{
+  if (!v)
+    return;
+
+  free (v);
+}
+
 #define DEFINE_OPERATORS( TYPE )  \
 \
   typedef TYPE (*COPY_##TYPE##_TYPE) (TYPE);              \
   typedef void (*DESTROY_##TYPE##_TYPE) (TYPE);           \
   typedef int (*LESS_THAN_##TYPE##_TYPE) (TYPE, TYPE);    \
 \
-  static TYPE (*COPY_##TYPE) (TYPE) = 0;                  \
-  static void (*DESTROY_##TYPE) (TYPE) = 0;               \
+  static TYPE (*COPY_##TYPE) (TYPE) = _Generic(*(TYPE*)0, char*:__str_copy__, default:0);    \
+  static void (*DESTROY_##TYPE) (TYPE) = _Generic(*(TYPE*)0, char*:__str_free__, default:0); \
   static int (*LESS_THAN_##TYPE) (TYPE, TYPE) = 0;
 
 /// Declares a destructor associated to type TYPE
