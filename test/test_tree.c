@@ -18,6 +18,24 @@ DEFINE_OPERATORS (int)
 DEFINE_BNODE (pchar, int)
 /* *INDENT-ON* */
 
+static pchar
+pchar_copy (pchar v)
+{
+  return strdup (v);
+}
+
+static void
+pchar_free (pchar v)
+{
+  free (v);
+}
+
+static void
+sigabort_handler (int signum)
+{
+  fprintf (stderr, "INFO:  " "Signal %i trapped and ignored.\n" "       " "Execution continued.\n", signum);
+}
+
 static int
 print_node_key (BNODE (pchar, int) * node, void *param)
 {
@@ -42,6 +60,12 @@ print_node_full (BNODE (pchar, int) * n, void *param)
 int
 main (void)
 {
+  struct sigaction sa = {.sa_handler = sigabort_handler };
+  sigaction (SIGABRT, &sa, 0);
+
+  SET_DESTRUCTOR (pchar, pchar_free);
+  SET_COPY_CONSTRUCTOR (pchar, pchar_copy);
+
   setlocale (LC_ALL, "");
 
   int unique = 0;
@@ -135,7 +159,7 @@ main (void)
     char alien[100];
 
     snprintf (alien, sizeof (alien) / sizeof (*alien), "_alien_[%s]", *BNODE_KEY (n));
-    BNODE_TREE_INSERT_BEFORE (tree, n, BNODE_CREATE (pchar, int) (strdup (alien), unique));
+    BNODE_TREE_INSERT_BEFORE (tree, n, BNODE_CREATE (pchar, int) (alien, unique));
   }
   BNODE_TREE_INSERT_BEFORE (tree, 0, BNODE_CREATE (pchar, int) ("_alien_end", unique));
   BNODE_TREE_INSERT_BEFORE (tree, BNODE_FIRST (tree), BNODE_CREATE (pchar, int) ("_alien_begining", unique));
