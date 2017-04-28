@@ -33,6 +33,7 @@
   static int MAP_MOVE_##K##_##T ( MAP_##K##_##T *to, MAP_##K##_##T *from, BNODE_##K##_##T *herefrom ); \
   static BNODE_##K##_##T *MAP_GET_##K##_##T ( MAP_##K##_##T *self, K key );                            \
   static BNODE_##K##_##T *MAP_SET_##K##_##T ( MAP_##K##_##T *self, K key, T value );                   \
+  static BNODE_##K##_##T *MAP_END_##K##_##T ( MAP_##K##_##T *self );                                   \
 \
   static const _MAP_VTABLE_##K##_##T MAP_VTABLE_##K##_##T =   \
   {                                                        \
@@ -44,6 +45,7 @@
     MAP_MOVE_##K##_##T,                                    \
     MAP_GET_##K##_##T,                                     \
     MAP_SET_##K##_##T,                                     \
+    MAP_END_##K##_##T,                                     \
   };                                                       \
 \
   MAP_##K##_##T *MAP_CREATE_##K##_##T( int (*less_than_operator) (K, K), int unique )        \
@@ -179,5 +181,11 @@
     MAP_CLEAR_##K##_##T (self);                   \
     free( self );                                 \
   }                                               \
+\
+  static BNODE_##K##_##T *MAP_END_##K##_##T ( MAP_##K##_##T *self ) \
+  {                                                             \
+    (void)self;                                                 \
+    return 0;                                                   \
+  }                                                             \
 
 #endif

@@ -34,6 +34,7 @@
     int (*Move) ( struct _MAP_##K##_##T *to, struct _MAP_##K##_##T *from, BNODE_##K##_##T *herefrom ); \
     BNODE_##K##_##T *(*Get) ( struct _MAP_##K##_##T *self, K key );                     \
     BNODE_##K##_##T *(*Set) ( struct _MAP_##K##_##T *self, K key, T value );            \
+    BNODE_##K##_##T *(*End) ( struct _MAP_##K##_##T *self );                            \
   } _MAP_VTABLE_##K##_##T;                                                              \
 \
   typedef struct _MAP_##K##_##T             \
@@ -108,7 +109,7 @@
 /// @param [in] listSelf pointer to map.
 /// @returns the one-past-last node in the map.
 #define MAP_END( listSelf ) \
-  ((void*)0)
+  ((listSelf)->vtable->End ((listSelf)))
 
 /// Gets the number of elements in a map.
 /// @param [in] listSelf pointer to map.
@@ -128,10 +129,10 @@
 #define MAP( K, T ) \
   MAP_##K##_##T
 
-#define MAP_SET( map, key, value ) \
+#define MAP_SET_VALUE( map, key, value ) \
   ((map)->vtable->Set((map), (key), (value)))
 
-#define MAP_GET( map, key ) \
+#define MAP_KEY( map, key ) \
   ((map)->vtable->Get((map), (key)))
 
 #define MAP_FIND_KEY3( map, begin, key ) \
@@ -179,6 +180,6 @@
   do { (map)->LessThanValue = (lt) ; } while(0)
 
 #define MAP_INDEX( map, index) \
-  ((map)->root ? BNODE_INDEX((map)->root, (index)): MAP_END (map))
+  ((map)->root ? BNODE_INDEX((map)->root, (index)) : (fprintf (stderr, "ERROR: " "Map is empty.\nABORT\n"), fflush (0), raise (SIGABRT), MAP_END(map)))
 
 #endif
