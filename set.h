@@ -34,7 +34,7 @@ typedef int __set_dummy__ ;
     BNODE_##K##___set_dummy__ *(*Insert) ( struct _SET_##K *self, BNODE_##K##___set_dummy__ *node );    \
     int (*Remove) ( struct _SET_##K *self, BNODE_##K##___set_dummy__ *node );                           \
     int (*Move) ( struct _SET_##K *to, struct _SET_##K *from, BNODE_##K##___set_dummy__ *herefrom );    \
-    BNODE_##K##___set_dummy__ *(*Get) ( struct _SET_##K *self, K key );                                 \
+    BNODE_##K##___set_dummy__ *(*End) ( struct _SET_##K *self );                                        \
   } _SET_VTABLE_##K;                                                                                    \
 \
   typedef struct _SET_##K            \
@@ -107,7 +107,7 @@ typedef int __set_dummy__ ;
 /// @param [in] listSelf pointer to map.
 /// @returns the one-past-last node in the map.
 #define SET_END( listSelf ) \
-  ((void*)0)
+  ((listSelf)->vtable->End ((listSelf)))
 
 /// Gets the number of elements in a map.
 /// @param [in] listSelf pointer to map.
@@ -126,25 +126,12 @@ typedef int __set_dummy__ ;
 #define SET( K ) \
   SET_##K
 
-#define SET_SET( map, key, value ) \
-  ((map)->vtable->Set((map), (key), (value)))
+#define SET_FIND3( map, begin, key ) \
+  ((map)->root ? BNODE_FIND_KEY3((begin), (key), (map)->LessThan): SET_END (map))
 
-#define SET_GET( map, key ) \
-  ((map)->vtable->Get((map), (key)))
+#define SET_FIND2( map, key ) SET_FIND3( map, SET_BEGIN (map), key )
 
-#define SET_FIND_KEY3( map, begin, key ) \
-  ((map)->root ? BNODE_FIND_KEY3((begin), (key), (map)->LessThan): 0)
-
-#define SET_FIND_KEY2( map, key ) SET_FIND_KEY3( map, BNODE_FIRST((map)->root), key )
-
-#define SET_FIND_KEY(...) VFUNC(SET_FIND_KEY, __VA_ARGS__)
-
-#define SET_FIND_VALUE3( map, begin, value ) \
-  ((map)->root ? BNODE_FIND_VALUE3((begin), (value), (map)->LessThanValue): 0)
-
-#define SET_FIND_VALUE2( map, value ) SET_FIND_VALUE3( map, BNODE_FIRST((map)->root), value )
-
-#define SET_FIND_VALUE(...) VFUNC(SET_FIND_VALUE, __VA_ARGS__)
+#define SET_FIND(...) VFUNC(SET_FIND, __VA_ARGS__)
 
 #define SET_TRAVERSE4( map, callback, param, stop_condition ) \
   do { if ((map)->root) { \
@@ -161,9 +148,9 @@ typedef int __set_dummy__ ;
 #define SET_TRAVERSE(...) VFUNC(SET_TRAVERSE, __VA_ARGS__)
 
 #define SET_FOR_EACH6( map, begin, end, callback, param, stop_condition ) \
-  ((map)->root ? (begin)->vtable->ForEach((begin), (end), (callback), (param), (stop_condition), BNODE_FORWARD) : 0)
+  ((map)->root ? (begin)->vtable->ForEach((begin), (end), (callback), (param), (stop_condition), BNODE_FORWARD) : SET_END (map))
 
-#define SET_FOR_EACH5( map, begin, callback, param, stop_condition ) SET_FOR_EACH6( map, begin, 0, callback, param, stop_condition )
+#define SET_FOR_EACH5( map, begin, callback, param, stop_condition ) SET_FOR_EACH6( map, begin, SET_END (map), callback, param, stop_condition )
 
 #define SET_FOR_EACH4( map, callback, param, stop_condition ) SET_FOR_EACH5( map, SET_BEGIN( map ), callback, param, stop_condition )
 
@@ -173,11 +160,8 @@ typedef int __set_dummy__ ;
 
 #define SET_FOR_EACH(...) VFUNC(SET_FOR_EACH, __VA_ARGS__)
 
-#define SET_SET_LESS_THAN_VALUE_OPERATOR(map, lt)  \
-  do { (map)->LessThanValue = (lt) ; } while(0)
-
 #define SET_INDEX( map, index) \
-  ((map)->root ? BNODE_INDEX((map)->root, (index)): (fflush (0), raise (SIGABRT), (void*)0))
+  ((map)->root ? BNODE_INDEX((map)->root, (index)) : (fprintf (stderr, "ERROR: " "Set is empty.\nABORT\n"), fflush (0), raise (SIGABRT), SET_END(map)))
 
 #define SNODE( K ) \
   BNODE_##K##___set_dummy__

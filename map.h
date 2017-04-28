@@ -135,14 +135,14 @@
   ((map)->vtable->Get((map), (key)))
 
 #define MAP_FIND_KEY3( map, begin, key ) \
-  ((map)->root ? BNODE_FIND_KEY3((begin), (key), (map)->LessThan): 0)
+  ((map)->root ? BNODE_FIND_KEY3((begin), (key), (map)->LessThan) : MAP_END (map))
 
 #define MAP_FIND_KEY2( map, key ) MAP_FIND_KEY3( map, BNODE_FIRST((map)->root), key )
 
 #define MAP_FIND_KEY(...) VFUNC(MAP_FIND_KEY, __VA_ARGS__)
 
 #define MAP_FIND_VALUE3( map, begin, value ) \
-  ((map)->root ? BNODE_FIND_VALUE3((begin), (value), (map)->LessThanValue): 0)
+  ((map)->root ? BNODE_FIND_VALUE3((begin), (value), (map)->LessThanValue) : MAP_END (map))
 
 #define MAP_FIND_VALUE2( map, value ) MAP_FIND_VALUE3( map, BNODE_FIRST((map)->root), value )
 
@@ -163,9 +163,9 @@
 #define MAP_TRAVERSE(...) VFUNC(MAP_TRAVERSE, __VA_ARGS__)
 
 #define MAP_FOR_EACH6( map, begin, end, callback, param, stop_condition ) \
-  ((map)->root ? (begin)->vtable->ForEach((begin), (end), (callback), (param), (stop_condition), BNODE_FORWARD) : 0)
+  ((map)->root ? (begin)->vtable->ForEach((begin), (end), (callback), (param), (stop_condition), BNODE_FORWARD) : MAP_END (map))
 
-#define MAP_FOR_EACH5( map, begin, callback, param, stop_condition ) MAP_FOR_EACH6( map, begin, 0, callback, param, stop_condition )
+#define MAP_FOR_EACH5( map, begin, callback, param, stop_condition ) MAP_FOR_EACH6( map, begin, MAP_END (map), callback, param, stop_condition )
 
 #define MAP_FOR_EACH4( map, callback, param, stop_condition ) MAP_FOR_EACH5( map, MAP_BEGIN( map ), callback, param, stop_condition )
 
@@ -179,6 +179,6 @@
   do { (map)->LessThanValue = (lt) ; } while(0)
 
 #define MAP_INDEX( map, index) \
-  ((map)->root ? BNODE_INDEX((map)->root, (index)): 0)
+  ((map)->root ? BNODE_INDEX((map)->root, (index)): MAP_END (map))
 
 #endif

@@ -79,13 +79,17 @@
       return 0;                                                            \
     }                                                                      \
                                                                            \
-    K key = *BNODE_KEY (node);                                             \
+    K key = COPY_##K ? COPY_##K(*BNODE_KEY (node)) : *BNODE_KEY (node);    \
                                                                            \
-    return !self->root ?                                                   \
+    BNODE_##K##_##T *ret =                                                 \
+           !self->root ?                                                   \
            self->root = node :                                             \
            BNODE_TREE_ADD(self->root, node, self->LessThan) ?              \
            node :                                                          \
            BNODE_FIND_KEY (BNODE_FIRST (self->root), key, self->LessThan); \
+                                                                           \
+    if (DESTROY_##K) DESTROY_##K (key);                                    \
+    return ret;                                                            \
   }                                                                        \
 \
   static BNODE_##K##_##T *MAP_GET_##K##_##T ( MAP_##K##_##T *self, K key ) \
@@ -134,6 +138,9 @@
 \
   static int MAP_MOVE_##K##_##T ( MAP_##K##_##T *to, MAP_##K##_##T *from, BNODE_##K##_##T *herefrom )  \
   {                                                                        \
+    if (to == from)                                                        \
+      return EXIT_SUCCESS;                                                 \
+                                                                           \
     /* Go to root */                                                       \
     BNODE_##K##_##T *n;                                                    \
     for (n = herefrom ; n->parent ; n = n->parent) /* nop */ ;             \

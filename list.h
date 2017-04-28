@@ -112,7 +112,7 @@ typedef int __list_dummy__ ;
 /// @param [in] listSelf pointer to list
 /// @returns the one-past-last node in the list.
 #define LIST_END( listSelf ) \
-  (listSelf->vtable->End ((listSelf)))
+  ((listSelf)->vtable->End ((listSelf)))
 
 /// Gets the number of elements in a list.
 /// @param [in] listSelf pointer to list.
@@ -180,9 +180,9 @@ typedef int __list_dummy__ ;
 #define LIST_TRAVERSE(...) VFUNC(LIST_TRAVERSE, __VA_ARGS__)
 
 #define LIST_FOR_EACH6( map, begin, end, callback, param, stop_condition ) \
-  ((map)->root ? (begin)->vtable->ForEach((begin), (end), (callback), (param), (stop_condition), BNODE_FORWARD) : 0)
+  ((map)->root ? (begin)->vtable->ForEach((begin), (end), (callback), (param), (stop_condition), BNODE_FORWARD) : LIST_END (map))
 
-#define LIST_FOR_EACH5( map, begin, callback, param, stop_condition ) LIST_FOR_EACH6( map, begin, 0, callback, param, stop_condition )
+#define LIST_FOR_EACH5( map, begin, callback, param, stop_condition ) LIST_FOR_EACH6( map, begin, LIST_END (map), callback, param, stop_condition )
 
 #define LIST_FOR_EACH4( map, callback, param, stop_condition ) LIST_FOR_EACH5( map, SET_BEGIN( map ), callback, param, stop_condition )
 
@@ -208,7 +208,7 @@ typedef int __list_dummy__ ;
   do { if (LIST_SIZE(listSelf) > 1) LIST_MOVE(listSelf, LIST_BEGIN(listSelf), listSelf, LIST_LAST(listSelf)); } while(0)
 
 #define LIST_INDEX( map, index) \
-  ((map)->root ? BNODE_INDEX((map)->root, (index)): (fprintf (stderr, "ERROR: " "List is empty.\nABORT\n"), fflush (0), raise (SIGABRT), LIST_END(map)))
+  ((map)->root ? BNODE_INDEX((map)->root, (index)) : (fprintf (stderr, "ERROR: " "List is empty.\nABORT\n"), fflush (0), raise (SIGABRT), LIST_END(map)))
 
 #define LIST_SWAP( la, nodea, lb, nodeb) \
   ((la)->vtable->Swap ((la), (nodea), (lb), (nodeb)))

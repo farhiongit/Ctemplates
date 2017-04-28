@@ -31,9 +31,9 @@ DEFINE_OPERATORS(__set_dummy__)
   static void SET_CLEAR_##K ( SET_##K *self );                                                 \
   static void SET_DESTROY_##K ( SET_##K *self );                                               \
   static BNODE_##K##___set_dummy__ *SET_INSERT_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node ); \
-  static int SET_REMOVE_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node );                   \
-  static int SET_MOVE_##K ( SET_##K *to, SET_##K *from, BNODE_##K##___set_dummy__ *herefrom );    \
-  static BNODE_##K##___set_dummy__ *SET_GET_##K ( SET_##K *self, K key );                          \
+  static int SET_REMOVE_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node );                \
+  static int SET_MOVE_##K ( SET_##K *to, SET_##K *from, BNODE_##K##___set_dummy__ *herefrom ); \
+  static BNODE_##K##___set_dummy__ *SET_END_##K ( SET_##K *self );                             \
 \
   static const _SET_VTABLE_##K SET_VTABLE_##K =      \
   {                                                  \
@@ -43,10 +43,10 @@ DEFINE_OPERATORS(__set_dummy__)
     SET_INSERT_##K,                                  \
     SET_REMOVE_##K,                                  \
     SET_MOVE_##K,                                    \
-    SET_GET_##K,                                     \
+    SET_END_##K,                                     \
   };                                                 \
 \
-  SET_##K *SET_CREATE_##K( int (*less_than_operator) (K, K), int unique )        \
+  SET_##K *SET_CREATE_##K( int (*less_than_operator) (K, K), int unique )    \
   {                                                                          \
     SET_##K *linkedList = malloc( sizeof( *linkedList ) );                   \
     if (!linkedList)                                                         \
@@ -70,8 +70,6 @@ DEFINE_OPERATORS(__set_dummy__)
       return 0;                                                            \
     }                                                                      \
                                                                            \
-    K key = *BNODE_KEY (node);                                             \
-                                                                           \
     if (self->tree_locked)                                                 \
     {                                                                      \
       fprintf (stderr, "ERROR: " "Collection cannot be modified here.\n"   \
@@ -80,21 +78,17 @@ DEFINE_OPERATORS(__set_dummy__)
       return 0;                                                            \
     }                                                                      \
                                                                            \
-    return !self->root ?                                                   \
+    K key = COPY_##K ? COPY_##K(*BNODE_KEY (node)) : *BNODE_KEY (node);    \
+                                                                           \
+    BNODE_##K##___set_dummy__ *ret =                                       \
+           !self->root ?                                                   \
            self->root = node :                                             \
            BNODE_TREE_ADD(self->root, node, self->LessThan) ?              \
            node :                                                          \
            BNODE_FIND_KEY (BNODE_FIRST (self->root), key, self->LessThan); \
-  }                                                                        \
-\
-  static BNODE_##K##___set_dummy__ *SET_GET_##K ( SET_##K *self, K key )   \
-  {                                                                        \
-    if (!self->root)                                                       \
-      return SET_INSERT (self, key);                                       \
-    BNODE_##K##___set_dummy__ * ret = BNODE_FIND_KEY(BNODE_FIRST(self->root), key, self->LessThan);  \
-    if (ret)                                                               \
-      return ret;                                                          \
-    return SET_INSERT(self, key);                                          \
+                                                                           \
+    if (DESTROY_##K) DESTROY_##K (key);                                    \
+    return ret;                                                            \
   }                                                                        \
 \
   static int SET_REMOVE_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node )   \
@@ -126,6 +120,9 @@ DEFINE_OPERATORS(__set_dummy__)
 \
   static int SET_MOVE_##K ( SET_##K *to, SET_##K *from, BNODE_##K##___set_dummy__ *herefrom )  \
   {                                                                        \
+    if (to == from)                                                        \
+      return EXIT_SUCCESS;                                                 \
+                                                                           \
     /* Go to root */                                                       \
     BNODE_##K##___set_dummy__ *n;                                          \
     for (n = herefrom ; n->parent ; n = n->parent) /* nop */ ;             \
@@ -164,5 +161,11 @@ DEFINE_OPERATORS(__set_dummy__)
     SET_CLEAR_##K (self);                         \
     free( self );                                 \
   }                                               \
+\
+  static BNODE_##K##___set_dummy__ *SET_END_##K ( SET_##K *self ) \
+  {                                                             \
+    (void)self;                                                 \
+    return 0;                                                   \
+  }                                                             \
 
 #endif

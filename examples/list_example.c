@@ -10,12 +10,13 @@
 // 'T' is an arbitrary name.
 typedef char *T;
 
-// Prerequisite declarations before template usage for type T
 /* *INDENT-OFF* */
+// Prerequisite declarations before template usage for type T LIST(T)
 DECLARE_LIST (T)
 DEFINE_OPERATORS (T)
 DEFINE_LIST (T)
 
+// Prerequisite declarations before template usage for type int LIST(int)
 DECLARE_LIST (int)
 DEFINE_OPERATORS (int)
 DEFINE_LIST (int)
@@ -70,7 +71,7 @@ Tlt (T a, T b)
   return strlen (a) < strlen (b) ? 1 : (strlen (a) == strlen (b) ? (strcoll (a, b) < 0 ? 1 : 0) : 0);
 }
 
-int
+static int
 skim (LNODE (int) * n, void *arg)
 {
   int threshold = 88;
@@ -96,7 +97,7 @@ main (void)
   // Set destructor for type T. This is not required if T does not allocate memory.
   SET_DESTRUCTOR (T, Tfree);
 
-  // Create a lis which type is a pointer to LIST(T).
+  // Create a list which type is a pointer to LIST(T).
   // A predefined 'less than' operator is used here but could have been declaraed as a second argument to LIST_CREATE.
   LIST (T) * mylist = LIST_CREATE (T);
 
@@ -211,7 +212,7 @@ main (void)
   for (int i = 0; i < 110; i++)
     LIST_INSERT (li, LIST_END (li), i);
 
-  // Apply skim for each element from 1 to 108 included.
+  // Apply skim for each element from 1 to 107 included.
   // skim removes some elements from the list.
   // Unlike LIST_TRAVERSE, LIST_FOR_EACH allows to remove or insert elements in the list while processing, 
   LIST_FOR_EACH (li, LIST_INDEX (li, 1), LNODE_PREVIOUS (LIST_LAST (li)), skim, li, EXIT_FAILURE);
