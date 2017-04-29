@@ -217,7 +217,7 @@ MAP (pchar, double) *
   MAP_TRAVERSE (ma, print_node);
   printf ("\n");
 
-  na = MAP_FIND_KEY (ma, "Raimondo");
+  na = MAP_KEY (ma, "Raimondo");
   print_node (na, 0);
   printf ("\n");
 
@@ -225,8 +225,7 @@ MAP (pchar, double) *
   print_node (na, 0);
   printf ("\n");
 
-  na = MAP_KEY (ma, "Zorro");
-  BNODE_ASSIGN (na, 55.5);
+  na = MAP_SET_VALUE (ma, "Zorro", 55.5);
   print_node (na, 0);
   printf ("\n");
 

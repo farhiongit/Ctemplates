@@ -31,7 +31,6 @@
   static BNODE_##K##_##T *MAP_INSERT_##K##_##T ( MAP_##K##_##T *self, BNODE_##K##_##T *node );         \
   static int MAP_REMOVE_##K##_##T ( MAP_##K##_##T *self, BNODE_##K##_##T *node );                      \
   static int MAP_MOVE_##K##_##T ( MAP_##K##_##T *to, MAP_##K##_##T *from, BNODE_##K##_##T *herefrom ); \
-  static BNODE_##K##_##T *MAP_GET_##K##_##T ( MAP_##K##_##T *self, K key );                            \
   static BNODE_##K##_##T *MAP_SET_##K##_##T ( MAP_##K##_##T *self, K key, T value );                   \
   static BNODE_##K##_##T *MAP_END_##K##_##T ( MAP_##K##_##T *self );                                   \
 \
@@ -43,7 +42,6 @@
     MAP_INSERT_##K##_##T,                                  \
     MAP_REMOVE_##K##_##T,                                  \
     MAP_MOVE_##K##_##T,                                    \
-    MAP_GET_##K##_##T,                                     \
     MAP_SET_##K##_##T,                                     \
     MAP_END_##K##_##T,                                     \
   };                                                       \
@@ -94,19 +92,13 @@
     return ret;                                                            \
   }                                                                        \
 \
-  static BNODE_##K##_##T *MAP_GET_##K##_##T ( MAP_##K##_##T *self, K key ) \
-  {                                                                        \
-    if (!self->root)                                                       \
-      return MAP_INSERT (self, key);                                       \
-    BNODE_##K##_##T * ret = BNODE_FIND_KEY(BNODE_FIRST(self->root), key, self->LessThan);  \
-    if (ret)                                                               \
-      return ret;                                                          \
-    return MAP_INSERT(self, key);                                          \
-  }                                                                        \
-\
   static BNODE_##K##_##T *MAP_SET_##K##_##T ( MAP_##K##_##T *self, K key, T value ) \
   {                                                                        \
-    BNODE_##K##_##T * ret = MAP_GET_##K##_##T (self, key);                 \
+    BNODE_##K##_##T * ret = 0;                                             \
+    if (!self->root ||                                                     \
+        !(ret = BNODE_FIND_KEY(BNODE_FIRST(self->root), key, self->LessThan)))  \
+      ret = MAP_INSERT(self, key);                                         \
+                                                                           \
     BNODE_ASSIGN (ret, value);                                             \
     return ret;                                                            \
   }                                                                        \

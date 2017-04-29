@@ -56,12 +56,42 @@ _Optional_ operators can be assigned to types managed by collections:
 For basic standard types, standard operators are defined and used by default.
 
 ## Lists
+### LIST_CREATE
 
 ## Sets
 
 ## Maps
 
+## Memory managment
+
 ## Algorithmic complexity
+
+
+
+|                     | List | Set | Map |
+|:--------------------|:----:|:---:|:---:|
+|Insert               | O(1) | O(log N) | O(log N) |
+|Remove               |      |     |     |
+|Move                 |      |     |     |
+|Next                 |      |     |     |
+|Previous             |      |     |     |
+|Go to begining       |      |     |     |
+|Go to end            |      |     |     |
+|Go to index          |      |     |     |
+|Search key           |      |     |     |
+|Search value         |      |     |     |
+|Traverse             |      |     |     |
+|For_each             |      |     |     |
+|Swap                 |      |     |     |
+|Reverse              |      |     |     |
+|Sort                 |      |     |     |
+|Rotate left or right |      |     |     |
+|Clear or destroy     |      |     |     |
+
+Lists, sets and maps are internally constructed and organized upon binary trees.
+Those complexities rely on perfectly balanced trees.
+
+**Actually, implementation does not use balnaced trees. Switching to balnaced trees is a matter of a couple of hours of work. I intend to implement balanced trees in a short while.**
 
 ## Tips and pitfalls
 Template declarations can not apply directly on compound types such as `char *`, `unsigned long` or `struct foo`.
