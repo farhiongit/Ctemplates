@@ -57,9 +57,9 @@ skim (SNODE (int) * n, void *arg)
 
   SET (int) * si = arg;
 
-  if (*SNODE_KEY(n) > threshold)
+  if (*SNODE_KEY (n) > threshold)
   {
-    printf ("-(%i)-;", *SNODE_KEY(n));
+    printf ("-(%i)-;", *SNODE_KEY (n));
     SET_REMOVE (si, n);
   }
   else
@@ -84,7 +84,7 @@ main (void)
   SET_INSERT (myset, "e");
   // Uniqueness: the element bbbb is not inserted
   SET_INSERT (myset, "bbbb");
-  SET_INSERT (myset, "dd");  // e;f;dd;aaa;bbbb;cccccccc;
+  SET_INSERT (myset, "dd");     // e;f;dd;aaa;bbbb;cccccccc;
   SET_INSERT (myset, "ZZZ");
   set_print (myset);
 
@@ -101,8 +101,8 @@ main (void)
   printf ("\n");
 
   // Find keys in the set
-  char* alicia[2] = { "aa", "aaa" };
-  for (size_t i = 0 ; i < sizeof (alicia) / sizeof (*alicia) ; i++)
+  char *alicia[2] = { "aa", "aaa" };
+  for (size_t i = 0; i < sizeof (alicia) / sizeof (*alicia); i++)
     if (SET_FIND (myset, alicia[i]))
       printf ("%s is in the set.\n", alicia[i]);
     else

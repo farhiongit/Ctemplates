@@ -9,8 +9,10 @@ all: examples
 
 list_example.o: list_example.c ../defops.h ../list_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../list.h
 set_example.o: set_example.c ../defops.h ../set_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../set.h
+map_example.o: map_example.c ../defops.h ../map_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../map.h
 
 .PHONY: examples
-examples: list_example set_example
+examples: list_example set_example map_example
 	valgrind ./list_example || :
 	valgrind ./set_example || :
+	valgrind ./map_example || :

@@ -112,7 +112,7 @@
   static BNODE_##K##_##T *MAP_SET_##K##_##T ( MAP_##K##_##T *self, K key, T value ) \
   {                                                                        \
     BNODE_##K##_##T * ret = 0;                                             \
-    if (!self->root ||                                                     \
+    if (!self->unique || !self->root ||                                    \
         !(ret = BNODE_FIND_KEY(BNODE_FIRST(self->root), key, self->LessThan)))  \
       ret = MAP_INSERT(self, key);                                         \
                                                                            \
