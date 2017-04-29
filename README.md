@@ -1,6 +1,8 @@
 # Ctemplates --- templates for C
 And templates for all ! Template containers (lists, sets and maps) for C language (why not ?).
 
+(c) 2017 Laurent Farhi
+
 Templates are about generating code at compile time.
 Languages such as C++ offer a powerful framework for template programming and usage.
 Nevertheless, Randy Gaul has demonstrated in 2012 [1] that the C macro preprocessor permits to implement a template mechanism in C.
@@ -101,6 +103,9 @@ One past the last element of the list.
 
 #### `LIST_UNIQUE`
 
+### Example
+Look at a compplete [example](examples/list_example.c).
+
 ## Sets
 ### Container
 #### Type
@@ -142,6 +147,9 @@ One past the last element of the list.
 #### `SET_FIND`
 
 #### `SET_MOVE`
+
+### Example
+Look at a compplete [example](examples/set_example.c).
 
 ## Maps
 ### Container
@@ -192,6 +200,9 @@ One past the last element of the list.
 #### `MAP_MOVE`
 
 #### `MAP_SET_VALUE`
+
+### Example
+Look at a compplete [example](examples/map_example.c).
 
 ## Memory managment
 _Optional_ operators can be assigned to types managed by collections:
@@ -256,7 +267,7 @@ Prefer
     LNODE_ASSIGN(b, 55);
 
 ## Examples
-Look at examples in directory `examples`.
+Look at examples in directory [`examples`](examples).
 
 [1] Randy Gaul's Game Programming Blog - Generic Programming in C (http://www.randygaul.net/2012/08/10/generic-programming-in-c/)
 
