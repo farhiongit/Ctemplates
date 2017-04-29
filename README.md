@@ -46,23 +46,165 @@ If collections are intended to be used in a library,
 - Declarations of templates should appear in the library header file.
 - Definitions of operators and templates should appear in library source file.
 
-## Operators
+## Lists
+### Container
+#### Type
+
+### Element
+#### Type
+#### Get value
+#### Assign value
+#### Move forward
+#### Move backward
+
+### Functions
+#### `LIST_CREATE`
+
+#### `LIST_DESTROY`
+
+#### `LIST_INSERT`
+
+#### `LIST_REMOVE`
+
+#### `LIST_CLEAR`
+
+#### `LIST_SIZE`
+
+#### `LIST_IS_EMPTY`
+
+#### `LIST_TRAVERSE`
+
+#### `LIST_FOR_EACH`
+
+#### `LIST_BEGIN`
+
+#### `LIST_LAST`
+
+#### `LIST_END`
+One past the last element of the list.
+
+#### `LIST_INDEX`
+
+#### `LIST_FIND`
+
+#### `LIST_MOVE`
+
+#### `LIST_SWAP`
+
+#### `LIST_REVERSE`
+
+#### `LIST_ROTATE_LEFT` and `LIST_ROTATE_RIGHT`
+
+#### `LIST_SORT`
+
+#### `LIST_SET_LESS_THAN_OPERATOR`
+
+#### `LIST_UNIQUE`
+
+## Sets
+### Container
+#### Type
+#### Unicity
+
+### Element
+#### Type
+#### Get value
+#### Move forward
+#### Move backward
+
+### Functions
+#### `SET_CREATE`
+
+#### `SET_DESTROY`
+
+#### `SET_INSERT`
+
+#### `SET_REMOVE`
+
+#### `SET_CLEAR`
+
+#### `SET_SIZE`
+
+#### `SET_IS_EMPTY`
+
+#### `SET_TRAVERSE`
+
+#### `SET_FOR_EACH`
+
+#### `SET_BEGIN`
+
+#### `SET_LAST`
+
+#### `SET_END`
+
+#### `SET_INDEX`
+
+#### `SET_FIND`
+
+#### `SET_MOVE`
+
+## Maps
+### Container
+#### Type
+#### Unicity
+
+### Element
+#### Type
+#### Get key
+#### Get value
+#### Assign value
+#### Move forward
+#### Move backward
+
+### Functions
+#### `MAP_CREATE`
+
+#### `MAP_DESTROY`
+
+#### `MAP_INSERT`
+
+#### `MAP_REMOVE`
+
+#### `MAP_CLEAR`
+
+#### `MAP_SIZE`
+
+#### `MAP_IS_EMPTY`
+
+#### `MAP_TRAVERSE`
+
+#### `MAP_FOR_EACH`
+
+#### `MAP_BEGIN`
+
+#### `MAP_LAST`
+
+#### `MAP_END`
+
+#### `MAP_KEY`
+
+#### `MAP_INDEX`
+
+#### `MAP_FIND_KEY`
+
+#### `MAP_FIND_VALUE`
+
+#### `MAP_MOVE`
+
+#### `MAP_SET_VALUE`
+
+## Memory managment
 _Optional_ operators can be assigned to types managed by collections:
 
 - `SET_DESTRUCTOR(type, destructor)` where `destructor` is a pointer to function with type `void (*destructor) (type arg)`
 - `SET_COPY_CONSTRUCTOR(type, constructor)` where `constructor` is a pointer to function with type `type (*constructor) (type arg)`
+
+## Ordering and equality
+_Optional_ operators can be assigned to types managed by collections:
+
 - `SET_LESS_THAN_OPERATOR(type, operator)` where `operator` is a pointer to function with type `type (*operator) (type arg1, type arg2)`. This function should return 1 if `arg1` < `arg2`, 0 otherwise.
 
 For basic standard types, standard operators are defined and used by default.
-
-## Lists
-### LIST_CREATE
-
-## Sets
-
-## Maps
-
-## Memory managment
 
 ## Algorithmic complexity
 
