@@ -178,10 +178,10 @@ MAP (pchar, double) *
 
   MAP (int, int) * mb = MAP_CREATE (int, int);
 
-  MAP_INSERT (mb, 3);
-  BNODE (int, int) * two = MAP_INSERT (mb, 2);
+  MAP_INSERT (mb, 3, 0);
+  BNODE (int, int) * two = MAP_INSERT (mb, 2, 0);
 
-  MAP_INSERT (mb, 4);
+  MAP_INSERT (mb, 4, 0);
   MAP_REMOVE (mb, two);
   (void) MAP_SIZE (mb);
   (void) MAP_IS_EMPTY (mb);
@@ -189,19 +189,18 @@ MAP (pchar, double) *
 
   MAP (pchar, double) * ma = MAP_CREATE (pchar, double, 0, 1);
 
-  BNODE_ASSIGN (MAP_INSERT (ma, "Julietta"), 37.2);
-  na = MAP_INSERT (ma, "Alberto");
-  BNODE_ASSIGN (na, 45.2);
-  BNODE_ASSIGN (MAP_INSERT (ma, "Raimondo"), 77.2);
+  MAP_INSERT (ma, "Julietta", 37.2);
+  na = MAP_INSERT (ma, "Alberto", 45.2);
+  MAP_INSERT (ma, "Raimondo", 77.2);
   BNODE_ASSIGN (BNODE_FIND_KEY (MAP_BEGIN (ma), "Julietta", ma->LessThan), 27.2);
-  MAP_INSERT (ma, "Bernardo");
+  MAP_INSERT (ma, "Bernardo", 0);
 
   MAP (pchar, double) * msf = MAP_CREATE (pchar, double);
 
-  na = MAP_INSERT (msf, "X");
-  MAP_INSERT (msf, "Y");
-  nb = MAP_INSERT (msf, "Z");
-  MAP_INSERT (msf, "T");
+  na = MAP_INSERT (msf, "X", 0);
+  MAP_INSERT (msf, "Y", 0);
+  nb = MAP_INSERT (msf, "Z", 0);
+  MAP_INSERT (msf, "T", 0);
 
   MAP_TRAVERSE (msf, print_node);
   printf ("*\n");
@@ -235,10 +234,10 @@ MAP (pchar, double) *
   printf ("\n");
 
   assert (MAP_FIND_KEY (ma, "Raimonda") == 0);
-  MAP_INSERT (ma, "Raimonda");
-  assert (MAP_FIND_KEY (ma, "Raimondo") == MAP_INSERT (ma, "Raimondo"));
+  MAP_INSERT (ma, "Raimonda", 0);
+  assert (MAP_FIND_KEY (ma, "Raimondo") == MAP_INSERT (ma, "Raimondo", 0));
   MAP_SET_VALUE (ma, "Alberta", 44.4);
-  MAP_INSERT (ma, "Zu");
+  MAP_INSERT (ma, "Zu", 0);
 
   printf ("Size=%zi\n", MAP_SIZE (ma));
   MAP_TRAVERSE (ma, print_node);

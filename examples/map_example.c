@@ -21,6 +21,15 @@ DECLARE_MAP (pchar, Dimensions)
 DEFINE_MAP (pchar, Dimensions)
 /* *INDENT-ON* */
 
+static int
+print_car (BNODE (pchar, Dimensions)* car, void * arg)
+{
+  (void) arg;
+  printf ("%s (%g, %g, %g)\n", *BNODE_KEY (car), BNODE_VALUE(car)->l, BNODE_VALUE(car)->w, BNODE_VALUE(car)->h);
+
+  return EXIT_SUCCESS;
+}
+
 int
 Dimensions_lt (Dimensions a, Dimensions b)
 {
@@ -37,22 +46,37 @@ main (void)
   Dimensions rt = {.l = 3595,.w = 1647,.h = 1557 };
   Dimensions cc1 = {.l = 3466,.w = 1615,.h = 1460 };
   Dimensions p108 = {.l = 3475,.w = 1615,.h = 1460 };
+  MAP_INSERT (cars, "Renault Twingo", cc1);
   MAP_SET_VALUE (cars, "Renault Twingo", rt);
-  MAP_SET_VALUE (cars, "Citroën C1", cc1);
+  MAP_SET_VALUE (cars, "Citroën C1", rt);
+  MAP_INSERT (cars, "Citroën C1", cc1);
+  MAP_SET_VALUE (cars, "Peugeot 108", cc1);
   MAP_SET_VALUE (cars, "Peugeot 108", p108);
 
   MAP (pchar, Dimensions) * fiat = MAP_CREATE (pchar, Dimensions);
 
+  Dimensions mini3 = {.l = 3821,.w = 1727,.h = 1415 };
+  MAP_SET_VALUE (fiat, "Mini Cooper", mini3);
   Dimensions f500 = {.l = 3546,.w = 1627,.h = 1488 };
   MAP_SET_VALUE (fiat, "Fiat 500", f500);
-  Dimensions mini = {.l = 3821,.w = 1727,.h = 1415 };
-  MAP_SET_VALUE (fiat, "Mini Cooper", mini);
 
   MAP_MOVE (cars, fiat, MAP_KEY (fiat, "Fiat 500"));
   MAP_REMOVE (fiat, MAP_KEY (fiat, "Mini Cooper"));
   printf ("%lu elements in fiat\n", MAP_SIZE (fiat));
 
   MAP_DESTROY (fiat);
+
+  MAP_TRAVERSE (cars, print_car);
+
+  MAP (pchar, Dimensions) * minis = MAP_CREATE (pchar, Dimensions, 0, 0);       // no unicity
+  MAP_SET_VALUE (minis, "Mini Cooper 3", mini3);
+  MAP_INSERT (minis, "Mini Cooper 5", mini3);
+  Dimensions mini5 = {.l = 4005,.w = 1727,.h = 1428 };
+  MAP_SET_VALUE (minis, "Mini Cooper 5", mini5);        // Reset value
+  MAP_INSERT (minis, "Mini Cooper 5", mini5);   // Duplicated
+  printf ("%lu elements in minis\n", MAP_SIZE (minis));
+  MAP_TRAVERSE (minis, print_car);
+  MAP_DESTROY (minis);
 
   // Find keys in the set
   char *alicia[2] = { "Fiat 500", "Mini Cooper" };
@@ -79,6 +103,5 @@ main (void)
 
   MAP_DESTROY (cars);
 
-  //TODO: - remove %AP_INSERT
-  //      - define equality operator for lists, sets, maps (keys and values)
+  //TODO: - define equality operator for lists, sets, maps (keys and values)
 }

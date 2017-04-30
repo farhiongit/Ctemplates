@@ -10,7 +10,8 @@ DEFINE_SET (int)
 DEFINE_MAP (pchar, double)
 /* *INDENT-ON* */
 
-int libfunction (SET (int) ** pps)
+int
+libfunction (SET (int) ** pps)
 {
   SET (int) * myset = SET_CREATE (int);
 

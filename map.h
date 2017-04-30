@@ -55,6 +55,7 @@
 \
   typedef struct _MAP_##K##_##T             \
   {                                         \
+    BNODE_##K##_##T *null;                  \
     BNODE_##K##_##T *root;                  \
     const _MAP_VTABLE_##K##_##T *vtable;    \
     int (*LessThan) (K, K);                 \
@@ -83,8 +84,8 @@
 /// @param [in] listSelf Pointer to collection.
 /// @param [in] key Key of type K to be inserted in the map.
 /// @returns 1 in case of success, or 0 in case of failure (errno set to ENOMEM).
-#define MAP_INSERT(listSelf, key) \
-  ((listSelf)->vtable->Insert ((listSelf), (listSelf)->vtable->CreateNode ((key), (listSelf)->unique)))
+#define MAP_INSERT(listSelf, key, value) \
+  ((listSelf)->null->vtable->Assign ((listSelf)->vtable->Insert ((listSelf), (listSelf)->vtable->CreateNode ((key), (listSelf)->unique)), value))
 
 /// Removes (deallocates) a node from a map.
 /// @param [in] listSelf Pointer to map.

@@ -51,6 +51,8 @@
   static BNODE_##K##_##T *MAP_SET_##K##_##T ( MAP_##K##_##T *self, K key, T value );                   \
   static BNODE_##K##_##T *MAP_END_##K##_##T ( MAP_##K##_##T *self );                                   \
 \
+  static BNODE_##K##_##T MAP_NULL_##K##_##T = { .vtable = &BNODE_VTABLE_##K##_##T };                  \
+\
   static const _MAP_VTABLE_##K##_##T MAP_VTABLE_##K##_##T =   \
   {                                                        \
     BNODE_CREATE_##K##_##T,                                \
@@ -76,6 +78,7 @@
     linkedList->tree_locked = 0;                                             \
                                                                              \
     linkedList->root = 0;                                                    \
+    linkedList->null = &MAP_NULL_##K##_##T;                                  \
                                                                              \
     return linkedList;                                                       \
   }                                                                          \
@@ -112,11 +115,12 @@
   static BNODE_##K##_##T *MAP_SET_##K##_##T ( MAP_##K##_##T *self, K key, T value ) \
   {                                                                        \
     BNODE_##K##_##T * ret = 0;                                             \
-    if (!self->unique || !self->root ||                                    \
+    if (!self->root ||                                                     \
         !(ret = BNODE_FIND_KEY(BNODE_FIRST(self->root), key, self->LessThan)))  \
-      ret = MAP_INSERT(self, key);                                         \
+      ret = MAP_INSERT (self, key, value);                                 \
+    else                                                                   \
+      BNODE_ASSIGN (ret, value);                                           \
                                                                            \
-    BNODE_ASSIGN (ret, value);                                             \
     return ret;                                                            \
   }                                                                        \
 \
