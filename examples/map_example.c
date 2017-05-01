@@ -22,10 +22,10 @@ DEFINE_MAP (pchar, Dimensions)
 /* *INDENT-ON* */
 
 static int
-print_car (BNODE (pchar, Dimensions)* car, void * arg)
+print_car (BNODE (pchar, Dimensions) * car, void *arg)
 {
   (void) arg;
-  printf ("%s (%g, %g, %g)\n", *BNODE_KEY (car), BNODE_VALUE(car)->l, BNODE_VALUE(car)->w, BNODE_VALUE(car)->h);
+  printf ("%s (%g, %g, %g)\n", *BNODE_KEY (car), BNODE_VALUE (car)->l, BNODE_VALUE (car)->w, BNODE_VALUE (car)->h);
 
   return EXIT_SUCCESS;
 }
@@ -46,12 +46,12 @@ main (void)
   Dimensions rt = {.l = 3595,.w = 1647,.h = 1557 };
   Dimensions cc1 = {.l = 3466,.w = 1615,.h = 1460 };
   Dimensions p108 = {.l = 3475,.w = 1615,.h = 1460 };
-  MAP_INSERT (cars, "Renault Twingo", cc1);
-  MAP_SET_VALUE (cars, "Renault Twingo", rt);
-  MAP_SET_VALUE (cars, "Citroën C1", rt);
-  MAP_INSERT (cars, "Citroën C1", cc1);
-  MAP_SET_VALUE (cars, "Peugeot 108", cc1);
-  MAP_SET_VALUE (cars, "Peugeot 108", p108);
+  MAP_INSERT (cars, "Renault Twingo", cc1);     // Inserts and sets value
+  MAP_SET_VALUE (cars, "Renault Twingo", rt);   // Does not insert but sets value
+  MAP_SET_VALUE (cars, "Citroën C1", cc1);     // Inserts and sets value
+  MAP_INSERT (cars, "Citroën C1", rt); // Does neither insert nor modify value
+  MAP_SET_VALUE (cars, "Peugeot 108", cc1);     // Inserts and sets value
+  MAP_SET_VALUE (cars, "Peugeot 108", p108);    // Does not insert but sets value
 
   MAP (pchar, Dimensions) * fiat = MAP_CREATE (pchar, Dimensions);
 

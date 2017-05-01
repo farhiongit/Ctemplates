@@ -193,7 +193,7 @@ MAP (pchar, double) *
   na = MAP_INSERT (ma, "Alberto", 45.2);
   MAP_INSERT (ma, "Raimondo", 77.2);
   BNODE_ASSIGN (BNODE_FIND_KEY (MAP_BEGIN (ma), "Julietta", ma->LessThan), 27.2);
-  MAP_INSERT (ma, "Bernardo", 0);
+  MAP_INSERT (ma, "Bernardo", 100);
 
   MAP (pchar, double) * msf = MAP_CREATE (pchar, double);
 
@@ -234,8 +234,8 @@ MAP (pchar, double) *
   printf ("\n");
 
   assert (MAP_FIND_KEY (ma, "Raimonda") == 0);
-  MAP_INSERT (ma, "Raimonda", 0);
-  assert (MAP_FIND_KEY (ma, "Raimondo") == MAP_INSERT (ma, "Raimondo", 0));
+  MAP_INSERT (ma, "Raimonda", 10.1);
+  assert (MAP_FIND_KEY (ma, "Raimondo") == MAP_SET_VALUE (ma, "Raimondo", 99.9));
   MAP_SET_VALUE (ma, "Alberta", 44.4);
   MAP_INSERT (ma, "Zu", 0);
 

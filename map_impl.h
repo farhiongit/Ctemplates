@@ -103,10 +103,9 @@
                                                                            \
     BNODE_##K##_##T *ret =                                                 \
            !self->root ?                                                   \
-           self->root = node :                                             \
-           BNODE_TREE_ADD(self->root, node, self->LessThan) ?              \
-           node :                                                          \
-           BNODE_FIND_KEY (BNODE_FIRST (self->root), key, self->LessThan); \
+             self->root = node :                                           \
+             BNODE_TREE_ADD(self->root, node, self->LessThan) ?            \
+               node : 0;                                                   \
                                                                            \
     if (DESTROY_##K) DESTROY_##K (key);                                    \
     return ret;                                                            \

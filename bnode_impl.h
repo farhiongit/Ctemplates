@@ -286,9 +286,12 @@
 \
   static BNODE_##K##_##T * BNODE_ASSIGN_##K##_##T ( BNODE_##K##_##T *node, T data )     \
   {                                                                \
-    if (DESTROY_##T)                                               \
-      DESTROY_##T( node->data );                                   \
-    node->data = COPY_##T ? COPY_##T(data) : data;                 \
+    if (node)                                                      \
+    {                                                              \
+      if (DESTROY_##T)                                             \
+        DESTROY_##T( node->data );                                 \
+      node->data = COPY_##T ? COPY_##T(data) : data;               \
+    }                                                              \
     return node;                                                   \
   }                                                                \
 \
@@ -327,7 +330,7 @@
     {                                                                       \
       BNODE_##K##_##T * ret = self;                                         \
       while (ret->parent && ret->parent->higher_child == ret)               \
-           ret = ret->parent;                                               \
+        ret = ret->parent;                                                  \
       return ret->parent;                                                   \
     }                                                                       \
   }                                                                         \
