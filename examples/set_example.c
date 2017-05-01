@@ -85,7 +85,7 @@ main (void)
   // Uniqueness: the element bbbb is not inserted
   SET_INSERT (myset, "bbbb");
   SET_INSERT (myset, "dd");     // e;f;dd;aaa;bbbb;cccccccc;
-  SET_INSERT (myset, "ZZZ");
+  SET_INSERT (myset, "ZZZ");    // e;f;dd;ZZZ;aaa;bbbb;cccccccc;
   set_print (myset);
 
   // Remove all (1) elements 'ZZZ'
@@ -96,6 +96,7 @@ main (void)
   print_node (SET_BEGIN (myset), 0);
   print_node (SNODE_NEXT (SET_BEGIN (myset)), 0);
   print_node (SET_INDEX (myset, 2), 0);
+  print_node (SET_FIND (myset, "aaa"), 0);
   print_node (SNODE_PREVIOUS (SET_LAST (myset)), 0);
   print_node (SET_LAST (myset), 0);
   printf ("\n");

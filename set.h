@@ -144,9 +144,10 @@ typedef int __set_dummy__ ;
   SET_##K
 
 #define SET_FIND3( set, begin, key ) \
-  ((set)->root ? BNODE_FIND_KEY3((begin), (key), (set)->LessThanKey): SET_END (set))
+  ((set)->root ? BNODE_FIND_KEY3((begin), (key), (set)->LessThanKey) : SET_END (set))
 
-#define SET_FIND2( set, key ) SET_FIND3( set, SET_BEGIN (set), key )
+#define SET_FIND2( set, key ) \
+  ((set)->root ? BNODE_GET_KEY((set)->root, (key), (set)->LessThanKey) : SET_END (set))
 
 #define SET_KEY( set, key ) SET_FIND2 ( set, key )
 

@@ -155,7 +155,8 @@
 #define MAP_FIND_KEY3( map, begin, key ) \
   ((map)->root ? BNODE_FIND_KEY3((begin), (key), (map)->LessThanKey) : MAP_END (map))
 
-#define MAP_FIND_KEY2( map, key ) MAP_FIND_KEY3( map, BNODE_FIRST((map)->root), key )
+#define MAP_FIND_KEY2( map, key ) \
+  ((map)->root ? BNODE_GET_KEY((map)->root, (key), (map)->LessThanKey) : MAP_END (map))
 
 #define MAP_FIND_KEY(...) VFUNC(MAP_FIND_KEY, __VA_ARGS__)
 

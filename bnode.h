@@ -63,6 +63,7 @@ typedef enum {
     int (*Add) ( struct _BNODE_##K##_##T *na, struct _BNODE_##K##_##T *nb, int (*lt)(K, K), int keep_subtree );       \
     int (*Insert) ( struct _BNODE_##K##_##T *self, struct _BNODE_##K##_##T *here, struct _BNODE_##K##_##T *newNode);  \
     struct _BNODE_##K##_##T *(*Index) ( struct _BNODE_##K##_##T *n, size_t index);                   \
+    struct _BNODE_##K##_##T *(*Key) ( struct _BNODE_##K##_##T *n, K key, int (*lt)(K, K));           \
     int (*Traverse) ( struct _BNODE_##K##_##T *tree,                                                 \
                       int (*callback)( struct _BNODE_##K##_##T *, void * ), void *param,             \
                       int stop_condition );                                                          \
@@ -223,6 +224,9 @@ typedef enum {
 /// @param [in] value Value to be searched for.
 /// @returns A pointer to the first node between \p begin and \p end which value equals to \p value. Or 0 if no such node exists.
 #define BNODE_FIND_KEY(...) VFUNC(BNODE_FIND_KEY, __VA_ARGS__)
+
+#define BNODE_GET_KEY(tree, key, lt) \
+  ((tree)->vtable->Key((tree), (key), (lt)))
 
 #define BNODE_FIND_KEY_REVERSE4(begin, end, key, lt) \
   ((begin)->vtable->FindKey((begin), (end), (key), (lt), BNODE_BACKWARD))

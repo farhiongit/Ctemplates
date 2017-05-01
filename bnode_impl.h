@@ -59,6 +59,7 @@
   static int BNODE_TREE_INSERT_BEFORE_##K##_##T( BNODE_##K##_##T *self, BNODE_##K##_##T *here,       \
                                                   BNODE_##K##_##T *newNode);                         \
   static BNODE_##K##_##T * BNODE_INDEX_##K##_##T ( BNODE_##K##_##T *self, size_t index );            \
+  static BNODE_##K##_##T * BNODE_KEY_##K##_##T (BNODE_##K##_##T *self, K key, int (*lt)(K, K));      \
   static int BNODE_TRAVERSE_##K##_##T( BNODE_##K##_##T *tree,                                        \
                                        int (*callback)( BNODE_##K##_##T *, void * ),                 \
                                        void *param, int stop_condition );                            \
@@ -81,10 +82,11 @@
     BNODE_TREE_ADD_##K##_##T,                                   \
     BNODE_TREE_INSERT_BEFORE_##K##_##T,                         \
     BNODE_INDEX_##K##_##T,                                      \
+    BNODE_KEY_##K##_##T,                                        \
     BNODE_TRAVERSE_##K##_##T,                                   \
   };                                                            \
 \
-  BNODE_##K##_##T *BNODE_CREATE_##K##_##T( K key, int unique )       \
+  BNODE_##K##_##T *BNODE_CREATE_##K##_##T( K key, int unique )  \
   {                                                             \
     BNODE_##K##_##T *newNode = malloc( sizeof( *newNode ) );    \
     if (!newNode)                                               \
@@ -591,6 +593,24 @@
     if (self->higher_child && index > (self->lower_child ? self->lower_child->size : 0))  \
       return BNODE_INDEX_##K##_##T (self->higher_child, index - 1 - (self->lower_child ? self->lower_child->size : 0));  \
     return self;                                                                  \
+  }                                                                               \
+\
+  static BNODE_##K##_##T *BNODE_KEY_##K##_##T (BNODE_##K##_##T *self, K key, int (*lt)(K, K)) \
+  {                                                                               \
+    if (BNODE_LESS_THAN_KEY_##K##_##T(key, self->key, lt))                        \
+    {                                                                             \
+      if (self->lower_child)                                                      \
+        return BNODE_KEY_##K##_##T (self->lower_child, key, lt);                  \
+    }                                                                             \
+    else if (BNODE_LESS_THAN_KEY_##K##_##T(self->key, key, lt))                   \
+    {                                                                             \
+      if (self->higher_child)                                                     \
+        return BNODE_KEY_##K##_##T (self->higher_child, key, lt);                 \
+    }                                                                             \
+    else                                                                          \
+      return self;                                                                \
+                                                                                  \
+    return 0;                                                                     \
   }                                                                               \
   
 #endif

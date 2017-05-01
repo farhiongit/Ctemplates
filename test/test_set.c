@@ -86,6 +86,7 @@ main (void)
 
   SET_INSERT (la, 4);
   SNODE (int) * na = SET_INSERT (la, 3333);
+  printf ("%i peeked\n", *BNODE_KEY (SET_FIND (la, 3333)));
 
   SET_INSERT (la, 1);
   printf ("Size %li\n", SET_SIZE (la));

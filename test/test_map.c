@@ -192,7 +192,7 @@ MAP (pchar, double) *
   MAP_INSERT (ma, "Julietta", 37.2);
   na = MAP_INSERT (ma, "Alberto", 45.2);
   MAP_INSERT (ma, "Raimondo", 77.2);
-  BNODE_ASSIGN (BNODE_FIND_KEY (MAP_BEGIN (ma), "Julietta", ma->LessThan), 27.2);
+  BNODE_ASSIGN (BNODE_FIND_KEY (MAP_BEGIN (ma), "Julietta", ma->LessThanKey), 27.2);
   MAP_INSERT (ma, "Bernardo", 100);
 
   MAP (pchar, double) * msf = MAP_CREATE (pchar, double);
