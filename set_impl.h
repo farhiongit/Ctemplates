@@ -70,7 +70,7 @@ DEFINE_OPERATORS(__set_dummy__)
       return 0;                                                              \
                                                                              \
     linkedList->vtable = &SET_VTABLE_##K;                                    \
-    linkedList->LessThan = less_than_operator;                               \
+    linkedList->LessThanKey = less_than_operator;                            \
     linkedList->unique = unique;                                             \
     linkedList->tree_locked = 0;                                             \
                                                                              \
@@ -99,10 +99,9 @@ DEFINE_OPERATORS(__set_dummy__)
                                                                            \
     BNODE_##K##___set_dummy__ *ret =                                       \
            !self->root ?                                                   \
-           self->root = node :                                             \
-           BNODE_TREE_ADD(self->root, node, self->LessThan) ?              \
-           node :                                                          \
-           BNODE_FIND_KEY (BNODE_FIRST (self->root), key, self->LessThan); \
+             self->root = node :                                           \
+             BNODE_TREE_ADD(self->root, node, self->LessThanKey) ?         \
+               node : 0;                                                   \
                                                                            \
     if (DESTROY_##K) DESTROY_##K (key);                                    \
     return ret;                                                            \

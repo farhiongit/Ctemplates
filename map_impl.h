@@ -72,7 +72,7 @@
       return 0;                                                              \
                                                                              \
     linkedList->vtable = &MAP_VTABLE_##K##_##T;                              \
-    linkedList->LessThan = less_than_operator;                               \
+    linkedList->LessThanKey = less_than_operator;                            \
     linkedList->LessThanValue = 0;                                           \
     linkedList->unique = unique;                                             \
     linkedList->tree_locked = 0;                                             \
@@ -104,7 +104,7 @@
     BNODE_##K##_##T *ret =                                                 \
            !self->root ?                                                   \
              self->root = node :                                           \
-             BNODE_TREE_ADD(self->root, node, self->LessThan) ?            \
+             BNODE_TREE_ADD(self->root, node, self->LessThanKey) ?         \
                node : 0;                                                   \
                                                                            \
     if (DESTROY_##K) DESTROY_##K (key);                                    \
@@ -115,7 +115,7 @@
   {                                                                        \
     BNODE_##K##_##T * ret = 0;                                             \
     if (!self->root ||                                                     \
-        !(ret = BNODE_FIND_KEY(BNODE_FIRST(self->root), key, self->LessThan)))  \
+        !(ret = BNODE_FIND_KEY(BNODE_FIRST(self->root), key, self->LessThanKey)))  \
       ret = MAP_INSERT (self, key, value);                                 \
     else                                                                   \
       BNODE_ASSIGN (ret, value);                                           \

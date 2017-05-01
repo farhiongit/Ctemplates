@@ -65,7 +65,7 @@ typedef int __list_dummy__ ;
     BNODE___list_dummy___##TYPE *null; \
     BNODE___list_dummy___##TYPE *root; \
     const _LIST_VTABLE_##TYPE *vtable; \
-    int (*LessThan) (TYPE, TYPE);      \
+    int (*LessThanValue) (TYPE, TYPE); \
     int tree_locked;                   \
   } LIST_##TYPE;                       \
 \
@@ -168,7 +168,7 @@ typedef int __list_dummy__ ;
 /// @param [in] listSelf pointer to list.
 /// @param [in] less_than_operator less than operator with signature `int (*)(TYPE, TYPE)`.
 #define LIST_SET_LESS_THAN_OPERATOR( listSelf, less_than_operator ) \
-  do { (listSelf)->LessThan = (less_than_operator) ; } while(0)
+  do { (listSelf)->LessThanValue = (less_than_operator) ; } while(0)
 
 /// Typename of the template list.
 /// @param [in] TYPE typename of elements hold in the list.
@@ -176,7 +176,7 @@ typedef int __list_dummy__ ;
   LIST_##TYPE
 
 #define LIST_FIND3( listSelf, begin, value ) \
-  ((listSelf)->root ? BNODE_FIND_VALUE3((begin), (value), (listSelf)->LessThan): 0)
+  ((listSelf)->root ? BNODE_FIND_VALUE3((begin), (value), (listSelf)->LessThanValue): 0)
 
 #define LIST_FIND2( map, value ) LIST_FIND3( map, BNODE_FIRST((map)->root), value )
 

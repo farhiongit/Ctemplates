@@ -80,7 +80,7 @@ DEFINE_OPERATORS(__list_dummy__)
       return 0;                                                               \
                                                                               \
     linkedList->vtable = &LIST_VTABLE_##TYPE;                                 \
-    linkedList->LessThan = less_than_operator;                                \
+    linkedList->LessThanValue = less_than_operator;                           \
     linkedList->tree_locked = 0;                                              \
     linkedList->root = 0;                                                     \
     linkedList->null = &LIST_NULL_##TYPE;                                     \
@@ -215,7 +215,7 @@ DEFINE_OPERATORS(__list_dummy__)
     if (LIST_SIZE (self) < 2)                                                                 \
       return 0;                                                                               \
     if (!less_than)                                                                           \
-      less_than = self->LessThan;                                                             \
+      less_than = self->LessThanValue;                                                        \
                                                                                               \
     size_t ret = 0;                                                                           \
     LNODE(TYPE) *next;                                                                        \
@@ -249,7 +249,7 @@ DEFINE_OPERATORS(__list_dummy__)
     }                                                                                         \
                                                                                               \
     if (!less_than)                                                                           \
-      less_than = self->LessThan;                                                             \
+      less_than = self->LessThanValue;                                                        \
     qsort_r (array, index, sizeof (*array), BNODE_CMP_VALUE___list_dummy___##TYPE, &less_than);   \
                                                                                               \
     for (size_t i = 0 ; i < index ; i++)                                                      \

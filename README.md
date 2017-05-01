@@ -142,6 +142,8 @@ Look at a compplete [example](examples/list_example.c).
 
 #### `SET_END`
 
+#### `SET_KEY`
+
 #### `SET_INDEX`
 
 #### `SET_FIND`

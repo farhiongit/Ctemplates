@@ -58,7 +58,7 @@
     BNODE_##K##_##T *null;                  \
     BNODE_##K##_##T *root;                  \
     const _MAP_VTABLE_##K##_##T *vtable;    \
-    int (*LessThan) (K, K);                 \
+    int (*LessThanKey) (K, K);              \
     int (*LessThanValue) (T, T);            \
     int unique;                             \
     int tree_locked;                        \
@@ -153,7 +153,7 @@
   MAP_FIND_KEY2 (map, key)
 
 #define MAP_FIND_KEY3( map, begin, key ) \
-  ((map)->root ? BNODE_FIND_KEY3((begin), (key), (map)->LessThan) : MAP_END (map))
+  ((map)->root ? BNODE_FIND_KEY3((begin), (key), (map)->LessThanKey) : MAP_END (map))
 
 #define MAP_FIND_KEY2( map, key ) MAP_FIND_KEY3( map, BNODE_FIRST((map)->root), key )
 
