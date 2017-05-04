@@ -107,6 +107,49 @@
     return newNode;                                             \
   }                                                             \
 \
+  static void BNODE_RETRACE_##K##_##T( BNODE_##K##_##T *invalidated )     \
+  {                                                                       \
+    /* Retrace the tree up from the invalidated node */                   \
+    /* Update attributes depth, size, lowest_child, highest_child */      \
+    for (BNODE_##K##_##T *p = invalidated ; p ; p = p->parent)            \
+    {                                                                     \
+      p->size = 1;                                                        \
+      p->depth = 1;                                                       \
+      if (!p->lower_child && !p->higher_child)                            \
+      {                                                                   \
+        p->lowest_child = p->highest_child = p;                           \
+      }                                                                   \
+      else if (!p->lower_child)                                           \
+      {                                                                   \
+        p->size += p->higher_child->size;                                 \
+        p->depth += p->higher_child->depth;                               \
+        p->highest_child = p->higher_child->highest_child;                \
+        p->lowest_child = p;                                              \
+      }                                                                   \
+      else if (!p->higher_child)                                          \
+      {                                                                   \
+        p->size += p->lower_child->size;                                  \
+        p->depth += p->lower_child->depth;                                \
+        p->lowest_child = p->lower_child->lowest_child;                   \
+        p->highest_child = p;                                             \
+      }                                                                   \
+      else if (p->lower_child->depth < p->higher_child->depth)            \
+      {                                                                   \
+        p->size += p->lower_child->size + p->higher_child->size;          \
+        p->depth += p->higher_child->depth;                               \
+        p->lowest_child = p->lower_child->lowest_child;                   \
+        p->highest_child = p->higher_child->highest_child;                \
+      }                                                                   \
+      else                                                                \
+      {                                                                   \
+        p->size += p->lower_child->size + p->higher_child->size;          \
+        p->depth += p->lower_child->depth;                                \
+        p->lowest_child = p->lower_child->lowest_child;                   \
+        p->highest_child = p->higher_child->highest_child;                \
+      }                                                                   \
+    }                                                                     \
+  }                                                                       \
+\
   static BNODE_##K##_##T *BNODE_COPY_##K##_##T( BNODE_##K##_##T *self )        \
   {                                                                            \
     BNODE_##K##_##T *ret = BNODE_CREATE_##K##_##T (self->key, self->unique);   \
@@ -362,42 +405,11 @@
       newNode->parent = here->lower_child->highest_child;                 \
     }                                                                     \
                                                                           \
-    /* highest_child, lowest_child                                    */  \
-    /* depth, size                                                    */  \
-    for (BNODE_##K##_##T *p = newNode->parent ; p ; p = p->parent)        \
-    {                                                                     \
-      p->size += newNode->size;                                           \
-      if (!p->lower_child)                                                \
-      {                                                                   \
-        p->depth = p->higher_child->depth + 1;                            \
-        p->highest_child = p->higher_child->highest_child;                \
-        p->lowest_child = p;                                              \
-      }                                                                   \
-      else if (!p->higher_child)                                          \
-      {                                                                   \
-        p->depth = p->lower_child->depth + 1;                             \
-        p->lowest_child = p->lower_child->lowest_child;                   \
-        p->highest_child = p;                                             \
-      }                                                                   \
-      else if (p->lower_child->depth < p->higher_child->depth)            \
-      {                                                                   \
-        p->depth = p->higher_child->depth + 1;                            \
-        p->lowest_child = p->lower_child->lowest_child;                   \
-        p->highest_child = p->higher_child->highest_child;                \
-      }                                                                   \
-      else                                                                \
-      {                                                                   \
-        p->depth = p->lower_child->depth + 1;                             \
-        p->lowest_child = p->lower_child->lowest_child;                   \
-        p->highest_child = p->higher_child->highest_child;                \
-      }                                                                   \
-    }                                                                     \
+    /* Retrace the tree up from the modified node */                      \
+    BNODE_RETRACE_##K##_##T (newNode->parent);                            \
                                                                           \
     return EXIT_SUCCESS;                                                  \
   }                                                                       \
-\
-  static int BNODE_IS_LOWER_##K##_##T(K a, K b) {(void)a ; (void)b ; return 0;}                 \
-  static int BNODE_IS_HIGHER_##K##_##T(K a, K b) {(void)a ; (void)b ; return 0;}                \
 \
   static int BNODE_TREE_ADD_##K##_##T(BNODE_##K##_##T *self,                \
                                       BNODE_##K##_##T *newNode,             \
@@ -420,13 +432,7 @@
                                                                             \
     /* Add newNode in the tree */                                           \
     int ret = 0;                                                            \
-    int comp;                                                               \
-    if (lt == BNODE_IS_HIGHER_##K##_##T)                                    \
-      comp = 1;                                                             \
-    else if (lt == BNODE_IS_LOWER_##K##_##T)                                \
-      comp = -1;                                                            \
-    else                                                                    \
-      comp = BNODE_CMP_KEY_##K##_##T (&newNode, &self, &lt);                \
+    int comp = BNODE_CMP_KEY_##K##_##T (&newNode, &self, &lt);              \
     if (comp > 0)                                                           \
     {                                                                       \
       if (self->higher_child)                                               \
@@ -437,7 +443,7 @@
         self->higher_child = newNode;                                       \
         ret = newNode->size;                                                \
       }                                                                     \
-      if (ret)                                                              \
+      if (ret) /* retrace */                                                \
       {                                                                     \
         self->size += ret;                                                  \
         if (!self->lower_child || self->lower_child->depth < self->higher_child->depth + 1) \
@@ -461,7 +467,7 @@
         self->lower_child = newNode;                                        \
         ret = newNode->size;                                                \
       }                                                                     \
-      if (ret)                                                              \
+      if (ret) /* retrace */                                                \
       {                                                                     \
         self->size += ret;                                                  \
         if (!self->higher_child || self->higher_child->depth < self->lower_child->depth + 1) \
@@ -593,40 +599,8 @@
       invalidated = node->parent;                                         \
     }                                                                     \
                                                                           \
-    /* retrace the tree up from the invalidated node */                   \
-    for (BNODE_##K##_##T *p = invalidated ; p ; p = p->parent)            \
-    {                                                                     \
-      p->size--;                                                          \
-      if (!p->lower_child && !p->higher_child)                            \
-      {                                                                   \
-        p->depth = 1;                                                     \
-        p->lowest_child = p->highest_child = p;                           \
-      }                                                                   \
-      else if (!p->lower_child)                                           \
-      {                                                                   \
-        p->depth = p->higher_child->depth + 1;                            \
-        p->highest_child = p->higher_child->highest_child;                \
-        p->lowest_child = p;                                              \
-      }                                                                   \
-      else if (!p->higher_child)                                          \
-      {                                                                   \
-        p->depth = p->lower_child->depth + 1;                             \
-        p->lowest_child = p->lower_child->lowest_child;                   \
-        p->highest_child = p;                                             \
-      }                                                                   \
-      else if (p->lower_child->depth < p->higher_child->depth)            \
-      {                                                                   \
-        p->depth = p->higher_child->depth + 1;                            \
-        p->lowest_child = p->lower_child->lowest_child;                   \
-        p->highest_child = p->higher_child->highest_child;                \
-      }                                                                   \
-      else                                                                \
-      {                                                                   \
-        p->depth = p->lower_child->depth + 1;                             \
-        p->lowest_child = p->lower_child->lowest_child;                   \
-        p->highest_child = p->higher_child->highest_child;                \
-      }                                                                   \
-    }                                                                     \
+    /* Retrace the tree up from the invalidated node */                   \
+    BNODE_RETRACE_##K##_##T (invalidated);                                \
                                                                           \
     /* Isolate 'node' to make it destroyable */                           \
     node->parent = 0;                                                     \
