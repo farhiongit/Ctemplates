@@ -41,20 +41,20 @@ static int
 print_node (LNODE (myint) * n, void *param)
 {
   (void) param;
-  printf ("%p = " "%i" "\n", (void *) n, *BNODE_VALUE (n));
+  printf ("{%i}\n", *BNODE_VALUE (n));
   return EXIT_SUCCESS;
 }
 
 static void
 int_destroyer (myint val)
 {
-  printf ("%i" " destroyed.\n", val);
+  printf ("{%i} destroyed.\n", val);
 }
 
 static myint
 int_copier (myint n)
 {
-  printf ("Copy of " "%i" ".\n", n);
+  printf ("Copy of {%i}.\n", n);
   return n;
 }
 
@@ -173,19 +173,19 @@ main (void)
   Range r = { 57, 63 };
   for (LNODE (myint) * na = LIST_BEGIN (la); na && (na = BNODE_FIND (na, LIST_END (la), range_value, &r));
        na = BNODE_NEXT (na))
-    printf ("%p = %i found *.\n", (void *) na, *BNODE_VALUE (na));
+    printf ("{%i} found *.\n", *BNODE_VALUE (na));
 
   for (LNODE (myint) * na = LIST_BEGIN (la); na && (na = LIST_FIND (la, na, 81)); na = BNODE_NEXT (na))
-    printf ("%p = %i found **.\n", (void *) na, *BNODE_VALUE (na));
+    printf ("{%i} found **.\n", *BNODE_VALUE (na));
 
   for (LNODE (myint) * na = LIST_LAST (la); na && (na = BNODE_FIND_VALUE_REVERSE (na, 54)); na = BNODE_PREVIOUS (na))
-    printf ("%p = %i found ***.\n", (void *) na, *BNODE_VALUE (na));
+    printf ("{%i} found ***.\n", *BNODE_VALUE (na));
 
   r.min = 75;
   r.max = 78;
   for (LNODE (myint) * na = LIST_LAST (la); na && (na = BNODE_FIND_REVERSE (na, range_value, &r));
        na = BNODE_PREVIOUS (na))
-    printf ("%p = %i found ****.\n", (void *) na, *BNODE_VALUE (na));
+    printf ("{%i} found ****.\n", *BNODE_VALUE (na));
 
   printf ("%zi redundant elements removed.\n", LIST_UNIQUE (la));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
@@ -221,8 +221,7 @@ main (void)
   printf ("....\n");
   LIST_TRAVERSE (la, print_node);
 
-  printf ("Swap %p = %i and %p = %i.\n", (void *) LIST_BEGIN (la), *BNODE_VALUE (LIST_BEGIN (la)),
-          (void *) LIST_LAST (la), *BNODE_VALUE (LIST_LAST (la)));
+  printf ("Swap {%i} and {%i}.\n", *BNODE_VALUE (LIST_BEGIN (la)), *BNODE_VALUE (LIST_LAST (la)));
   LIST_SWAP (la, LIST_BEGIN (la), la, LIST_LAST (la));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
   printf ("Size %li\n", LIST_SIZE (la));
@@ -232,16 +231,15 @@ main (void)
   LIST_INSERT (lb, LIST_BEGIN (lb), 1000);
   LIST_INSERT (lb, LIST_END (lb), 2000);
 
-  printf ("Move %p = %i to the begining.\n", (void *) LIST_LAST (la), *BNODE_VALUE (LIST_LAST (la)));
+  printf ("Move {%i} to the begining.\n", *BNODE_VALUE (LIST_LAST (la)));
   LIST_MOVE (la, LIST_BEGIN (la), la, LIST_LAST (la));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
-  printf ("Move %p = %i to the second position.\n", (void *) LIST_LAST (la), *BNODE_VALUE (LIST_LAST (la)));
+  printf ("Move {%i} to the second position.\n", *BNODE_VALUE (LIST_LAST (la)));
   LIST_MOVE (la, BNODE_NEXT (LIST_BEGIN (la)), la, LIST_LAST (la));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
-  printf ("Swap %p = %i and %p = %i.\n", (void *) LIST_BEGIN (lb), *BNODE_VALUE (LIST_BEGIN (lb)),
-          (void *) LIST_BEGIN (la), *BNODE_VALUE (LIST_BEGIN (la)));
+  printf ("Swap {%i} and {%i}.\n", *BNODE_VALUE (LIST_BEGIN (lb)), *BNODE_VALUE (LIST_BEGIN (la)));
   LIST_SWAP (la, LIST_BEGIN (la), lb, LIST_BEGIN (lb));
   LIST_DESTROY (lb);
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
@@ -250,11 +248,12 @@ main (void)
   LIST_ROTATE_LEFT (la);
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
-  printf ("Reverse [%p, %p[.\n", (void *) BNODE_NEXT (LIST_BEGIN (la)), (void *) LIST_LAST (la));
+  printf ("Reverse [{%i}, {%i}[.\n", *BNODE_VALUE (BNODE_NEXT (LIST_BEGIN (la))), *BNODE_VALUE (LIST_LAST (la)));
   LIST_REVERSE (la, BNODE_NEXT (LIST_BEGIN (la)), LIST_LAST (la));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
-  printf ("Reverse [%p, %p[.\n", (void *) BNODE_PREVIOUS (LIST_LAST (la)), (void *) BNODE_NEXT (LIST_BEGIN (la)));
+  printf ("Reverse [{%i}, {%i}[.\n", *BNODE_VALUE (BNODE_PREVIOUS (LIST_LAST (la))),
+          *BNODE_VALUE (BNODE_NEXT (LIST_BEGIN (la))));
   LIST_REVERSE (la, BNODE_PREVIOUS (LIST_LAST (la)), BNODE_NEXT (LIST_BEGIN (la)));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
@@ -266,8 +265,7 @@ main (void)
   LIST_ROTATE_RIGHT (la);
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
-  printf ("Swap %p = %i and %p = %i.\n", (void *) BNODE_NEXT (LIST_BEGIN (la)),
-          *BNODE_VALUE (BNODE_NEXT (LIST_BEGIN (la))), (void *) BNODE_PREVIOUS (LIST_LAST (la)),
+  printf ("Swap {%i} and {%i}.\n", *BNODE_VALUE (BNODE_NEXT (LIST_BEGIN (la))),
           *BNODE_VALUE (BNODE_PREVIOUS (LIST_LAST (la))));
   LIST_SWAP (la, BNODE_NEXT (LIST_BEGIN (la)), la, BNODE_PREVIOUS (LIST_LAST (la)));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);

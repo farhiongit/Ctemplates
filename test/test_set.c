@@ -29,20 +29,20 @@ static int
 print_node (SNODE (int) * n, void *param)
 {
   (void) param;
-  printf ("%p = %i\n", (void *) n, *BNODE_KEY (n));
+  printf ("{%i}\n", *BNODE_KEY (n));
   return 1;
 }
 
 static void
 int_destroyer (int val)
 {
-  printf ("%i destroyed.\n", val);
+  printf ("{%i} destroyed.\n", val);
 }
 
 static int
 int_copier (int n)
 {
-  printf ("Copy of %i.\n", n);
+  printf ("Copy of {%i}.\n", n);
   return n;
 }
 
@@ -86,6 +86,7 @@ main (void)
 
   SET_INSERT (la, 4);
   SNODE (int) * na = SET_INSERT (la, 3333);
+
   printf ("%i peeked\n", *BNODE_KEY (SET_FIND (la, 3333)));
 
   SET_INSERT (la, 1);
@@ -126,19 +127,19 @@ main (void)
   Range r = { 80, 95 };
   for (SNODE (int) * na = SET_BEGIN (la); na && (na = BNODE_FIND (na, SET_END (la), range_value, &r));
        na = BNODE_NEXT (na))
-    printf ("%p = %i found.\n", (void *) na, *BNODE_KEY (na));
+    printf ("{%i} found.\n", *BNODE_KEY (na));
 
   for (SNODE (int) * na = SET_BEGIN (la); na && (na = BNODE_FIND_KEY (na, 100)); na = BNODE_NEXT (na))
-    printf ("%p = %i found.\n", (void *) na, *BNODE_KEY (na));
+    printf ("{%i} found.\n", *BNODE_KEY (na));
 
   for (SNODE (int) * na = SET_LAST (la); na && (na = BNODE_FIND_KEY_REVERSE (na, 105)); na = BNODE_PREVIOUS (na))
-    printf ("%p = %i found.\n", (void *) na, *BNODE_KEY (na));
+    printf ("{%i} found.\n", *BNODE_KEY (na));
 
   r.min = 135;
   r.max = 140;
   for (SNODE (int) * na = SET_LAST (la); na && (na = BNODE_FIND_REVERSE (na, range_value, &r));
        na = BNODE_PREVIOUS (na))
-    printf ("%p = %i found.\n", (void *) na, *BNODE_KEY (na));
+    printf ("{%i} found.\n", *BNODE_KEY (na));
 
   BNODE_FOR_EACH (SET_BEGIN (la), SET_END (la), print_node);
   printf ("Size %li\n", SET_SIZE (la));
@@ -157,7 +158,7 @@ main (void)
   SET_INSERT (lb, 1000);
   SET_INSERT (lb, 2000);
   printf ("Size %li\n", SET_SIZE (lb));
-  printf ("Move %p = %i.\n", (void *) SET_BEGIN (lb), *BNODE_KEY (SET_BEGIN (lb)));
+  printf ("Move {%i}.\n", *BNODE_KEY (SET_BEGIN (lb)));
   SET_MOVE (la, lb, SET_BEGIN (lb));
   SET_DESTROY (lb);
   BNODE_FOR_EACH (SET_BEGIN (la), SET_END (la), print_node);

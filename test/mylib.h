@@ -3,10 +3,12 @@
 #include "set.h"
 #include "map.h"
 
-DECLARE_SET(int)
-typedef char* pchar;
-DECLARE_MAP(pchar, double)
+/* *INDENT-OFF* */
+DECLARE_SET (int)
+typedef char *pchar;
+DECLARE_MAP (pchar, double)
 
-int libfunction (SET(int) **);
+int libfunction (SET (int) **);
+/* *INDENT-ON* */
 
 #endif

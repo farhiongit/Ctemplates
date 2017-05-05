@@ -39,8 +39,6 @@ Dimensions_lt (Dimensions a, Dimensions b)
 int
 main (void)
 {
-  setlocale (LC_ALL, "");
-
   MAP (pchar, Dimensions) * cars = MAP_CREATE (pchar, Dimensions);
 
   Dimensions rt = {.l = 3595,.w = 1647,.h = 1557 };

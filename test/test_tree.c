@@ -51,8 +51,6 @@ main (void)
   struct sigaction sa = {.sa_handler = sigabort_handler };
   sigaction (SIGABRT, &sa, 0);
 
-  setlocale (LC_ALL, "");
-
   int unique = 0;
 
   BNODE (pchar, int) * tree = BNODE_CREATE (pchar, int) ("Laurent", unique);

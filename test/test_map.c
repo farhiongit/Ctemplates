@@ -20,7 +20,7 @@ do {                                     \
 static void
 sigaction_param_destructor (void *sigaction_param_value)
 {
-  fprintf (stderr, "%s (%p)\n", __func__, sigaction_param_value);
+  fprintf (stderr, "%s\n", __func__);
   fflush (stderr);
   free (sigaction_param_value);
 }
@@ -62,39 +62,39 @@ DEFINE_MAP (Point, int)
 static void
 int_destroyer (int val)
 {
-  printf ("%i destroyed.\n", val);
+  printf ("{%i} destroyed.\n", val);
 }
 
 static int
 int_copier (int n)
 {
-  printf ("Copy of %i.\n", n);
+  printf ("Copy of {%i}.\n", n);
   return n;
 }
 
 static void
 double_destroyer (double val)
 {
-  printf ("%#g destroyed.\n", val);
+  printf ("{%#g} destroyed.\n", val);
 }
 
 static double
 double_copier (double val)
 {
-  printf ("Copy of %#g.\n", val);
+  printf ("Copy of {%#g}.\n", val);
   return val;
 }
 
 static void
 string_destroyer (char *val)
 {
-  printf ("%s destroyed.\n", val);
+  printf ("{%s} destroyed.\n", val);
 }
 
 static char *
 string_copier (char *val)
 {
-  printf ("Copy of %s.\n", val);
+  printf ("Copy of {%s}.\n", val);
   return val;
 }
 
@@ -130,8 +130,6 @@ MAP (pchar, double) *
 
      int main (void)
 {
-  setlocale (LC_ALL, "");
-
   pthread_once (&pthread_local_init, create_pthread_local_vars);
   PTHREAD_SET_SPECIFIC (sigaction_param, 1, int, sigaction_param_destructor_function);
 
@@ -316,7 +314,7 @@ MAP (pchar, double) *
   MAP_REMOVE (mi, MAP_FIND_KEY (mi, 25));
   MAP_REMOVE (mi, MAP_FIND_KEY (mi, 75));
   for (BNODE (int, int) * n = MAP_BEGIN (mi); n; n = BNODE_NEXT (n))
-    printf ("%i=%i ; ", *BNODE_KEY (n), *BNODE_VALUE (n));
+    printf ("{%i}={%i} ; ", *BNODE_KEY (n), *BNODE_VALUE (n));
   printf ("\n");
 
   MAP_DESTROY (mi);

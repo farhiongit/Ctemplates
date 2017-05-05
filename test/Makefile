@@ -30,10 +30,18 @@ test_map.o: test_map.c ../defops.h ../map_impl.h ../bnode_impl.h ../bnode.h ../v
 
 .PHONY: tests
 tests: test_list test_set test_tree test_map
-	valgrind ./test_list || :
-	valgrind ./test_set || :
-	valgrind ./test_tree || :
-	valgrind ./test_map  || :
+	valgrind -q ./test_list > ./test_list.tmp 2>&1 || :
+	diff -q ./test_list.tmp ./test_list.log
+	rm -f ./test_list.tmp
+	valgrind -q ./test_set > ./test_set.tmp 2>&1 || :
+	diff -q ./test_set.tmp ./test_set.log
+	rm -f ./test_set.tmp
+	valgrind -q ./test_tree > ./test_tree.tmp 2>&1 || :
+	diff -q ./test_tree.tmp ./test_tree.log
+	rm -f ./test_tree.tmp
+	valgrind -q ./test_map > ./test_map.tmp 2>&1  || :
+	diff -q ./test_map.tmp ./test_map.log
+	rm -f ./test_map.tmp
 
 mylib.o: mylib.c mylib.h ../set.h ../bnode.h ../vfunc.h ../map.h ../set_impl.h ../bnode_impl.h ../defops.h ../map_impl.h
 	$(CC) $(CFLAGS) -c mylib.c -o mylib.o
@@ -45,4 +53,4 @@ main: mylib.o main.c mylib.h ../set.h ../bnode.h ../vfunc.h ../map.h
 	$(CC) $(CFLAGS) $(LDFLAGS) mylib.o main.c -o main
 	strip -xg main
 	nm main
-	valgrind ./main
+	valgrind -q ./main

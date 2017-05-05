@@ -1,0 +1,644 @@
+ERROR: List is empty.
+ABORT
+-------- will abort here:
+INFO:  Signal 6 trapped and ignored.
+       Execution continued.
+ERROR: Index 4 out of range [0, 3].
+ABORT  
+Size 0
+{0} destroyed.
+Copy of {4}.
+{0} destroyed.
+Copy of {3333}.
+{0} destroyed.
+Copy of {2}.
+{4}
+{2}
+{3333}
+Size 3
+4 peeked
+{0} destroyed.
+Copy of {1}.
+1 peeked
+{0} destroyed.
+Copy of {5}.
+Size 5
+{3333} destroyed.
+Size 4
+{1}
+5 peeked
+Assign last to 99.
+{5} destroyed.
+Copy of {99}.
+99 peeked
+1 < 99
+99 > 1
+4 > 2
+{1}
+{4}
+{2}
+{99}
+Size 4
+-------- will abort here:
+INFO:  Signal 6 trapped and ignored.
+       Execution continued.
+{0} destroyed.
+Copy of {51}.
+{0} destroyed.
+Copy of {51}.
+{0} destroyed.
+Copy of {51}.
+{0} destroyed.
+Copy of {51}.
+{0} destroyed.
+Copy of {54}.
+{0} destroyed.
+Copy of {54}.
+{0} destroyed.
+Copy of {54}.
+{0} destroyed.
+Copy of {54}.
+{0} destroyed.
+Copy of {57}.
+{0} destroyed.
+Copy of {57}.
+{0} destroyed.
+Copy of {57}.
+{0} destroyed.
+Copy of {57}.
+{0} destroyed.
+Copy of {60}.
+{0} destroyed.
+Copy of {60}.
+{0} destroyed.
+Copy of {60}.
+{0} destroyed.
+Copy of {60}.
+{0} destroyed.
+Copy of {63}.
+{0} destroyed.
+Copy of {63}.
+{0} destroyed.
+Copy of {63}.
+{0} destroyed.
+Copy of {63}.
+{0} destroyed.
+Copy of {66}.
+{0} destroyed.
+Copy of {66}.
+{0} destroyed.
+Copy of {66}.
+{0} destroyed.
+Copy of {66}.
+{0} destroyed.
+Copy of {69}.
+{0} destroyed.
+Copy of {69}.
+{0} destroyed.
+Copy of {69}.
+{0} destroyed.
+Copy of {69}.
+{0} destroyed.
+Copy of {72}.
+{0} destroyed.
+Copy of {72}.
+{0} destroyed.
+Copy of {72}.
+{0} destroyed.
+Copy of {72}.
+{0} destroyed.
+Copy of {75}.
+{0} destroyed.
+Copy of {75}.
+{0} destroyed.
+Copy of {75}.
+{0} destroyed.
+Copy of {75}.
+{0} destroyed.
+Copy of {78}.
+{0} destroyed.
+Copy of {78}.
+{0} destroyed.
+Copy of {78}.
+{0} destroyed.
+Copy of {78}.
+{0} destroyed.
+Copy of {81}.
+{0} destroyed.
+Copy of {81}.
+{0} destroyed.
+Copy of {81}.
+{0} destroyed.
+Copy of {81}.
+Print in reverse order.
+{81}
+{78}
+{75}
+{72}
+{69}
+{66}
+{63}
+{60}
+{57}
+{54}
+{51}
+{99}
+{2}
+{4}
+{1}
+{51}
+{51}
+{51}
+{54}
+{54}
+{54}
+{57}
+{57}
+{57}
+{60}
+{60}
+{60}
+{63}
+{63}
+{63}
+{66}
+{66}
+{66}
+{69}
+{69}
+{69}
+{72}
+{72}
+{72}
+{75}
+{75}
+{75}
+{78}
+{78}
+{78}
+{81}
+{81}
+{81}
+Size 48
+{63} found *.
+{63} found *.
+{63} found *.
+{60} found *.
+{60} found *.
+{60} found *.
+{57} found *.
+{57} found *.
+{57} found *.
+{57} found *.
+{60} found *.
+{63} found *.
+{81} found **.
+{81} found **.
+{81} found **.
+{81} found **.
+{54} found ***.
+{54} found ***.
+{54} found ***.
+{54} found ***.
+{78} found ****.
+{75} found ****.
+{75} found ****.
+{75} found ****.
+{75} found ****.
+{78} found ****.
+{78} found ****.
+{78} found ****.
+{81} destroyed.
+{81} destroyed.
+{78} destroyed.
+{78} destroyed.
+{75} destroyed.
+{75} destroyed.
+{72} destroyed.
+{72} destroyed.
+{69} destroyed.
+{69} destroyed.
+{66} destroyed.
+{66} destroyed.
+{63} destroyed.
+{63} destroyed.
+{60} destroyed.
+{60} destroyed.
+{57} destroyed.
+{57} destroyed.
+{54} destroyed.
+{54} destroyed.
+{51} destroyed.
+{51} destroyed.
+22 redundant elements removed.
+{81}
+{78}
+{75}
+{72}
+{69}
+{66}
+{63}
+{60}
+{57}
+{54}
+{51}
+{1}
+{4}
+{2}
+{99}
+{51}
+{54}
+{57}
+{60}
+{63}
+{66}
+{69}
+{72}
+{75}
+{78}
+{81}
+Size 26
+Sort.
+{1}
+{2}
+{4}
+{51}
+{51}
+{54}
+{54}
+{57}
+{57}
+{60}
+{60}
+{63}
+{63}
+{66}
+{66}
+{69}
+{69}
+{72}
+{72}
+{75}
+{75}
+{78}
+{78}
+{81}
+{81}
+{99}
+Size 26
+{51} destroyed.
+{54} destroyed.
+{57} destroyed.
+{60} destroyed.
+{63} destroyed.
+{66} destroyed.
+{69} destroyed.
+{72} destroyed.
+{75} destroyed.
+{78} destroyed.
+{81} destroyed.
+11 redundant elements removed again.
+{1}
+{2}
+{4}
+{51}
+{54}
+{57}
+{60}
+{63}
+{66}
+{69}
+{72}
+{75}
+{78}
+{81}
+{99}
+Size 15
+Sort again in descending order.
+{99}
+{81}
+{78}
+{75}
+{72}
+{69}
+{66}
+{63}
+{60}
+{57}
+{54}
+{51}
+{4}
+{2}
+{1}
+Sort again by tens.
+{4}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{81}
+{99}
+Move end at the begining....
+{99}
+{4}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{81}
+....
+{99}
+{4}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{81}
+Move 2nd at the end....
+{99}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{81}
+{4}
+....
+{99}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{81}
+{4}
+Swap {99} and {4}.
+{4}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{81}
+{99}
+Size 15
+{0} destroyed.
+Copy of {1000}.
+{0} destroyed.
+Copy of {2000}.
+Move {99} to the begining.
+{99}
+{4}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{81}
+Move {81} to the second position.
+{99}
+{81}
+{4}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+Swap {1000} and {99}.
+{99} destroyed.
+{2000} destroyed.
+{1000}
+{81}
+{4}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+Rotate list to left.
+{81}
+{4}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{1000}
+Reverse [{4}, {1000}[.
+{81}
+{72}
+ERROR: Missing less than operator for type 'Range'.
+       Use SET_LESS_THAN_OPERATOR(Range, operator),
+       where operator is a function defined as:
+       int operator(Range a, Range b) { return a < b ; }.
+ABORT  
+{75}
+{78}
+{60}
+{63}
+{66}
+{69}
+{51}
+{54}
+{57}
+{1}
+{2}
+{4}
+{1000}
+Reverse [{4}, {72}[.
+{81}
+{1000}
+{4}
+{72}
+{75}
+{78}
+{60}
+{63}
+{66}
+{69}
+{51}
+{54}
+{57}
+{1}
+{2}
+Reverse all.
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{4}
+{1000}
+{81}
+Rotate list to right.
+{81}
+{2}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{4}
+{1000}
+Swap {2} and {4}.
+{81}
+{4}
+{1}
+{57}
+{54}
+{51}
+{69}
+{66}
+{63}
+{60}
+{78}
+{75}
+{72}
+{2}
+{1000}
+Access through indexes.
+  0: {81}
+  1: {4}
+  2: {1}
+  3: {57}
+  4: {54}
+  5: {51}
+  6: {69}
+  7: {66}
+  8: {63}
+  9: {60}
+ 10: {78}
+ 11: {75}
+ 12: {72}
+ 13: {2}
+ 14: {1000}
+Is empty = 0
+Clear.
+{4} destroyed.
+{81} destroyed.
+{57} destroyed.
+{54} destroyed.
+{51} destroyed.
+{69} destroyed.
+{66} destroyed.
+{63} destroyed.
+{60} destroyed.
+{78} destroyed.
+{75} destroyed.
+{2} destroyed.
+{72} destroyed.
+{1000} destroyed.
+{1} destroyed.
+Size 0
+Is empty = 1
+Destroy.
+-------- will abort here:
+INFO:  Signal 6 trapped and ignored.
+       Execution continued.
+ERROR: Missing less than operator for type 'Range'.
+       Use SET_LESS_THAN_OPERATOR(Range, operator),
+       where operator is a function defined as:
+       int operator(Range a, Range b) { return a < b ; }.
+ABORT  
+INFO:  Signal 6 trapped and ignored.
+       Execution continued.
+ERROR: Missing less than operator for type 'Range'.
+       Use SET_LESS_THAN_OPERATOR(Range, operator),
+       where operator is a function defined as:
+       int operator(Range a, Range b) { return a < b ; }.
+ABORT  
+INFO:  Signal 6 trapped and ignored.
+       Execution continued.
+ERROR: Missing less than operator for type 'Range'.
+       Use SET_LESS_THAN_OPERATOR(Range, operator),
+       where operator is a function defined as:
+       int operator(Range a, Range b) { return a < b ; }.
+ABORT  
+INFO:  Signal 6 trapped and ignored.
+       Execution continued.
