@@ -13,6 +13,6 @@ map_example.o: map_example.c ../defops.h ../map_impl.h ../bnode_impl.h ../bnode.
 
 .PHONY: examples
 examples: list_example set_example map_example
-	valgrind ./list_example || :
-	valgrind ./set_example || :
-	valgrind ./map_example || :
+	valgrind -q ./list_example || :
+	valgrind -q ./set_example || :
+	valgrind -q ./map_example || :
