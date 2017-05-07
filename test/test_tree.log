@@ -1,127 +1,127 @@
 A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
-Alphonse 0,		>A <Emmanuel ^Emmanuel,		>>A <<Emmanuel		size=5, depth=4
+Alphonse 0,		>A <Emmanuel ^Ingrid,		>>A <<F		size=7, depth=4
 C 0,		>(null) <(null) ^Emmanuel,		>>C <<C		size=1, depth=1
 Emmanuel 0,		>C <(null) ^Emmanuel,		>>C <<Emmanuel		size=2, depth=2
-Emmanuel 0,		>Emmanuel <(null) ^Alphonse,		>>C <<Emmanuel		size=3, depth=3
-Emmanuel 0,		>Alphonse <F ^Ingrid,		>>A <<F		size=7, depth=5
+Emmanuel 0,		>Emmanuel <Emmanuel ^Alphonse,		>>C <<F		size=5, depth=3
+Emmanuel 0,		>(null) <F ^Emmanuel,		>>Emmanuel <<F		size=2, depth=2
 F 0,		>(null) <(null) ^Emmanuel,		>>F <<F		size=1, depth=1
-Ingrid 0,		>Emmanuel <(null) ^Laurent,		>>A <<Ingrid		size=8, depth=6
-Laurent 0,		>Ingrid <Rosella ^(null),		>>A <<Zorro		size=11, depth=7
-Rosella 0,		>(null) <Zorro ^Laurent,		>>Rosella <<Zorro		size=2, depth=2
+Ingrid 0,		>Alphonse <Rosella ^(null),		>>A <<Zorro		size=11, depth=5
+Laurent 0,		>(null) <(null) ^Rosella,		>>Laurent <<Laurent		size=1, depth=1
+Rosella 0,		>Laurent <Zorro ^Ingrid,		>>Laurent <<Zorro		size=3, depth=2
 Zorro 0,		>(null) <(null) ^Rosella,		>>Zorro <<Zorro		size=1, depth=1
 --------
-Y 0,		>(null) <Z ^(null),		>>Y <<Z		size=2, depth=2
-Z 0,		>(null) <(null) ^Y,		>>Z <<Z		size=1, depth=1
+X 0,		>(null) <(null) ^Z,		>>X <<X		size=1, depth=1
+Z 0,		>X <(null) ^(null),		>>X <<Z		size=2, depth=2
 11 [A, Zorro]
 A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
-Alphonse 0,		>A <Emmanuel ^Emmanuel,		>>A <<Emmanuel		size=4, depth=3
+Alphonse 0,		>A <Emmanuel ^Ingrid,		>>A <<F		size=6, depth=4
 Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
-Emmanuel 0,		>Emmanuel <(null) ^Alphonse,		>>Emmanuel <<Emmanuel		size=2, depth=2
-Emmanuel 0,		>Alphonse <F ^Ingrid,		>>A <<F		size=6, depth=4
+Emmanuel 0,		>Emmanuel <Emmanuel ^Alphonse,		>>Emmanuel <<F		size=4, depth=3
+Emmanuel 0,		>(null) <F ^Emmanuel,		>>Emmanuel <<F		size=2, depth=2
 F 0,		>(null) <(null) ^Emmanuel,		>>F <<F		size=1, depth=1
-Ingrid 0,		>Emmanuel <(null) ^Laurent,		>>A <<Ingrid		size=7, depth=5
-Laurent 0,		>Ingrid <Rosella ^(null),		>>A <<Zorro		size=11, depth=6
-Rosella 0,		>(null) <Zorro ^Laurent,		>>Rosella <<Zorro		size=3, depth=3
-X 0,		>(null) <(null) ^Zorro,		>>X <<X		size=1, depth=1
-Zorro 0,		>X <(null) ^Rosella,		>>X <<Zorro		size=2, depth=2
---------
-A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
-Alphonse 0,		>A <Emmanuel ^Emmanuel,		>>A <<Emmanuel		size=4, depth=3
-Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
-Emmanuel 0,		>Emmanuel <(null) ^Alphonse,		>>Emmanuel <<Emmanuel		size=2, depth=2
-Emmanuel 0,		>Alphonse <F ^Ingrid,		>>A <<F		size=6, depth=4
-F 0,		>(null) <(null) ^Emmanuel,		>>F <<F		size=1, depth=1
-Ingrid 0,		>Emmanuel <(null) ^Laurent,		>>A <<Ingrid		size=7, depth=5
-Laurent 0,		>Ingrid <Rosella ^(null),		>>A <<Zorro		size=11, depth=6
-Rosella 0,		>(null) <Zorro ^Laurent,		>>Rosella <<Zorro		size=3, depth=3
-X 0,		>(null) <(null) ^Zorro,		>>X <<X		size=1, depth=1
-Zorro 0,		>X <(null) ^Rosella,		>>X <<Zorro		size=2, depth=2
---------
-11 [A, Zorro]
-Zorro 0,		>X <(null) ^Rosella,		>>X <<Zorro		size=2, depth=2
-X 0,		>(null) <(null) ^Zorro,		>>X <<X		size=1, depth=1
-Rosella 0,		>(null) <Zorro ^Laurent,		>>Rosella <<Zorro		size=3, depth=3
-Laurent 0,		>Ingrid <Rosella ^(null),		>>A <<Zorro		size=11, depth=6
-Ingrid 0,		>Emmanuel <(null) ^Laurent,		>>A <<Ingrid		size=7, depth=5
-F 0,		>(null) <(null) ^Emmanuel,		>>F <<F		size=1, depth=1
-Emmanuel 0,		>Alphonse <F ^Ingrid,		>>A <<F		size=6, depth=4
-Emmanuel 0,		>Emmanuel <(null) ^Alphonse,		>>Emmanuel <<Emmanuel		size=2, depth=2
-Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
-Alphonse 0,		>A <Emmanuel ^Emmanuel,		>>A <<Emmanuel		size=4, depth=3
-A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
---------
-A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
-Alphonse 0,		>A <Emmanuel ^Emmanuel,		>>A <<Emmanuel		size=4, depth=3
-Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
-Emmanuel 0,		>Emmanuel <(null) ^Alphonse,		>>Emmanuel <<Emmanuel		size=2, depth=2
-Emmanuel 0,		>Alphonse <F ^Ingrid,		>>A <<F		size=6, depth=4
-F 0,		>(null) <(null) ^Emmanuel,		>>F <<F		size=1, depth=1
-Ingrid 0,		>Emmanuel <Rosella ^(null),		>>A <<Zorro		size=10, depth=5
-Rosella 0,		>(null) <Zorro ^Ingrid,		>>Rosella <<Zorro		size=3, depth=3
-X 0,		>(null) <(null) ^Zorro,		>>X <<X		size=1, depth=1
-Zorro 0,		>X <(null) ^Rosella,		>>X <<Zorro		size=2, depth=2
---------
-A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
-Alphonse 0,		>A <Emmanuel ^Emmanuel,		>>A <<Emmanuel		size=4, depth=3
-Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
-Emmanuel 0,		>Emmanuel <(null) ^Alphonse,		>>Emmanuel <<Emmanuel		size=2, depth=2
-Emmanuel 0,		>Alphonse <F ^Ingrid,		>>A <<F		size=6, depth=4
-F 0,		>(null) <(null) ^Emmanuel,		>>F <<F		size=1, depth=1
-Ingrid 0,		>Emmanuel <Rosella ^(null),		>>A <<Zorro		size=11, depth=5
+Ingrid 0,		>Alphonse <Rosella ^(null),		>>A <<Zorro		size=11, depth=5
 Laurent 0,		>(null) <(null) ^Rosella,		>>Laurent <<Laurent		size=1, depth=1
 Rosella 0,		>Laurent <Zorro ^Ingrid,		>>Laurent <<Zorro		size=4, depth=3
-X 0,		>(null) <(null) ^Zorro,		>>X <<X		size=1, depth=1
-Zorro 0,		>X <(null) ^Rosella,		>>X <<Zorro		size=2, depth=2
+Y 0,		>(null) <(null) ^Zorro,		>>Y <<Y		size=1, depth=1
+Zorro 0,		>Y <(null) ^Rosella,		>>Y <<Zorro		size=2, depth=2
+--------
+A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
+Alphonse 0,		>A <Emmanuel ^Ingrid,		>>A <<F		size=6, depth=4
+Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
+Emmanuel 0,		>Emmanuel <Emmanuel ^Alphonse,		>>Emmanuel <<F		size=4, depth=3
+Emmanuel 0,		>(null) <F ^Emmanuel,		>>Emmanuel <<F		size=2, depth=2
+F 0,		>(null) <(null) ^Emmanuel,		>>F <<F		size=1, depth=1
+Ingrid 0,		>Alphonse <Rosella ^(null),		>>A <<Zorro		size=11, depth=5
+Laurent 0,		>(null) <(null) ^Rosella,		>>Laurent <<Laurent		size=1, depth=1
+Rosella 0,		>Laurent <Zorro ^Ingrid,		>>Laurent <<Zorro		size=4, depth=3
+Y 0,		>(null) <(null) ^Zorro,		>>Y <<Y		size=1, depth=1
+Zorro 0,		>Y <(null) ^Rosella,		>>Y <<Zorro		size=2, depth=2
+--------
+11 [A, Zorro]
+Zorro 0,		>Y <(null) ^Rosella,		>>Y <<Zorro		size=2, depth=2
+Y 0,		>(null) <(null) ^Zorro,		>>Y <<Y		size=1, depth=1
+Rosella 0,		>Laurent <Zorro ^Ingrid,		>>Laurent <<Zorro		size=4, depth=3
+Laurent 0,		>(null) <(null) ^Rosella,		>>Laurent <<Laurent		size=1, depth=1
+Ingrid 0,		>Alphonse <Rosella ^(null),		>>A <<Zorro		size=11, depth=5
+F 0,		>(null) <(null) ^Emmanuel,		>>F <<F		size=1, depth=1
+Emmanuel 0,		>(null) <F ^Emmanuel,		>>Emmanuel <<F		size=2, depth=2
+Emmanuel 0,		>Emmanuel <Emmanuel ^Alphonse,		>>Emmanuel <<F		size=4, depth=3
+Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
+Alphonse 0,		>A <Emmanuel ^Ingrid,		>>A <<F		size=6, depth=4
+A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
+--------
+A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
+Alphonse 0,		>A <Emmanuel ^F,		>>A <<Emmanuel		size=5, depth=3
+Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
+Emmanuel 0,		>Emmanuel <Emmanuel ^Alphonse,		>>Emmanuel <<Emmanuel		size=3, depth=2
+Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
+F 0,		>Alphonse <Rosella ^(null),		>>A <<Zorro		size=10, depth=4
+Laurent 0,		>(null) <(null) ^Rosella,		>>Laurent <<Laurent		size=1, depth=1
+Rosella 0,		>Laurent <Zorro ^F,		>>Laurent <<Zorro		size=4, depth=3
+Y 0,		>(null) <(null) ^Zorro,		>>Y <<Y		size=1, depth=1
+Zorro 0,		>Y <(null) ^Rosella,		>>Y <<Zorro		size=2, depth=2
+--------
+A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
+Alphonse 0,		>A <Emmanuel ^F,		>>A <<Emmanuel		size=5, depth=3
+Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
+Emmanuel 0,		>Emmanuel <Emmanuel ^Alphonse,		>>Emmanuel <<Emmanuel		size=3, depth=2
+Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
+F 0,		>Alphonse <Rosella ^(null),		>>A <<Zorro		size=11, depth=4
+Ingrid 0,		>(null) <(null) ^Laurent,		>>Ingrid <<Ingrid		size=1, depth=1
+Laurent 0,		>Ingrid <(null) ^Rosella,		>>Ingrid <<Laurent		size=2, depth=2
+Rosella 0,		>Laurent <Zorro ^F,		>>Ingrid <<Zorro		size=5, depth=3
+Y 0,		>(null) <(null) ^Zorro,		>>Y <<Y		size=1, depth=1
+Zorro 0,		>Y <(null) ^Rosella,		>>Y <<Zorro		size=2, depth=2
 11 [A, Zorro]
 --------
 0: A 0,		>(null) <(null) ^Alphonse,		>>A <<A		size=1, depth=1
-1: Alphonse 0,		>A <Emmanuel ^Emmanuel,		>>A <<Emmanuel		size=4, depth=3
+1: Alphonse 0,		>A <Emmanuel ^F,		>>A <<Emmanuel		size=5, depth=3
 2: Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
-3: Emmanuel 0,		>Emmanuel <(null) ^Alphonse,		>>Emmanuel <<Emmanuel		size=2, depth=2
-4: Emmanuel 0,		>Alphonse <F ^Ingrid,		>>A <<F		size=6, depth=4
-5: F 0,		>(null) <(null) ^Emmanuel,		>>F <<F		size=1, depth=1
-6: Ingrid 0,		>Emmanuel <Rosella ^(null),		>>A <<Zorro		size=11, depth=5
-7: Laurent 0,		>(null) <(null) ^Rosella,		>>Laurent <<Laurent		size=1, depth=1
-8: Rosella 0,		>Laurent <Zorro ^Ingrid,		>>Laurent <<Zorro		size=4, depth=3
-9: X 0,		>(null) <(null) ^Zorro,		>>X <<X		size=1, depth=1
-10: Zorro 0,		>X <(null) ^Rosella,		>>X <<Zorro		size=2, depth=2
+3: Emmanuel 0,		>Emmanuel <Emmanuel ^Alphonse,		>>Emmanuel <<Emmanuel		size=3, depth=2
+4: Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
+5: F 0,		>Alphonse <Rosella ^(null),		>>A <<Zorro		size=11, depth=4
+6: Ingrid 0,		>(null) <(null) ^Laurent,		>>Ingrid <<Ingrid		size=1, depth=1
+7: Laurent 0,		>Ingrid <(null) ^Rosella,		>>Ingrid <<Laurent		size=2, depth=2
+8: Rosella 0,		>Laurent <Zorro ^F,		>>Ingrid <<Zorro		size=5, depth=3
+9: Y 0,		>(null) <(null) ^Zorro,		>>Y <<Y		size=1, depth=1
+10: Zorro 0,		>Y <(null) ^Rosella,		>>Y <<Zorro		size=2, depth=2
 --------
-A ; Alphonse ; Emmanuel ; Emmanuel ; Emmanuel ; F ; Ingrid ; Laurent ; Rosella ; X ; Zorro ; 
-A ; Alphonse ; Emmanuel ; Emmanuel ; Emmanuel ; F ; Ingrid ; Laurent ; Rosella ; X ; Zorro ; 
-Zorro ; X ; Rosella ; Laurent ; Ingrid ; F ; Emmanuel ; Emmanuel ; Emmanuel ; Alphonse ; A ; 
+A ; Alphonse ; Emmanuel ; Emmanuel ; Emmanuel ; F ; Ingrid ; Laurent ; Rosella ; Y ; Zorro ; 
+A ; Alphonse ; Emmanuel ; Emmanuel ; Emmanuel ; F ; Ingrid ; Laurent ; Rosella ; Y ; Zorro ; 
+Zorro ; Y ; Rosella ; Laurent ; Ingrid ; F ; Emmanuel ; Emmanuel ; Emmanuel ; Alphonse ; A ; 
 --------
 Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
-Emmanuel 0,		>Emmanuel <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=2, depth=2
-Emmanuel 0,		>Emmanuel <(null) ^Alphonse,		>>Emmanuel <<Emmanuel		size=3, depth=3
-Emmanuel 0,		>Alphonse <F ^Ingrid,		>>A <<F		size=7, depth=5
+Emmanuel 0,		>Emmanuel <(null) ^Alphonse,		>>Emmanuel <<Emmanuel		size=2, depth=2
+Emmanuel 0,		>Alphonse <Emmanuel ^F,		>>A <<Emmanuel		size=6, depth=4
+Emmanuel 0,		>(null) <(null) ^Emmanuel,		>>Emmanuel <<Emmanuel		size=1, depth=1
 --------
 _alien_begining 0,		>(null) <(null) ^_alien_[A],		>>_alien_begining <<_alien_begining		size=1, depth=1
 _alien_[A] 0,		>_alien_begining <(null) ^A,		>>_alien_begining <<_alien_[A]		size=2, depth=2
 A 0,		>_alien_[A] <_alien_[Alphonse] ^Alphonse,		>>_alien_begining <<_alien_[Alphonse]		size=4, depth=3
 _alien_[Alphonse] 0,		>(null) <(null) ^A,		>>_alien_[Alphonse] <<_alien_[Alphonse]		size=1, depth=1
-Alphonse 0,		>A <Emmanuel ^Emmanuel,		>>_alien_begining <<_alien_[Emmanuel]		size=12, depth=5
+Alphonse 0,		>A <Emmanuel ^F,		>>_alien_begining <<_alien_[F]		size=14, depth=5
+_alien_[Emmanuel] 0,		>(null) <(null) ^Emmanuel,		>>_alien_[Emmanuel] <<_alien_[Emmanuel]		size=1, depth=1
+Emmanuel 0,		>_alien_[Emmanuel] <Emmanuel ^Emmanuel,		>>_alien_[Emmanuel] <<_alien_[Emmanuel]		size=5, depth=3
 _alien_[Emmanuel] 0,		>(null) <(null) ^Emmanuel,		>>_alien_[Emmanuel] <<_alien_[Emmanuel]		size=1, depth=1
 Emmanuel 0,		>_alien_[Emmanuel] <_alien_[Emmanuel] ^Emmanuel,		>>_alien_[Emmanuel] <<_alien_[Emmanuel]		size=3, depth=2
 _alien_[Emmanuel] 0,		>(null) <(null) ^Emmanuel,		>>_alien_[Emmanuel] <<_alien_[Emmanuel]		size=1, depth=1
-Emmanuel 0,		>Emmanuel <_alien_[Emmanuel] ^Emmanuel,		>>_alien_[Emmanuel] <<_alien_[Emmanuel]		size=5, depth=3
+Emmanuel 0,		>Emmanuel <Emmanuel ^Alphonse,		>>_alien_[Emmanuel] <<_alien_[F]		size=9, depth=4
 _alien_[Emmanuel] 0,		>(null) <(null) ^Emmanuel,		>>_alien_[Emmanuel] <<_alien_[Emmanuel]		size=1, depth=1
-Emmanuel 0,		>Emmanuel <_alien_[Emmanuel] ^Alphonse,		>>_alien_[Emmanuel] <<_alien_[Emmanuel]		size=7, depth=4
-_alien_[Emmanuel] 0,		>(null) <(null) ^Emmanuel,		>>_alien_[Emmanuel] <<_alien_[Emmanuel]		size=1, depth=1
-Emmanuel 0,		>Alphonse <F ^Ingrid,		>>_alien_begining <<_alien_[Ingrid]		size=16, depth=6
-_alien_[F] 0,		>(null) <(null) ^F,		>>_alien_[F] <<_alien_[F]		size=1, depth=1
-F 0,		>_alien_[F] <_alien_[Ingrid] ^Emmanuel,		>>_alien_[F] <<_alien_[Ingrid]		size=3, depth=2
-_alien_[Ingrid] 0,		>(null) <(null) ^F,		>>_alien_[Ingrid] <<_alien_[Ingrid]		size=1, depth=1
-Ingrid 0,		>Emmanuel <Rosella ^(null),		>>_alien_begining <<_alien_end		size=26, depth=7
+Emmanuel 0,		>_alien_[Emmanuel] <_alien_[F] ^Emmanuel,		>>_alien_[Emmanuel] <<_alien_[F]		size=3, depth=2
+_alien_[F] 0,		>(null) <(null) ^Emmanuel,		>>_alien_[F] <<_alien_[F]		size=1, depth=1
+F 0,		>Alphonse <Rosella ^(null),		>>_alien_begining <<_alien_end		size=26, depth=6
+_alien_[Ingrid] 0,		>(null) <(null) ^Ingrid,		>>_alien_[Ingrid] <<_alien_[Ingrid]		size=1, depth=1
+Ingrid 0,		>_alien_[Ingrid] <Laurent ^Rosella,		>>_alien_[Ingrid] <<_alien_[Rosella]		size=5, depth=3
 _alien_[Laurent] 0,		>(null) <(null) ^Laurent,		>>_alien_[Laurent] <<_alien_[Laurent]		size=1, depth=1
-Laurent 0,		>_alien_[Laurent] <_alien_[Rosella] ^Rosella,		>>_alien_[Laurent] <<_alien_[Rosella]		size=3, depth=2
+Laurent 0,		>_alien_[Laurent] <_alien_[Rosella] ^Ingrid,		>>_alien_[Laurent] <<_alien_[Rosella]		size=3, depth=2
 _alien_[Rosella] 0,		>(null) <(null) ^Laurent,		>>_alien_[Rosella] <<_alien_[Rosella]		size=1, depth=1
-Rosella 0,		>Laurent <Zorro ^Ingrid,		>>_alien_[Laurent] <<_alien_end		size=9, depth=4
-_alien_[X] 0,		>(null) <(null) ^X,		>>_alien_[X] <<_alien_[X]		size=1, depth=1
-X 0,		>_alien_[X] <_alien_[ZorERROR: Index 26 out of range [0, 25].
+Rosella 0,		>Ingrid <Y ^F,		>>_alien_[Ingrid] <<_alien_end		size=11, depth=4
+_alien_[Y] 0,		>(null) <(null) ^Y,		>>_alien_[Y] <<_alien_[ERROR: Index 26 out of range [0, 25].
 ABORT  
-ro] ^Zorro,		>>_alien_[X] <<_alien_[Zorro]		size=3, depth=2
-_alien_[Zorro] 0,		>(null) <(null) ^X,		>>_alien_[Zorro] <<_alien_[Zorro]		size=1, depth=1
-Zorro 0,		>X <_alien_end ^Rosella,		>>_alien_[X] <<_alien_end		size=5, depth=3
+Y]		size=1, depth=1
+Y 0,		>_alien_[Y] <Zorro ^Rosella,		>>_alien_[Y] <<_alien_end		size=5, depth=3
+_alien_[Zorro] 0,		>(null) <(null) ^Zorro,		>>_alien_[Zorro] <<_alien_[Zorro]		size=1, depth=1
+Zorro 0,		>_alien_[Zorro] <_alien_end ^Y,		>>_alien_[Zorro] <<_alien_end		size=3, depth=2
 _alien_end 0,		>(null) <(null) ^Zorro,		>>_alien_end <<_alien_end		size=1, depth=1
 -------- will abort here:
 INFO:  Signal 6 trapped and ignored.

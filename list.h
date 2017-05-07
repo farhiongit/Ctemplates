@@ -89,6 +89,9 @@ typedef int __list_dummy__ ;
 #define LIST_INSERT(listSelf, here, data) \
   ((listSelf)->vtable->Insert ((listSelf), (here), (listSelf)->null->vtable->Assign((listSelf)->vtable->CreateNode (0, 0), data)))
 
+#define LIST_APPEND(listSelf, data) \
+  LIST_INSERT (listSelf, LIST_END (listSelf), data)
+
 /// Removes (deallocates) a node from a list.
 /// @param [in] listSelf Pointer to list
 /// @param [in] node Pointer to the node to remove from the list.

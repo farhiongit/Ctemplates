@@ -96,19 +96,6 @@ DEFINE_OPERATORS(__list_dummy__)
       return 0;                                                            \
     }                                                                      \
                                                                            \
-    if (here)                                                              \
-    {                                                                      \
-      /* Go to root */                                                     \
-      BNODE___list_dummy___##TYPE *n;                                      \
-      for (n = here ; n->parent ; n = n->parent) /* nop */ ;               \
-      /* Check that herefrom is owned by from */                           \
-      if (n != self->root)                                                 \
-      {                                                                    \
-        errno = EINVAL;                                                    \
-        return 0;                                                          \
-      }                                                                    \
-    }                                                                      \
-                                                                           \
     if (self->tree_locked)                                                 \
     {                                                                      \
       fprintf (stderr, "ERROR: " "Collection cannot be modified here.\n"   \
@@ -118,7 +105,10 @@ DEFINE_OPERATORS(__list_dummy__)
     }                                                                      \
                                                                            \
     if (self->root)                                                        \
-      BNODE_TREE_INSERT_BEFORE (self->root, here, node);                   \
+    {                                                                      \
+      if (BNODE_TREE_INSERT_BEFORE___list_dummy___##TYPE (&(self->root), here, node) != EXIT_SUCCESS) \
+        return 0;                                                            \
+    }                                                                      \
     else                                                                   \
       self->root = node;                                                   \
                                                                            \

@@ -96,11 +96,10 @@ DEFINE_OPERATORS(__set_dummy__)
     }                                                                      \
                                                                            \
     K key = COPY_##K ? COPY_##K(*BNODE_KEY (node)) : *BNODE_KEY (node);    \
-                                                                           \
     BNODE_##K##___set_dummy__ *ret =                                       \
            !self->root ?                                                   \
              self->root = node :                                           \
-             BNODE_TREE_ADD(self->root, node, self->LessThanKey) ?         \
+             BNODE_TREE_ADD_##K##___set_dummy__ (&(self->root), node, self->LessThanKey) ?         \
                node : 0;                                                   \
                                                                            \
     if (DESTROY_##K) DESTROY_##K (key);                                    \

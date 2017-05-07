@@ -66,6 +66,8 @@ If collections are intended to be used in a library,
 
 #### `LIST_INSERT`
 
+#### `LIST_APPEND`
+
 #### `LIST_REMOVE`
 
 #### `LIST_CLEAR`
@@ -246,7 +248,7 @@ For basic standard types, standard operators are defined and used by default.
 Lists, sets and maps are internally constructed and organized upon binary trees.
 Those complexities rely on perfectly balanced trees.
 
-**Actually, implementation does not use balnaced trees. Switching to balnaced trees is a matter of a couple of hours of work. I intend to implement balanced trees in a short while.**
+## Tree self-balancing
 
 ## Tips and pitfalls
 Template declarations can not apply directly on compound types such as `char *`, `unsigned long` or `struct foo`.

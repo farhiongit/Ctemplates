@@ -56,10 +56,10 @@
                                          T value, int (*lt)(T, T), BNODE_DIRECTION direction );      \
   static BNODE_##K##_##T * BNODE_PREVIOUS_##K##_##T( BNODE_##K##_##T *node );                        \
   static BNODE_##K##_##T * BNODE_NEXT_##K##_##T( BNODE_##K##_##T *node );                            \
-  static int BNODE_TREE_ADD_##K##_##T( BNODE_##K##_##T *self, BNODE_##K##_##T *newNode,              \
-                                                     int (*lt)(K, K), int keep_subtree);             \
-  static int BNODE_TREE_INSERT_BEFORE_##K##_##T( BNODE_##K##_##T *self, BNODE_##K##_##T *here,       \
-                                                  BNODE_##K##_##T *newNode);                         \
+  static int BNODE_TREE_ADD_##K##_##T( BNODE_##K##_##T **self, BNODE_##K##_##T *newNode,             \
+                                       int (*lt)(K, K) );                                            \
+  static int BNODE_TREE_INSERT_BEFORE_##K##_##T( BNODE_##K##_##T **self, BNODE_##K##_##T *here,      \
+                                                 BNODE_##K##_##T *newNode);                          \
   static BNODE_##K##_##T * BNODE_INDEX_##K##_##T ( BNODE_##K##_##T *self, size_t index );            \
   static BNODE_##K##_##T * BNODE_KEY_##K##_##T (BNODE_##K##_##T *self, K key, int (*lt)(K, K));      \
   static int BNODE_TRAVERSE_##K##_##T( BNODE_##K##_##T *tree,                                        \
@@ -107,11 +107,11 @@
     return newNode;                                             \
   }                                                             \
 \
-  static void BNODE_RETRACE_##K##_##T( BNODE_##K##_##T *invalidated )     \
+  static void BNODE_RETRACE_##K##_##T( BNODE_##K##_##T *invalidated, BNODE_##K##_##T *until ) \
   {                                                                       \
     /* Retrace the tree up from the invalidated node */                   \
     /* Update attributes depth, size, lowest_child, highest_child */      \
-    for (BNODE_##K##_##T *p = invalidated ; p ; p = p->parent)            \
+    for (BNODE_##K##_##T *p = invalidated ; p && p != until ; p = p->parent) \
     {                                                                     \
       p->size = 1;                                                        \
       p->depth = 1;                                                       \
@@ -148,6 +148,131 @@
         p->highest_child = p->higher_child->highest_child;                \
       }                                                                   \
     }                                                                     \
+  }                                                                       \
+\
+  static BNODE_##K##_##T *BNODE_ROTATE_LEFT_##K##_##T(BNODE_##K##_##T *A)  \
+  {                                                                       \
+    BNODE_##K##_##T *P = A->parent;                                       \
+    BNODE_##K##_##T *B = A->higher_child;  /*   A                   */    \
+    if (!B)                                /*  / \                  */    \
+      return 0;                            /* e   B                 */    \
+    BNODE_##K##_##T *C = B->lower_child;   /*    / \                */    \
+    A->higher_child = C;                   /*   C   d =>   B        */    \
+    if (C)                                 /*             / \       */    \
+      C->parent = A;                       /*            A   d      */    \
+    B->lower_child = A;                    /*           / \         */    \
+    A->parent = B;                         /*          e   C        */    \
+                                                                          \
+    /* Update parent links */                                             \
+    B->parent = P;                                                        \
+    if (P)                                                                \
+    {                                                                     \
+      if (P->lower_child == A)                                            \
+        P->lower_child = B;                                               \
+      else /* if (P->higher_child == A) */                                \
+        P->higher_child = B;                                              \
+    }                                                                     \
+                                                                          \
+    /* Update depth, size, lowest_child, highest_child for A and B */     \
+    BNODE_RETRACE_##K##_##T( A, B->parent );                              \
+                                                                          \
+    return B;                                                             \
+  }                                                                       \
+\
+  static BNODE_##K##_##T *BNODE_ROTATE_RIGHT_##K##_##T(BNODE_##K##_##T *A)  \
+  {                                                                       \
+    BNODE_##K##_##T *P = A->parent;                                       \
+    BNODE_##K##_##T *B = A->lower_child;   /*     A                 */    \
+    if (!B)                                /*    / \                */    \
+      return 0;                            /*   B   e               */    \
+    BNODE_##K##_##T *C = B->higher_child;  /*  / \                  */    \
+    A->lower_child = C;                    /* d   C   =>   B        */    \
+    if (C)                                 /*             / \       */    \
+      C->parent = A;                       /*            d   A      */    \
+    B->higher_child = A;                   /*               / \     */    \
+    A->parent = B;                         /*              C   e    */    \
+                                                                          \
+    /* Update parent links */                                             \
+    B->parent = P;                                                        \
+    if (P)                                                                \
+    {                                                                     \
+      if (P->lower_child == A)                                            \
+        P->lower_child = B;                                               \
+      else /* if (P->higher_child == A) */                                \
+        P->higher_child = B;                                              \
+    }                                                                     \
+                                                                          \
+    /* Update depth, size, lowest_child, highest_child for A and B */     \
+    BNODE_RETRACE_##K##_##T( A, B->parent );                              \
+                                                                          \
+    return B;                                                             \
+  }                                                                       \
+\
+  static BNODE_##K##_##T *BNODE_BALANCE_##K##_##T( BNODE_##K##_##T *from )\
+  {                                                                       \
+    /* Self-balancing the tree with a relaxed strategy.                */ \
+    /* Balancing is asymetric: it applies only for branches longer     */ \
+    /* than its sibling branch. It only shortens the branch containing */ \
+    /* from and no other.                                              */ \
+    BNODE_##K##_##T *new_root = 0;                                        \
+                                                                          \
+    for (BNODE_##K##_##T *n = from ; n && n->parent ; n = n->parent)      \
+      if (n->parent->lower_child == n)                                    \
+      {                                                                   \
+        BNODE_##K##_##T *sibling = n->parent->higher_child;               \
+        if (n->depth > (sibling ? sibling->depth + 1 : 1))                \
+        {                                                                 \
+          BNODE_##K##_##T *parent = n->parent;                            \
+          BNODE_##K##_##T *grandparent = n->parent->parent;               \
+          if (grandparent)                                                \
+          {                                                               \
+            if (grandparent->lower_child == parent)                       \
+            {                                                             \
+              grandparent->lower_child = BNODE_ROTATE_RIGHT_##K##_##T (parent);  \
+              grandparent->lower_child->parent = grandparent;             \
+            }                                                             \
+            else /* if (grandparent->higher_child == parent) */           \
+            {                                                             \
+              grandparent->higher_child = BNODE_ROTATE_RIGHT_##K##_##T (parent); \
+              grandparent->higher_child->parent = grandparent;            \
+            }                                                             \
+          }                                                               \
+          else /* if (!grandparent) */                                    \
+          {                                                               \
+            new_root = BNODE_ROTATE_RIGHT_##K##_##T (parent);             \
+            new_root->parent = 0;                                         \
+          }                                                               \
+        }                                                                 \
+      }                                                                   \
+      else /* if (n->parent->higher_child == n) */                        \
+      {                                                                   \
+        BNODE_##K##_##T *sibling = n->parent->lower_child;                \
+        if (n->depth > (sibling ? sibling->depth + 1 : 1))                \
+        {                                                                 \
+          BNODE_##K##_##T *parent = n->parent;                            \
+          BNODE_##K##_##T *grandparent = n->parent->parent;               \
+          if (grandparent)                                                \
+          {                                                               \
+            if (grandparent->lower_child == parent)                       \
+            {                                                             \
+              grandparent->lower_child = BNODE_ROTATE_LEFT_##K##_##T (parent);   \
+              grandparent->lower_child->parent = grandparent;             \
+            }                                                             \
+            else /* if (grandparent->higher_child == parent) */           \
+            {                                                             \
+              grandparent->higher_child = BNODE_ROTATE_LEFT_##K##_##T (parent);  \
+              grandparent->higher_child->parent = grandparent;            \
+            }                                                             \
+          }                                                               \
+          else /* if (!grandparent) */                                    \
+          {                                                               \
+            new_root = BNODE_ROTATE_LEFT_##K##_##T (parent);              \
+            new_root->parent = 0;                                         \
+          }                                                               \
+        }                                                                 \
+      }                                                                   \
+                                                                          \
+    return new_root;                                                      \
   }                                                                       \
 \
   static BNODE_##K##_##T *BNODE_COPY_##K##_##T( BNODE_##K##_##T *self )        \
@@ -368,11 +493,11 @@
     }                                                                       \
   }                                                                         \
 \
-  static int BNODE_TREE_INSERT_BEFORE_##K##_##T(BNODE_##K##_##T *self,    \
+  static int BNODE_TREE_INSERT_BEFORE_##K##_##T(BNODE_##K##_##T **self,   \
                                                 BNODE_##K##_##T *here,    \
                                                 BNODE_##K##_##T *newNode) \
   {                                                                       \
-    if (newNode->parent || newNode == self)                               \
+    if (newNode->parent || newNode == *self)                              \
     {                                                                     \
       errno = EINVAL;                                                     \
       return EXIT_FAILURE;                                                \
@@ -382,7 +507,7 @@
     BNODE_##K##_##T *n;                                                   \
     for (n = here ; n && n->parent ; n = n->parent) /* nop */ ;           \
     /* Check that herefrom is owned by from */                            \
-    if (here && n != self)                                                \
+    if (here && n != *self)                                               \
     {                                                                     \
       errno = EINVAL;                                                     \
       return EXIT_FAILURE;                                                \
@@ -391,8 +516,8 @@
     /* parent, higher_child, lower_child                              */  \
     if (!here)                                                            \
     {                                                                     \
-      self->highest_child->higher_child = newNode;                        \
-      newNode->parent = self->highest_child;                              \
+      (*self)->highest_child->higher_child = newNode;                     \
+      newNode->parent = (*self)->highest_child;                           \
     }                                                                     \
     else if (!here->lower_child)                                          \
     {                                                                     \
@@ -405,97 +530,106 @@
       newNode->parent = here->lower_child->highest_child;                 \
     }                                                                     \
                                                                           \
-    /* Retrace the tree up from the modified node */                      \
-    BNODE_RETRACE_##K##_##T (newNode->parent);                            \
+    /* Retrace the tree up from the modified node to the root */          \
+    BNODE_RETRACE_##K##_##T (newNode->parent, 0);                         \
+                                                                          \
+    /* Self-balancing */                                                  \
+    BNODE_##K##_##T *new_root = BNODE_BALANCE_##K##_##T (newNode->parent);\
+    if (new_root)                                                         \
+      *self = new_root;                                                   \
                                                                           \
     return EXIT_SUCCESS;                                                  \
   }                                                                       \
 \
-  static int BNODE_TREE_ADD_##K##_##T(BNODE_##K##_##T *self,                \
-                                      BNODE_##K##_##T *newNode,             \
-                                      int (*lt)(K, K), int keep_subtree)    \
-  {                                                                         \
-    if (newNode->parent || newNode == self)                                 \
-    {                                                                       \
-      errno = EINVAL;                                                       \
-      return 0;                                                             \
-    }                                                                       \
-                                                                            \
-    BNODE_##K##_##T *lower = newNode->lower_child;                          \
-    BNODE_##K##_##T *higher = newNode->higher_child;                        \
-    if (!keep_subtree)  /* newNode isolation */                             \
-    {                                                                       \
-      newNode->lower_child = newNode->higher_child = 0;                     \
-      newNode->lowest_child = newNode->highest_child = newNode;             \
-      newNode->size = newNode->depth = 1;                                   \
-    }                                                                       \
-                                                                            \
-    /* Add newNode in the tree */                                           \
-    int ret = 0;                                                            \
-    int comp = BNODE_CMP_KEY_##K##_##T (&newNode, &self, &lt);              \
-    if (comp > 0)                                                           \
-    {                                                                       \
-      if (self->higher_child)                                               \
-        ret = BNODE_TREE_ADD_##K##_##T (self->higher_child, newNode, lt, keep_subtree);   \
-      else                                                                  \
-      {                                                                     \
-        newNode->parent = self;                                             \
-        self->higher_child = newNode;                                       \
-        ret = newNode->size;                                                \
-      }                                                                     \
-      if (ret) /* retrace */                                                \
-      {                                                                     \
-        self->size += ret;                                                  \
-        if (!self->lower_child || self->lower_child->depth < self->higher_child->depth + 1) \
-          self->depth = self->higher_child->depth + 1;                      \
-        self->highest_child = self->higher_child->highest_child;            \
-      }                                                                     \
-    }                                                                       \
-    else if (comp == 0 && self->unique)                                     \
-    {                                                                       \
-      assert (!keep_subtree);                                               \
-      BNODE_DESTROY_##K##_##T (newNode);                                    \
-      ret = 0;                                                              \
-    }                                                                       \
-    else /* comp <= 0 && (comp != 0 || !self->unique)                    */ \
-    {                                                                       \
-      if (self->lower_child)                                                \
-        ret = BNODE_TREE_ADD_##K##_##T (self->lower_child, newNode, lt, keep_subtree);    \
-      else                                                                  \
-      {                                                                     \
-        newNode->parent = self;                                             \
-        self->lower_child = newNode;                                        \
-        ret = newNode->size;                                                \
-      }                                                                     \
-      if (ret) /* retrace */                                                \
-      {                                                                     \
-        self->size += ret;                                                  \
-        if (!self->higher_child || self->higher_child->depth < self->lower_child->depth + 1) \
-          self->depth = self->lower_child->depth + 1;                       \
-        self->lowest_child = self->lower_child->lowest_child;               \
-      }                                                                     \
-    }                                                                       \
-                                                                            \
-    if (!keep_subtree)                                                      \
-    {                                                                       \
-      /* Add leaves of newNode in the tree */                               \
-      /* (allow to add a tree in a tree) */                                 \
-      if (lower)                                                            \
-      {                                                                     \
-        lower->parent = 0;                                                  \
-        ret += BNODE_TREE_ADD_##K##_##T(self, lower, lt, keep_subtree);     \
-      }                                                                     \
-      if (higher)                                                           \
-      {                                                                     \
-        higher->parent = 0;                                                 \
-        ret += BNODE_TREE_ADD_##K##_##T(self, higher, lt, keep_subtree);    \
-      }                                                                     \
-    }                                                                       \
-    else if (0)  /* TODO: check this */                                     \
-      ret += (lower ? lower->size : 0) + (higher ? higher->size : 0);       \
-                                                                            \
-    return ret;                                                             \
-  }                                                                         \
+  static int BNODE_TREE_ADD_##K##_##T(BNODE_##K##_##T **self,             \
+                                      BNODE_##K##_##T *newNode,           \
+                                      int (*lt)(K, K))                    \
+  {                                                                       \
+    if (newNode->parent || newNode == *self)                              \
+    {                                                                     \
+      errno = EINVAL;                                                     \
+      return EXIT_FAILURE;                                                \
+    }                                                                     \
+                                                                          \
+    BNODE_##K##_##T *lower = newNode->lower_child;                        \
+    BNODE_##K##_##T *higher = newNode->higher_child;                      \
+                                                                          \
+    /* newNode isolation */                                               \
+    newNode->lower_child = newNode->higher_child = 0;                     \
+    newNode->lowest_child = newNode->highest_child = newNode;             \
+    newNode->size = newNode->depth = 1;                                   \
+                                                                          \
+    /* Add newNode in the tree */                                         \
+    int ret = 0;                                                          \
+    /* Go to leaf */                                                      \
+    BNODE_##K##_##T *leaf = *self;                                        \
+    while (1)                                                             \
+    {                                                                     \
+      int comp = BNODE_CMP_KEY_##K##_##T (&newNode, &leaf, &lt);           \
+      if (comp > 0)                                                       \
+      {                                                                   \
+        if (leaf->higher_child)                                           \
+        {                                                                 \
+          leaf = leaf->higher_child;                                      \
+          continue;                                                       \
+        }                                                                 \
+        else                                                              \
+        {                                                                 \
+          leaf->higher_child = newNode;                                   \
+          newNode->parent = leaf;                                         \
+          ret = newNode->size;                                            \
+          break;                                                          \
+        }                                                                 \
+      }                                                                   \
+      else if (comp == 0 && (*self)->unique)                              \
+      {                                                                   \
+        BNODE_DESTROY_##K##_##T (newNode); /* not inserted => destroyed */\
+        ret = 0;                                                          \
+        break;                                                            \
+      }                                                                   \
+      else /* comp <= 0 && (comp != 0 || !self->unique)                */ \
+      {                                                                   \
+        if (leaf->lower_child)                                            \
+        {                                                                 \
+          leaf = leaf->lower_child;                                       \
+          continue;                                                       \
+        }                                                                 \
+        else                                                              \
+        {                                                                 \
+          leaf->lower_child = newNode;                                    \
+          newNode->parent = leaf;                                         \
+          ret = newNode->size;                                            \
+          break;                                                          \
+        }                                                                 \
+      }                                                                   \
+    }                                                                     \
+                                                                          \
+    if (ret)                                                              \
+    {                                                                     \
+      /* Retrace the tree up from the modified node to the root */        \
+      BNODE_RETRACE_##K##_##T (newNode->parent, 0);                       \
+                                                                          \
+      /* Self-balancing */                                                \
+      BNODE_##K##_##T *new_root = BNODE_BALANCE_##K##_##T (newNode->parent);\
+      if (new_root)                                                       \
+        *self = new_root;                                                 \
+    }                                                                     \
+                                                                          \
+    /* Add leaves of newNode in the tree */                               \
+    /* (allow to add a tree in a tree) */                                 \
+    if (lower)                                                            \
+    {                                                                     \
+      lower->parent = 0;                                                  \
+      ret += BNODE_TREE_ADD_##K##_##T(self, lower, lt);                   \
+    }                                                                     \
+    if (higher)                                                           \
+    {                                                                     \
+      higher->parent = 0;                                                 \
+      ret += BNODE_TREE_ADD_##K##_##T(self, higher, lt);                  \
+    }                                                                     \
+                                                                          \
+    return ret;                                                           \
+  }                                                                       \
 \
   static BNODE_##K##_##T *BNODE_REMOVE_##K##_##T( BNODE_##K##_##T *node ) \
   {                                                                       \
@@ -584,7 +718,7 @@
       else                                                                \
         new_root = 0;                                                     \
                                                                           \
-      /* Remove 'node' from the tree */                                   \
+      /* Update links to nodes's parent and remove 'node' from the tree */\
       if (node->parent)                                                   \
       {                                                                   \
         if (node->parent->lower_child == node)                            \
@@ -599,10 +733,10 @@
       invalidated = node->parent;                                         \
     }                                                                     \
                                                                           \
-    /* Retrace the tree up from the invalidated node */                   \
-    BNODE_RETRACE_##K##_##T (invalidated);                                \
+    /* Retrace the tree up from the invalidated node to the root */       \
+    BNODE_RETRACE_##K##_##T (invalidated, 0);                             \
                                                                           \
-    /* Isolate 'node' to make it destroyable */                           \
+    /* Isolate 'node' to make it destroyable or movable */                \
     node->parent = 0;                                                     \
     node->lower_child = node->higher_child = 0;                           \
     node->lowest_child = node->highest_child = node;                      \

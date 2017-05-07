@@ -100,11 +100,10 @@
     }                                                                      \
                                                                            \
     K key = COPY_##K ? COPY_##K(*BNODE_KEY (node)) : *BNODE_KEY (node);    \
-                                                                           \
     BNODE_##K##_##T *ret =                                                 \
            !self->root ?                                                   \
              self->root = node :                                           \
-             BNODE_TREE_ADD(self->root, node, self->LessThanKey) ?         \
+             BNODE_TREE_ADD_##K##_##T(&(self->root), node, self->LessThanKey) ?         \
                node : 0;                                                   \
                                                                            \
     if (DESTROY_##K) DESTROY_##K (key);                                    \

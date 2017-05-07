@@ -60,8 +60,8 @@ typedef enum {
                                       T value, int (*lt)(T, T), BNODE_DIRECTION direction );         \
     struct _BNODE_##K##_##T *(*Previous) ( struct _BNODE_##K##_##T *n );                             \
     struct _BNODE_##K##_##T *(*Next) ( struct _BNODE_##K##_##T *n );                                 \
-    int (*Add) ( struct _BNODE_##K##_##T *na, struct _BNODE_##K##_##T *nb, int (*lt)(K, K), int keep_subtree );       \
-    int (*Insert) ( struct _BNODE_##K##_##T *self, struct _BNODE_##K##_##T *here, struct _BNODE_##K##_##T *newNode);  \
+    int (*Add) ( struct _BNODE_##K##_##T **self, struct _BNODE_##K##_##T *node, int (*lt)(K, K) );   \
+    int (*Insert) ( struct _BNODE_##K##_##T **self, struct _BNODE_##K##_##T *here, struct _BNODE_##K##_##T *newNode); \
     struct _BNODE_##K##_##T *(*Index) ( struct _BNODE_##K##_##T *n, size_t index);                   \
     struct _BNODE_##K##_##T *(*Key) ( struct _BNODE_##K##_##T *n, K key, int (*lt)(K, K));           \
     int (*Traverse) ( struct _BNODE_##K##_##T *tree,                                                 \
@@ -271,10 +271,10 @@ typedef enum {
 #define BNODE_FIND_VALUE_REVERSE(...) VFUNC(BNODE_FIND_VALUE_REVERSE, __VA_ARGS__)
 
 #define BNODE_TREE_ADD(tree, n, lt) \
-  ((tree)->vtable->Add((tree), (n), (lt), 0))
+  ((tree)->vtable->Add(&(tree), (n), (lt)))
 
 #define BNODE_TREE_INSERT_BEFORE(tree, here, new_node) \
-  ((tree)->vtable->Insert((tree), (here), (new_node)))
+  ((tree)->vtable->Insert(&(tree), (here), (new_node)))
 
 #define BNODE_INDEX(tree, i) \
   ((tree)->vtable->Index((tree), (i)))

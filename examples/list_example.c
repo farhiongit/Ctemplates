@@ -82,6 +82,16 @@ main (void)
   // A predefined 'less than' operator is used here but could have been declaraed as a second argument to LIST_CREATE.
   LIST (T) * mylist = LIST_CREATE (T);
 
+  LIST_APPEND (mylist, "A");
+  LIST_APPEND (mylist, "B");
+  LIST_APPEND (mylist, "C");
+  LIST_APPEND (mylist, "D");
+  LIST_APPEND (mylist, "E");
+  LIST_APPEND (mylist, "F");
+  LIST_APPEND (mylist, "G");
+  list_print (mylist);
+  LIST_CLEAR (mylist);
+
   // Inserts elements in the list
   LIST_INSERT (mylist, LIST_END (mylist), "aaa");       // aaa
   LIST_INSERT (mylist, LIST_BEGIN (mylist), "bbbb");    // bbbb;aaa
