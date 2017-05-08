@@ -500,11 +500,6 @@ Rotate list to left.
 Reverse [{4}, {1000}[.
 {81}
 {72}
-ERROR: Missing less than operator for type 'Range'.
-       Use SET_LESS_THAN_OPERATOR(Range, operator),
-       where operator is a function defined as:
-       int operator(Range a, Range b) { return a < b ; }.
-ABORT  
 {75}
 {78}
 {60}
@@ -618,27 +613,9 @@ Clear.
 Size 0
 Is empty = 1
 Destroy.
--------- will abort here:
-INFO:  Signal 6 trapped and ignored.
-       Execution continued.
-ERROR: Missing less than operator for type 'Range'.
-       Use SET_LESS_THAN_OPERATOR(Range, operator),
-       where operator is a function defined as:
-       int operator(Range a, Range b) { return a < b ; }.
-ABORT  
-INFO:  Signal 6 trapped and ignored.
-       Execution continued.
-ERROR: Missing less than operator for type 'Range'.
-       Use SET_LESS_THAN_OPERATOR(Range, operator),
-       where operator is a function defined as:
-       int operator(Range a, Range b) { return a < b ; }.
-ABORT  
-INFO:  Signal 6 trapped and ignored.
-       Execution continued.
-ERROR: Missing less than operator for type 'Range'.
-       Use SET_LESS_THAN_OPERATOR(Range, operator),
-       where operator is a function defined as:
-       int operator(Range a, Range b) { return a < b ; }.
-ABORT  
-INFO:  Signal 6 trapped and ignored.
-       Execution continued.
+{ 2, 2 }
+{ 3, 3 }
+{ 1, 1 }
+{ 1, 1 }
+{ 2, 2 }
+{ 3, 3 }

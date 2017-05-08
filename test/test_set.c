@@ -17,12 +17,15 @@ typedef struct
 /* *INDENT-OFF* */
 DEFINE_OPERATORS (int)
 DEFINE_OPERATORS (pchar)
+DEFINE_OPERATORS (Range)
 
 DECLARE_SET (int)
 DECLARE_SET (pchar)
+DECLARE_SET (Range)
 
 DEFINE_SET (int)
 DEFINE_SET (pchar)
+DEFINE_SET (Range)
 /* *INDENT-ON* */
 
 static int
@@ -174,4 +177,18 @@ main (void)
 
   SET (pchar) * st = SET_CREATE (pchar);
   SET_DESTROY (st);
+
+  // Using default (kind of memcmp) less than operator.
+  SET (Range) * sp = SET_CREATE (Range);
+  Range p1 = { 1, 1 };
+  Range p2 = { 2, 2 };
+  Range p3 = { 3, 3 };
+  SET_INSERT (sp, p1);
+  SET_INSERT (sp, p3);
+  SET_INSERT (sp, p2);
+
+  for (SNODE(Range) * p = SET_BEGIN (sp) ; p != SET_END (sp) ; p = SNODE_NEXT (p))
+    printf ("{ %i, %i }\n", SNODE_KEY (p)->min, SNODE_KEY (p)->max);
+
+  SET_DESTROY (sp);
 }

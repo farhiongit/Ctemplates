@@ -298,7 +298,11 @@ main (void)
   LIST_INSERT (lp, LIST_BEGIN (lp), p3);
   LIST_INSERT (lp, LIST_BEGIN (lp), p2);
 
-  printf ("-------- will abort here:\n");
+  // Using default (kind of memcmp) less than operator.
+  for (LNODE(Range) * p = LIST_BEGIN (lp) ; p != LIST_END (lp) ; p = LNODE_NEXT (p))
+    printf ("{ %i, %i }\n", BNODE_VALUE (p)->min, BNODE_VALUE (p)->max);
   LIST_SORT (lp);
+  for (LNODE(Range) * p = LIST_BEGIN (lp) ; p != LIST_END (lp) ; p = LNODE_NEXT (p))
+    printf ("{ %i, %i }\n", BNODE_VALUE (p)->min, BNODE_VALUE (p)->max);
   LIST_DESTROY (lp);
 }

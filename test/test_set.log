@@ -158,3 +158,6 @@ Clear.
 Size 0
 Is empty = 1
 Destroy.
+{ 1, 1 }
+{ 2, 2 }
+{ 3, 3 }

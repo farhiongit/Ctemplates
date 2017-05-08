@@ -316,8 +316,8 @@
              lt (a,   b) :                                        \
              LESS_THAN_##K ?                                      \
              LESS_THAN_##K (a,   b) :                             \
-             (size_t)0 != (size_t)(LESS_THAN_DEFAULT (K, a, b)) ? \
-             LESS_THAN_DEFAULT (K, a, b)(a,   b) :                \
+             (size_t)0 != (size_t)(LESS_THAN_DEFAULT (K)) ?       \
+             LESS_THAN_DEFAULT (K)(a,   b) :                      \
              (fprintf (stderr, "%s", "ERROR: " "Missing less than operator for type '" #K "'.\n"          \
                                      "       " "Use SET_LESS_THAN_OPERATOR(" #K ", operator),\n"          \
                                      "       " "where operator is a function defined as:\n"               \
@@ -331,8 +331,8 @@
              lt (a,   b) :                                        \
              LESS_THAN_##T ?                                      \
              LESS_THAN_##T (a,   b) :                             \
-             (size_t)0 != (size_t)(LESS_THAN_DEFAULT (T, a, b)) ? \
-             LESS_THAN_DEFAULT (T, a, b)(a,   b) :                \
+             (size_t)0 != (size_t)(LESS_THAN_DEFAULT (T)) ?       \
+             LESS_THAN_DEFAULT (T)(a,   b) :                      \
              (fprintf (stderr, "%s", "ERROR: " "Missing less than operator for type '" #T "'.\n"          \
                                      "       " "Use SET_LESS_THAN_OPERATOR(" #T ", operator),\n"          \
                                      "       " "where operator is a function defined as:\n"               \

@@ -52,7 +52,24 @@ __str_free__ (char* v)
 \
   static TYPE (*COPY_##TYPE) (TYPE) = _Generic(*(TYPE*)0, char*:__str_copy__, default:0);    \
   static void (*DESTROY_##TYPE) (TYPE) = _Generic(*(TYPE*)0, char*:__str_free__, default:0); \
-  static int (*LESS_THAN_##TYPE) (TYPE, TYPE) = 0;
+  static int (*LESS_THAN_##TYPE) (TYPE, TYPE) = 0;        \
+\
+  static int LESS_THAN_##TYPE##_DEFAULT (TYPE a, TYPE b)  \
+  {                                            \
+    const size_t size = sizeof (TYPE);         \
+    unsigned char *pa = (unsigned char *)(&a); \
+    unsigned char *pb = (unsigned char *)(&b); \
+                                               \
+    for (size_t i = 0 ; i < size ; i++)        \
+      if (pa[i] < pb[i])                       \
+        return 1;                              \
+      else if (pa[i] == pb[i])                 \
+        continue;                              \
+      else                                     \
+        break;                                 \
+                                               \
+    return 0;                                  \
+  }                                            \
 
 /// Declares a destructor associated to type TYPE
 /// @param [in] TYPE typename
@@ -124,7 +141,7 @@ __str_free__ (char* v)
   static int __ltldouble(long double a, long double b) { return a < b ; }
   static int __ltstring(const char* a, const char* b) { return strcoll (a, b) < 0; }
 
-#define LESS_THAN_DEFAULT(TYPE,a,b) _Generic((a), \
+#define LESS_THAN_DEFAULT(TYPE) _Generic(*(TYPE *)0, \
   char:               __ltchar,                   \
   unsigned char:      __ltuchar,                  \
   short:              __ltshort,                  \
@@ -139,10 +156,10 @@ __str_free__ (char* v)
   double:             __ltdouble,                 \
   long double:        __ltldouble,                \
   char*:              __ltstring,                 \
-  default:            (int (*)(TYPE, TYPE))(0)    \
+  default:            LESS_THAN_##TYPE##_DEFAULT  \
   )
 
-#define PRINT_FORMAT(a) _Generic((a), \
+#define PRINT_FORMAT(TYPE) _Generic(*(TYPE *)0, \
   char:               "%c",           \
   unsigned char:      "%c",           \
   short:              "%hi",          \
