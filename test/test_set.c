@@ -186,6 +186,7 @@ main (void)
   SET_INSERT (sp, p1);
   SET_INSERT (sp, p3);
   SET_INSERT (sp, p2);
+  SET_INSERT (sp, p3);
 
   for (SNODE(Range) * p = SET_BEGIN (sp) ; p != SET_END (sp) ; p = SNODE_NEXT (p))
     printf ("{ %i, %i }\n", SNODE_KEY (p)->min, SNODE_KEY (p)->max);
