@@ -70,7 +70,10 @@ skim (LNODE (int) * n, void *arg)
     LIST_REMOVE (li, n);
   }
   else
-    printf ("%i;", *LNODE_VALUE (LNODE_ASSIGN (n, *LNODE_VALUE (n) + 10)));
+  {
+    LNODE_ASSIGN (n, *LNODE_VALUE (n) + 10);
+    printf ("%i;", *LNODE_VALUE (n));
+  }
 
   return EXIT_SUCCESS;
 }
@@ -102,7 +105,7 @@ main (void)
   list_print (mylist);
 
   // Create and populate a second list
-  LIST (T) * caps = LIST_CREATE (T, Trlt);
+  LIST (T) * caps = LIST_CREATE (T);
   LIST_INSERT (caps, LIST_END (caps), "YYYY");
   LIST_INSERT (caps, LIST_END (caps), "ZZZ");
   list_print (caps);
@@ -131,9 +134,8 @@ main (void)
   LIST_SORT (mylist);
   list_print (mylist);
 
-  // Sort: use a user defined less than operator tied to instanciation of list 'mylist'
-  LIST_SET_LESS_THAN_OPERATOR (mylist, Trlt);
-  LIST_SORT (mylist);
+  // Sort: use a user defined less than operator
+  LIST_SORT (mylist, Trlt);
   list_print (mylist);
 
   // Empty list

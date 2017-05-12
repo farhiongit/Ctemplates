@@ -49,119 +49,313 @@ If collections are intended to be used in a library,
 - Definitions of operators and templates should appear in library source file.
 
 ## Lists
-### Container
-#### Type
+This container represents a strongly typed list of objects that can be accessed by index.
+### Type
+LIST(*T*), where *T* denotes the type contained in the list.
 
-### Element
-#### Type
-#### Get value
-#### Assign value
-#### Move forward
-#### Move backward
+The type is denoted as *L* below.
+### Elements
+Elements are place-holders of values of type *T*.
+Thoses eleemnts allow to navigate through the container.
+#### Element type
+LNODE(*T*)
+
+The type is denoted as *N* below.
+#### Get value: *T* \*LNODE_VALUE(*N* \*n)
+The returned value should not be freed by the caller.
+#### Assign value: void LNODE_ASSIGN(*N* \*n, *T* v)
+A *copy* of T is assigned to the element.
+#### Move forward: *N* \*LNODE_NEXT(*N* \*n)
+Returnd a pointer to the next element in the collection or LIST_END(*L*). Compelexity: O(*log* N)
+#### Move backward: *N* \*LNODE_PREVIOUS(*N* \*n)
+Returnd a pointer to the previous elemnt in the collection or LIST_END(*L*). Compelexity: O(*log* N)
 
 ### Functions
 #### `LIST_CREATE`
+##### **Syntax:** *L* \*LIST-CREATE(*T*)
+##### **Description:** Creates a new list. This list must be destroyed by LIST_DESTROY after usage.
+##### **Return value:** A pointer to the created list, or 0 in case of memory allocation error.
+##### **Errors:** ENOMEM Out of memory.
+##### **Complexity:** O(1)
 
 #### `LIST_DESTROY`
+##### **Syntax:** void LIST_DESTROY(*L* \*l)
+##### **Description:** Desallocate all elements in the list and desallocate the list. The destructor of type *T* is called for each element of the list. The list must not be used afterwards.
+##### **Return value:** None
+##### **Errors:** None
+##### **Complexity:** O(N)
 
 #### `LIST_INSERT`
+##### **Syntax:** *N* \*LIST_INSERT(*L* \*l, *N* \*n, *T* v)
+##### **Description:** Inserts an element containing the value v before the element n where n is an element of the list l or LIST_END(l). The new element is inserted at the end of the list if n is equal to LIST_END(l).
+##### **Return value:** A pointer to the created element in case of success, or 0 otherwise.
+##### **Errors:** EINVAL if n is not an element of the list l. ENOMEM in case of memory allocation error.
+##### **Complexity:** O(*1og* N)
 
 #### `LIST_APPEND`
+##### **Syntax:** *N* \*LIST_APPEND(*L* \*l, *T* v)
+##### **Description:** Inserts an element containing the value v at the end of the list. Behaves as well as LIST_INSERT(l, LIST_END(l), v)
+##### **Return value:** A pointer to the created element in case of success, or 0 otherwise.
+##### **Errors:** ENOMEM in case of memory allocation error.
+##### **Complexity:** O(*1og* N)
 
 #### `LIST_REMOVE`
+##### **Syntax:** int LIST_REMOVE(*L* \*l, *N* \*n)
+##### **Description:** Removes the element n from the list l. The value hold by the eleemnt is destroyed. n should not be dereferenced afterwards.
+##### **Return value:** EXIT_SUCCESS on success, EXIT_FAILURE otherwise.
+##### **Errors:** EINVAL if n is not an element of the list l.
+##### **Complexity:** O(1)
 
 #### `LIST_CLEAR`
+##### **Syntax:** void LIST_CLEAR(*L* \*l)
+##### **Description:** Desallocate all elements in the list. The destructor of type *T* is called for each element of the list. The list can still be used afterwards.
+##### **Return value:** None
+##### **Errors:** None
+##### **Complexity:** O(N)
 
 #### `LIST_SIZE`
+##### **Syntax:** size_t LIST_SIZE(*L* \*l)
+##### **Description:** Returns the number of elements in list l.
+##### **Return value:** The number of elements in list l
+##### **Errors:** None
+##### **Complexity:** O(1)
 
 #### `LIST_IS_EMPTY`
+##### **Syntax:** int LIST_IS_EMPTY(*L* \*l)
+##### **Description:** Indicates if the list is empty.
+##### **Return value:** 1 if the list is empty, 0 otherwise
+##### **Errors:** None
+##### **Complexity:** O(1)
 
 #### `LIST_TRAVERSE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(N)
 
 #### `LIST_FOR_EACH`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(N *log* N)
 
 #### `LIST_BEGIN`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(1)
 
 #### `LIST_LAST`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(1)
 
 #### `LIST_END`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
 One past the last element of the list.
+##### **Errors:** 
+##### **Complexity:** O(1)
 
 #### `LIST_INDEX`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(*1og* N)
 
 #### `LIST_FIND`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(N *log* N)
 
 #### `LIST_MOVE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(*1og* N)
 
 #### `LIST_SWAP`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(*1og* N)
 
 #### `LIST_REVERSE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(N *1og* N)
 
 #### `LIST_ROTATE_LEFT` and `LIST_ROTATE_RIGHT`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(*1og* N)
 
 #### `LIST_SORT`
-
-#### `LIST_SET_LESS_THAN_OPERATOR`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** Complexity of `qsort`
 
 #### `LIST_UNIQUE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** O(N *1og* N)
 
 ### Example
-Look at a compplete [example](examples/list_example.c).
+Look at a complete [example](examples/list_example.c).
 
 ## Sets
-### Container
-#### Type
-#### Unicity
+This container represents a collection of objects that is maintained in sorted order.
+### Type
+### Unicity
 
-### Element
-#### Type
+### Elements
+#### Element type
 #### Get value
 #### Move forward
 #### Move backward
 
 ### Functions
 #### `SET_CREATE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_DESTROY`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_INSERT`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_REMOVE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_CLEAR`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_SIZE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_IS_EMPTY`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_TRAVERSE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_FOR_EACH`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_BEGIN`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_LAST`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_END`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_KEY`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_INDEX`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_FIND`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `SET_MOVE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 ### Example
-Look at a compplete [example](examples/set_example.c).
+Look at a complete [example](examples/set_example.c).
 
 ## Maps
-### Container
-#### Type
-#### Unicity
+This container represents a collection of keys and values that is maintained in sorted order by keys.
+### Type
+### Unicity
 
-### Element
-#### Type
+### Elements
+#### Element type
 #### Get key
 #### Get value
 #### Assign value
@@ -170,49 +364,142 @@ Look at a compplete [example](examples/set_example.c).
 
 ### Functions
 #### `MAP_CREATE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_DESTROY`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_INSERT`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
+
 
 #### `MAP_REMOVE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_CLEAR`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_SIZE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_IS_EMPTY`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_TRAVERSE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_FOR_EACH`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_BEGIN`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_LAST`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_END`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_KEY`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_INDEX`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_FIND_KEY`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_FIND_VALUE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_MOVE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 #### `MAP_SET_VALUE`
+##### **Syntax:** 
+##### **Description:** 
+##### **Return value:** 
+##### **Errors:** 
+##### **Complexity:** 
 
 ### Example
-Look at a compplete [example](examples/map_example.c).
+Look at a complete [example](examples/map_example.c).
 
 ## Memory managment
 _Optional_ operators can be assigned to types managed by collections:
 
 - `SET_DESTRUCTOR(type, destructor)` where `destructor` is a pointer to function with type `void (*destructor) (type arg)`
 - `SET_COPY_CONSTRUCTOR(type, constructor)` where `constructor` is a pointer to function with type `type (*constructor) (type arg)`
+
+Default creators et destructors are applied for basic types ans strings (`char *`).
 
 ## Ordering and equality
 _Optional_ operators can be assigned to types managed by collections:

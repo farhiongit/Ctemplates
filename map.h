@@ -45,7 +45,6 @@
   {                                                                                     \
     BNODE_##K##_##T *(*CreateNode)( K key, int unique );                                \
     void (*Clear) ( struct _MAP_##K##_##T *self );                                      \
-    void (*Destroy) ( struct _MAP_##K##_##T *self );                                    \
     BNODE_##K##_##T *(*Insert) ( struct _MAP_##K##_##T *self, BNODE_##K##_##T *node );  \
     int (*Remove) ( struct _MAP_##K##_##T *self, BNODE_##K##_##T *node );               \
     int (*Move) ( struct _MAP_##K##_##T *to, struct _MAP_##K##_##T *from, BNODE_##K##_##T *herefrom ); \
@@ -96,7 +95,7 @@
 /// Removes (deallocates) a collection and all its nodes.
 /// @param [in] listSelf Pointer to collection.
 #define MAP_DESTROY( listSelf ) \
-  do { (listSelf)->vtable->Destroy ( (listSelf) ); } while(0)
+  do { (listSelf)->vtable->Clear ( (listSelf) ); free ((listSelf)); } while(0)
 
 /// Removes (deallocates) all the nodes from a collection.
 /// @param [in] listSelf Pointer to collection.
@@ -132,7 +131,7 @@
 /// @param [in] listSelf pointer to map.
 /// @returns the number of elements in the map.
 #define MAP_SIZE( listSelf ) \
-  ((listSelf)->root ? BNODE_SIZE ((listSelf)->root) : 0)
+  ((listSelf)->root ? BNODE_SIZE ((listSelf)->root) : (size_t)0)
 
 /// Indicates a map is empty.
 /// @param [in] listSelf pointer to map.

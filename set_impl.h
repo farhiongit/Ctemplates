@@ -46,7 +46,6 @@ DEFINE_OPERATORS(__set_dummy__)
   DEFINE_BNODE( K, __set_dummy__ )                       \
 \
   static void SET_CLEAR_##K ( SET_##K *self );                                                 \
-  static void SET_DESTROY_##K ( SET_##K *self );                                               \
   static BNODE_##K##___set_dummy__ *SET_INSERT_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node ); \
   static int SET_REMOVE_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node );                \
   static int SET_MOVE_##K ( SET_##K *to, SET_##K *from, BNODE_##K##___set_dummy__ *herefrom ); \
@@ -56,7 +55,6 @@ DEFINE_OPERATORS(__set_dummy__)
   {                                                  \
     BNODE_CREATE_##K##___set_dummy__,                \
     SET_CLEAR_##K,                                   \
-    SET_DESTROY_##K,                                 \
     SET_INSERT_##K,                                  \
     SET_REMOVE_##K,                                  \
     SET_MOVE_##K,                                    \
@@ -170,12 +168,6 @@ DEFINE_OPERATORS(__set_dummy__)
       BNODE_DESTROY_##K##___set_dummy__(self->root);  \
     self->root = 0;                                   \
   }                                                   \
-\
-  static void SET_DESTROY_##K ( SET_##K *self )   \
-  {                                               \
-    SET_CLEAR_##K (self);                         \
-    free( self );                                 \
-  }                                               \
 \
   static BNODE_##K##___set_dummy__ *SET_END_##K ( SET_##K *self ) \
   {                                                             \

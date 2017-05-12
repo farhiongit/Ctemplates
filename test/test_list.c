@@ -175,7 +175,7 @@ main (void)
        na = BNODE_NEXT (na))
     printf ("{%i} found *.\n", *BNODE_VALUE (na));
 
-  for (LNODE (myint) * na = LIST_BEGIN (la); na && (na = LIST_FIND (la, na, 81)); na = BNODE_NEXT (na))
+  for (LNODE (myint) * na = LIST_BEGIN (la); na && (na = LIST_FIND (la, na, 81, 0)); na = BNODE_NEXT (na))
     printf ("{%i} found **.\n", *BNODE_VALUE (na));
 
   for (LNODE (myint) * na = LIST_LAST (la); na && (na = BNODE_FIND_VALUE_REVERSE (na, 54)); na = BNODE_PREVIOUS (na))

@@ -46,7 +46,6 @@ DEFINE_OPERATORS(__list_dummy__)
   DEFINE_BNODE(__list_dummy__, TYPE)                     \
 \
   static void LIST_CLEAR_##TYPE ( LIST_##TYPE *self );                                                               \
-  static void LIST_DESTROY_##TYPE ( LIST_##TYPE *self );                                                             \
   static BNODE___list_dummy___##TYPE *LIST_INSERT_##TYPE ( LIST_##TYPE *self, BNODE___list_dummy___##TYPE *here, BNODE___list_dummy___##TYPE *node );             \
   static int LIST_REMOVE_##TYPE ( LIST_##TYPE *self, BNODE___list_dummy___##TYPE *node );                            \
   static size_t LIST_UNIQUE_##TYPE ( LIST_##TYPE *self, int (*less_than) (TYPE, TYPE));                              \
@@ -62,7 +61,6 @@ DEFINE_OPERATORS(__list_dummy__)
   {                                                      \
     BNODE_CREATE___list_dummy___##TYPE,                  \
     LIST_CLEAR_##TYPE,                                   \
-    LIST_DESTROY_##TYPE,                                 \
     LIST_INSERT_##TYPE,                                  \
     LIST_REMOVE_##TYPE,                                  \
     LIST_UNIQUE_##TYPE,                                  \
@@ -73,14 +71,13 @@ DEFINE_OPERATORS(__list_dummy__)
     LIST_END_##TYPE,                                     \
   };                                                     \
 \
-  LIST_##TYPE *LIST_CREATE_##TYPE( int (*less_than_operator) (TYPE, TYPE) )   \
+  LIST_##TYPE *LIST_CREATE_##TYPE( void )   \
   {                                                                           \
     LIST_##TYPE *linkedList = malloc( sizeof( *linkedList ) );                \
     if (!linkedList)                                                          \
       return 0;                                                               \
                                                                               \
     linkedList->vtable = &LIST_VTABLE_##TYPE;                                 \
-    linkedList->LessThanValue = less_than_operator;                           \
     linkedList->tree_locked = 0;                                              \
     linkedList->root = 0;                                                     \
     linkedList->null = &LIST_NULL_##TYPE;                                     \
@@ -194,18 +191,10 @@ DEFINE_OPERATORS(__list_dummy__)
     self->root = 0;                                    \
   }                                                    \
 \
-  static void LIST_DESTROY_##TYPE ( LIST_##TYPE *self )  \
-  {                                    \
-    LIST_CLEAR_##TYPE (self);          \
-    free( self );                      \
-  }                                    \
-\
   static size_t LIST_UNIQUE_##TYPE ( LIST_##TYPE *self, int (*less_than) (TYPE, TYPE))  \
   {                                                                                           \
     if (LIST_SIZE (self) < 2)                                                                 \
       return 0;                                                                               \
-    if (!less_than)                                                                           \
-      less_than = self->LessThanValue;                                                        \
                                                                                               \
     size_t ret = 0;                                                                           \
     LNODE(TYPE) *next;                                                                        \
@@ -238,8 +227,6 @@ DEFINE_OPERATORS(__list_dummy__)
       index++;                                                                                \
     }                                                                                         \
                                                                                               \
-    if (!less_than)                                                                           \
-      less_than = self->LessThanValue;                                                        \
     qsort_r (array, index, sizeof (*array), BNODE_CMP_VALUE___list_dummy___##TYPE, &less_than);   \
                                                                                               \
     for (size_t i = 0 ; i < index ; i++)                                                      \

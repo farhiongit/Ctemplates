@@ -44,7 +44,6 @@
   DEFINE_BNODE(K, T)                                    \
 \
   static void MAP_CLEAR_##K##_##T ( MAP_##K##_##T *self );                                             \
-  static void MAP_DESTROY_##K##_##T ( MAP_##K##_##T *self );                                           \
   static BNODE_##K##_##T *MAP_INSERT_##K##_##T ( MAP_##K##_##T *self, BNODE_##K##_##T *node );         \
   static int MAP_REMOVE_##K##_##T ( MAP_##K##_##T *self, BNODE_##K##_##T *node );                      \
   static int MAP_MOVE_##K##_##T ( MAP_##K##_##T *to, MAP_##K##_##T *from, BNODE_##K##_##T *herefrom ); \
@@ -57,7 +56,6 @@
   {                                                        \
     BNODE_CREATE_##K##_##T,                                \
     MAP_CLEAR_##K##_##T,                                   \
-    MAP_DESTROY_##K##_##T,                                 \
     MAP_INSERT_##K##_##T,                                  \
     MAP_REMOVE_##K##_##T,                                  \
     MAP_MOVE_##K##_##T,                                    \
@@ -185,12 +183,6 @@
     if (self->root)                               \
       BNODE_DESTROY_##K##_##T(self->root);        \
     self->root = 0;                               \
-  }                                               \
-\
-  static void MAP_DESTROY_##K##_##T ( MAP_##K##_##T *self )  \
-  {                                               \
-    MAP_CLEAR_##K##_##T (self);                   \
-    free( self );                                 \
   }                                               \
 \
   static BNODE_##K##_##T *MAP_END_##K##_##T ( MAP_##K##_##T *self ) \

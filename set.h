@@ -47,7 +47,6 @@ typedef int __set_dummy__ ;
   {                                                                                                     \
     BNODE_##K##___set_dummy__ *(*CreateNode)( K key, int unique );                                      \
     void (*Clear) ( struct _SET_##K *self );                                                            \
-    void (*Destroy) ( struct _SET_##K *self );                                                          \
     BNODE_##K##___set_dummy__ *(*Insert) ( struct _SET_##K *self, BNODE_##K##___set_dummy__ *node );    \
     int (*Remove) ( struct _SET_##K *self, BNODE_##K##___set_dummy__ *node );                           \
     int (*Move) ( struct _SET_##K *to, struct _SET_##K *from, BNODE_##K##___set_dummy__ *herefrom );    \
@@ -94,7 +93,7 @@ typedef int __set_dummy__ ;
 /// Removes (deallocates) a collection and all its nodes.
 /// @param [in] listSelf Pointer to collection.
 #define SET_DESTROY( listSelf ) \
-  do { (listSelf)->vtable->Destroy ( (listSelf) ); } while(0)
+  do { (listSelf)->vtable->Clear ( (listSelf) ); free ((listSelf)); } while(0)
 
 /// Removes (deallocates) all the nodes from a collection.
 /// @param [in] listSelf Pointer to collection.
@@ -130,7 +129,7 @@ typedef int __set_dummy__ ;
 /// @param [in] listSelf pointer to map.
 /// @returns the number of elements in the map.
 #define SET_SIZE( listSelf ) \
-  ((listSelf)->root ? BNODE_SIZE ((listSelf)->root) : 0)
+  ((listSelf)->root ? BNODE_SIZE ((listSelf)->root) : (size_t)0)
 
 /// Indicates a map is empty.
 /// @param [in] listSelf pointer to map.

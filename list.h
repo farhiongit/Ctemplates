@@ -49,7 +49,6 @@ typedef int __list_dummy__ ;
   {                                                                                                  \
     BNODE___list_dummy___##TYPE *(*CreateNode)( __list_dummy__ key, int unique );                    \
     void (*Clear) ( struct _LIST_##TYPE *self );                                                     \
-    void (*Destroy) ( struct _LIST_##TYPE *self );                                                   \
     BNODE___list_dummy___##TYPE * (*Insert) ( struct _LIST_##TYPE *self, BNODE___list_dummy___##TYPE *here, BNODE___list_dummy___##TYPE *node );  \
     int (*Remove) ( struct _LIST_##TYPE *self, BNODE___list_dummy___##TYPE *node );                                \
     size_t (*Unique) ( struct _LIST_##TYPE *self, int (*less_than) (TYPE, TYPE));                    \
@@ -65,21 +64,15 @@ typedef int __list_dummy__ ;
     BNODE___list_dummy___##TYPE *null; \
     BNODE___list_dummy___##TYPE *root; \
     const _LIST_VTABLE_##TYPE *vtable; \
-    int (*LessThanValue) (TYPE, TYPE); \
     int tree_locked;                   \
   } LIST_##TYPE;                       \
 \
-  LIST_##TYPE *LIST_CREATE_##TYPE( int (*less_than_operator) (TYPE, TYPE) );                                  \
-
-#define LIST_CREATE1( TYPE ) LIST_CREATE2( TYPE, 0 )
-
-#define LIST_CREATE2( TYPE, less_than_operator ) \
-  LIST_CREATE_##TYPE(less_than_operator)
+  LIST_##TYPE *LIST_CREATE_##TYPE( void );                                  \
 
 /// Creates and returns a new list object of specified type.
 /// @param [in] TYPE typename of elements hold in the list.
-/// @param [in, optional] less_than_operator Function defining the less than operator int (*less_than_operator) (TYPE, TYPE).
-#define LIST_CREATE(...) VFUNC(LIST_CREATE, __VA_ARGS__)
+#define LIST_CREATE( TYPE ) \
+  LIST_CREATE_##TYPE()
 
 /// Inserts a node of specified type in a list.
 /// @param [in] listSelf pointer to list
@@ -101,7 +94,7 @@ typedef int __list_dummy__ ;
 /// Removes (deallocates) a list and all its nodes.
 /// @param [in] listSelf Pointer to list
 #define LIST_DESTROY( listSelf ) \
-  do { (listSelf)->vtable->Destroy ( (listSelf) ); } while(0)
+  do { (listSelf)->vtable->Clear ( (listSelf) ); free ((listSelf)); } while(0)
 
 /// Removes (deallocates) all the nodes of a list.
 /// @param [in] listSelf Pointer to list
@@ -138,7 +131,7 @@ typedef int __list_dummy__ ;
 /// @param [in] listSelf pointer to list.
 /// @returns the number of elements in the list.
 #define LIST_SIZE( listSelf ) \
-  ((listSelf)->root ? BNODE_SIZE ((listSelf)->root) : 0)
+  ((listSelf)->root ? BNODE_SIZE ((listSelf)->root) : (size_t)0)
 
 /// Indicates a list is empty.
 /// @param [in] listSelf pointer to list.
@@ -178,10 +171,12 @@ typedef int __list_dummy__ ;
 #define LIST( TYPE ) \
   LIST_##TYPE
 
-#define LIST_FIND3( listSelf, begin, value ) \
-  ((listSelf)->root ? BNODE_FIND_VALUE3((begin), (value), (listSelf)->LessThanValue): 0)
+#define LIST_FIND4( listSelf, begin, value, neq ) \
+  ((listSelf)->root ? BNODE_FIND_VALUE3((begin), (value), (neq)): 0)
 
-#define LIST_FIND2( map, value ) LIST_FIND3( map, BNODE_FIRST((map)->root), value )
+#define LIST_FIND3( listSelf, value, neq ) LIST_FIND4( listSelf, BNODE_FIRST((listSelf)->root), value, neq )
+
+#define LIST_FIND2( listSelf, value ) LIST_FIND3( listSelf, value, 0 )
 
 #define LIST_FIND(...) VFUNC(LIST_FIND, __VA_ARGS__)
 
