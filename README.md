@@ -62,13 +62,15 @@ LNODE(*T*)
 
 The type is denoted as *N* below.
 #### Get value: *T* \*LNODE_VALUE(*N* \*n)
+Dereferences the value of the element n.
 The returned value should not be freed by the caller.
 #### Assign value: void LNODE_ASSIGN(*N* \*n, *T* v)
+Modifies the value hold be the element n with the value v..
 A *copy* of T is assigned to the element.
 #### Move forward: *N* \*LNODE_NEXT(*N* \*n)
-Returnd a pointer to the next element in the collection or LIST_END(*L*). Compelexity: O(*log* N)
+Returns a pointer to the next element in the list or LIST_END(*L*). Compelexity: O(*log* N)
 #### Move backward: *N* \*LNODE_PREVIOUS(*N* \*n)
-Returnd a pointer to the previous elemnt in the collection or LIST_END(*L*). Compelexity: O(*log* N)
+Returns a pointer to the previous elemnt in the list or LIST_END(*L*). Compelexity: O(*log* N)
 
 ### Functions
 #### `LIST_CREATE`
@@ -89,7 +91,7 @@ Returnd a pointer to the previous elemnt in the collection or LIST_END(*L*). Com
 ##### **Syntax:** *N* \*LIST_INSERT(*L* \*l, *N* \*n, *T* v)
 ##### **Description:** Inserts an element containing the value v before the element n where n is an element of the list l or LIST_END(l). The new element is inserted at the end of the list if n is equal to LIST_END(l).
 ##### **Return value:** A pointer to the created element in case of success, or 0 otherwise.
-##### **Errors:** EINVAL if n is not an element of the list l. ENOMEM in case of memory allocation error.
+##### **Errors:** EINVAL if n is not LIST_END(l) and is not an element of the list l. ENOMEM in case of memory allocation error.
 ##### **Complexity:** O(*1og* N)
 
 #### `LIST_APPEND`
@@ -128,67 +130,88 @@ Returnd a pointer to the previous elemnt in the collection or LIST_END(*L*). Com
 ##### **Complexity:** O(1)
 
 #### `LIST_TRAVERSE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### **Syntax:**
+###### void LIST_TRAVERSE(*L* \*l, int (\*callback)( *N* \*, void \*))
+###### void LIST_TRAVERSE(*L* \*l, int (\*callback)( *N* \*, void \*), void \*param)
+###### void LIST_TRAVERSE(*L* \*l, int (\*callback)( *N* \*, void \*), void \*param, int until)
+Arguments `param` and `until` are optional. Default values are respectively l and EXIT_FAILURE.
+##### **Description:** Applies a function `callback` to every element of the list sequentially, from beginning to end, until `callback` returns `until`. Elements are passed sequentially as the first argument of `callback`. `param` is oassed as the second argument to each call of `callback`.
+##### **Note:** The list must not be modified (insertion or deletion of elements) during traversal.
+##### **Return value:** None.
+##### **Errors:** None.
 ##### **Complexity:** O(N)
 
 #### `LIST_FOR_EACH`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### **Syntax:**
+###### void LIST_FOR_EACH(*L* \*l, int (\*callback)(*N* \*, void \*))
+###### void LIST_FOR_EACH(*L* \*l, int (\*callback)(*N* \*, void \*), void \*param)
+###### void LIST_FOR_EACH(*L* \*l, int (\*callback)(*N* \*, void \*), void \*param, int until)
+###### void LIST_FOR_EACH(*L* \*l, *N* \*begin, int (\*callback)(*N* \*, void \*), void \*param, int until)
+###### void LIST_FOR_EACH(*L* \*l, *N* \*begin, *N* \*end, int (\*callback)(*N* \*, void \*), void \*param, int until)
+Arguments `param`, `until`, `begin` and `end` are optional. Default values are respectively l, EXIT_FAILURE, LIST_BEGIN(l) and LIST_END(l).
+##### **Description:** Applies a function `callback` to every element of the list sequentially, from `begin` (included) to `end` (excluded), until `callback` returns `until`. Elements are passed sequentially as the first argument of `callback`. `param` is oassed as the second argument to each call of `callback`.
+##### **Note:** The list *can be modified* (insertion or deletion of elements) during traversal.
+##### **Return value:** None.
+##### **Errors:** None.
 ##### **Complexity:** O(N *log* N)
 
 #### `LIST_BEGIN`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### **Syntax:** *N* \*LIST_BEGIN(*L* \*l)
+##### **Description:** Yields the first element of a list.
+##### **Return value:** First element of list l, or LIST_END(l) if l is empty.
+##### **Errors:** None.
 ##### **Complexity:** O(1)
 
 #### `LIST_LAST`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### **Syntax:** *N* \*LIST_LAST(*L* \*l)
+##### **Description:** Yields the last element of a list.
+##### **Return value:** Last element of list l, or LIST_END(l) if l is empty.
+##### **Errors:** None.
 ##### **Complexity:** O(1)
 
 #### `LIST_END`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-One past the last element of the list.
-##### **Errors:** 
+##### **Syntax:** *N* \*LIST_END(*L* \*l)
+##### **Description:** Yields the past-the-end element of a list.
+##### **Note:** The returned element must not be dereferenced.
+##### **Return value:** Past-the-end element of list l, or LIST_END(l) if l is empty.
+##### **Errors:** None.
 ##### **Complexity:** O(1)
 
 #### `LIST_INDEX`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### **Syntax:** *N* \*LIST_INDEX(*L* \*l, size_t index)
+##### **Description:** Yields the *i*th element of a list.
+##### **Return value:** The *i*th element of list l, *i* is a 0-based index.
+##### **Errors:** None.
+##### **Note:** l should not be empty and index should be positive and strictly less than LIST_SIZE(l).
 ##### **Complexity:** O(*1og* N)
 
 #### `LIST_FIND`
 ##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### *N* \*LIST_FIND(*L* \*l, *T* v)
+##### *N* \*LIST_FIND(*L* \*l, *T* v, int (*op)(T, T))
+##### *N* \*LIST_FIND(*L* \*l, *T* v, int (*op)(T, T))
+##### *N* \*LIST_FIND(*L* \*l, *N* \*begin, *T* v, int (*neq)(T, T))
+Arguments `op` and `begin` are optionnal. Default values are respectively the default less than operator and LIST_BEGIN(l).
+##### **Description:** Finds the first element n in list l after element begin (included) which holds a value equal to v, that is for which op(value of n, v) and op(v, value of n) return 0.
+##### **Note:** op(*T* a, *T* b) can either
+- return 0 if the two values are equal, 1 otherwise ;
+- return 1 if `a` is strictly less than `b`, 0 otherwise.
+##### **Return value:** The first element n in list l after element begin (included) which holds a value equal to v, that is for which op(value of n, v) and op(v, value of n) return 0, or LIST_END(l) if no occurrence were found.
+##### **Errors:** EINVAL if begin does not belong to l.
 ##### **Complexity:** O(N *log* N)
 
 #### `LIST_MOVE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### **Syntax:** int LIST_MOVE(*L* \*to, *N* \*hereto, *L* \*from, *N* \*herefrom)
+##### **Description:** Moves element `herefrom` of list `from` before element `hereto` of list `to`.
+##### **Return value:** EXIT_SUCCESS in case of success, EXIT_FAILURE otherwise.
+##### **Errors:** EINVAL if `herefrom` does not belong to the list `from` or if `hereto` is not LIST_END(to) and is not an element of the list `to`.
 ##### **Complexity:** O(*1og* N)
 
 #### `LIST_SWAP`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### **Syntax:** int LIST_MOVE(*L* \*la, *N* \*na, *L* \*lb, *N* \*nb)
+##### **Description:** Swaps elements `na` and `nb` between lists `la` and `lb`.
+##### **Return value:** EXIT_SUCCESS in case of success, EXIT_FAILURE otherwise. 
+##### **Errors:** EINVAL if `na` does not belong to `la`, or if `nb` does not belong to `lb`.
 ##### **Complexity:** O(*1og* N)
 
 #### `LIST_REVERSE`

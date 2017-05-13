@@ -62,13 +62,13 @@ __str_free__ (char* v)
                                                \
     for (size_t i = 0 ; i < size ; i++)        \
       if (pa[i] < pb[i])                       \
-        return 1;                              \
+        return 1;       /* a < b */            \
       else if (pa[i] == pb[i])                 \
         continue;                              \
       else                                     \
-        break;                                 \
+        return 0;       /* a > b */            \
                                                \
-    return 0;                                  \
+    return 0;           /* a = b */            \
   }                                            \
 
 /// Declares a destructor associated to type TYPE

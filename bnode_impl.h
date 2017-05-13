@@ -565,7 +565,7 @@
     BNODE_##K##_##T *leaf = *self;                                        \
     while (1)                                                             \
     {                                                                     \
-      int comp = BNODE_CMP_KEY_##K##_##T (&newNode, &leaf, &lt);           \
+      int comp = BNODE_CMP_KEY_##K##_##T (&newNode, &leaf, &lt);          \
       if (comp > 0)                                                       \
       {                                                                   \
         if (leaf->higher_child)                                           \

@@ -242,9 +242,13 @@ DEFINE_OPERATORS(__list_dummy__)
                                                                        \
     BNODE___list_dummy___##TYPE *nextb = BNODE_NEXT (nodeb);           \
                                                                        \
-    if (LIST_MOVE (la, nodea, lb, nodeb) == EXIT_FAILURE ||            \
-        LIST_MOVE (lb, nextb, la, nodea) == EXIT_FAILURE)              \
+    if (LIST_MOVE (la, nodea, lb, nodeb) == EXIT_FAILURE)              \
       return EXIT_FAILURE;                                             \
+    else if (LIST_MOVE (lb, nextb, la, nodea) == EXIT_FAILURE)         \
+    {                                                                  \
+      LIST_MOVE (lb, nextb, la, nodeb);    /* undo first move */       \
+      return EXIT_FAILURE;                                             \
+    }                                                                  \
                                                                        \
     return EXIT_SUCCESS;                                               \
   }                                                                    \

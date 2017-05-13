@@ -172,7 +172,7 @@ typedef int __list_dummy__ ;
   LIST_##TYPE
 
 #define LIST_FIND4( listSelf, begin, value, neq ) \
-  ((listSelf)->root ? BNODE_FIND_VALUE3((begin), (value), (neq)): 0)
+  ((listSelf)->root ? BNODE_FIND_VALUE3((begin), (value), (neq)): LIST_END(listSelf))
 
 #define LIST_FIND3( listSelf, value, neq ) LIST_FIND4( listSelf, BNODE_FIRST((listSelf)->root), value, neq )
 
