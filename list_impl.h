@@ -172,12 +172,14 @@ DEFINE_OPERATORS(__list_dummy__)
       return EXIT_FAILURE;                                                 \
     }                                                                      \
                                                                            \
+    BNODE___list_dummy___##TYPE *nextfrom = BNODE_NEXT(herefrom);          \
     BNODE___list_dummy___##TYPE *new_node = BNODE_REMOVE___list_dummy___##TYPE(herefrom);       \
     if (from->root == herefrom)                                            \
       from->root = new_node;                                               \
-    if (!LIST_INSERT_##TYPE (to, hereto, herefrom))                        \
+    if (LIST_INSERT_##TYPE (to, hereto, herefrom) == 0)                    \
     {                                                                      \
       errno = EINVAL;                                                      \
+      LIST_INSERT_##TYPE (from, nextfrom, herefrom);  /* undo removal */   \
       return EXIT_FAILURE;                                                 \
     }                                                                      \
                                                                            \
@@ -198,7 +200,7 @@ DEFINE_OPERATORS(__list_dummy__)
                                                                                               \
     size_t ret = 0;                                                                           \
     LNODE(TYPE) *next;                                                                        \
-    for (LNODE(TYPE) *node = LIST_BEGIN(self) ; node != LIST_END(self) && (next = BNODE_NEXT(node)) != LIST_END(self) ;)       \
+    for (LNODE(TYPE) *node = LIST_BEGIN(self) ; node != LIST_END(self) && (next = BNODE_NEXT(node)) != LIST_END(self) ; /* nop */)  \
         if (BNODE_CMP_VALUE___list_dummy___##TYPE(&node, &next, &less_than) == 0)             \
         {                                                                                     \
           ret++;                                                                              \

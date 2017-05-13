@@ -193,7 +193,7 @@ Arguments `param`, `until`, `begin` and `end` are optional. Default values are r
 ##### *N* \*LIST_FIND(*L* \*l, *N* \*begin, *T* v, int (*neq)(T, T))
 Arguments `op` and `begin` are optionnal. Default values are respectively the default less than operator and LIST_BEGIN(l).
 ##### **Description:** Finds the first element n in list l after element begin (included) which holds a value equal to v, that is for which op(value of n, v) and op(v, value of n) return 0.
-##### **Note:** op(*T* a, *T* b) can either
+##### **Note:** op(*T* a, *T* b) should either
 - return 0 if the two values are equal, 1 otherwise ;
 - return 1 if `a` is strictly less than `b`, 0 otherwise.
 ##### **Return value:** The first element n in list l after element begin (included) which holds a value equal to v, that is for which op(value of n, v) and op(v, value of n) return 0, or LIST_END(l) if no occurrence were found.
@@ -208,7 +208,7 @@ Arguments `op` and `begin` are optionnal. Default values are respectively the de
 ##### **Complexity:** O(*1og* N)
 
 #### `LIST_SWAP`
-##### **Syntax:** int LIST_MOVE(*L* \*la, *N* \*na, *L* \*lb, *N* \*nb)
+##### **Syntax:** int LIST_SWAP(*L* \*la, *N* \*na, *L* \*lb, *N* \*nb)
 ##### **Description:** Swaps elements `na` and `nb` between lists `la` and `lb`.
 ##### **Return value:** EXIT_SUCCESS in case of success, EXIT_FAILURE otherwise. 
 ##### **Errors:** EINVAL if `na` does not belong to `la`, or if `nb` does not belong to `lb`.
@@ -216,30 +216,44 @@ Arguments `op` and `begin` are optionnal. Default values are respectively the de
 
 #### `LIST_REVERSE`
 ##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+###### int LIST_REVERSE(*L* \*l)
+###### int LIST_REVERSE(*L* \*l, *N* \*begin, *N* \*end)
+##### **Description:** Reverses the order of the elements of the list l. If `begin` and `end` are specified, only the elements between `begin` (included) and `end` (excluded) are reversed.
+##### **Note:** `end` should be forward reachable from `begin`.
+##### **Return value:** EXIT_SUCCESS in case of success, EXIT_FAILURE otherwise.
+##### **Errors:** EINVAL if `begin` or `end` do not belong to `l`.
 ##### **Complexity:** O(N *1og* N)
 
 #### `LIST_ROTATE_LEFT` and `LIST_ROTATE_RIGHT`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### **Syntax:**
+###### void LIST_ROTATE_LEFT(*L* \*l)
+###### void LIST_ROTATE_RIGHT(*L* \*l)
+##### **Description:** Rotates all the elements of the list one position to the left (`LIST_ROTATE_LEFT`) or to the right (`LIST_ROTATE_RIGHT`).
+##### **Return value:** None.
+##### **Errors:** None.
 ##### **Complexity:** O(*1og* N)
 
 #### `LIST_SORT`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+##### **Syntax:**
+###### void LIST_SORT(*L* \*l)
+###### void LIST_SORT(*L* \*l, int (*lt)(T, T))
+##### **Description:** Sorts the elements of the list in ascending order with respect to the less than operator `lt`.
+##### **Note:** lt(*T* a, *T* b) should return 1 if `a` is strictly less than `b`, 0 otherwise. If `lt` is not specified, the standard less than operator is used.
+##### **Return value:** None.
+##### **Errors:** ENOMEM in case of memory allocation error.
 ##### **Complexity:** Complexity of `qsort`
 
 #### `LIST_UNIQUE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
+###### size_t LIST_UNIQUE(*L* \*l)
+###### size_t LIST_UNIQUE(*L* \*l, int (*op)(T, T))
+##### **Description:** Removes all but one adjacent matching elements (which values are equal with respect to `op`) from list l. Only the *first* occurrence is kept in the list.
+##### **Note:** op(*T* a, *T* b) should either
+- return 0 if the two values are equal, 1 otherwise ;
+- return 1 if `a` is strictly less than `b`, 0 otherwise.
+
+If `op` is not specified, the standard less than operator is used.
+##### **Return value:** The number of elements removed from the list.
+##### **Errors:** None.
 ##### **Complexity:** O(N *1og* N)
 
 ### Example

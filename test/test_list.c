@@ -230,6 +230,8 @@ main (void)
 
   LIST_INSERT (lb, LIST_BEGIN (lb), 1000);
   LIST_INSERT (lb, LIST_END (lb), 2000);
+  LIST_ROTATE_LEFT (lb);
+  LIST_SWAP (lb, LIST_BEGIN (lb), lb, LIST_LAST (lb));
 
   printf ("Move {%i} to the begining.\n", *BNODE_VALUE (LIST_LAST (la)));
   LIST_MOVE (la, LIST_BEGIN (la), la, LIST_LAST (la));
@@ -239,6 +241,9 @@ main (void)
   LIST_MOVE (la, BNODE_NEXT (LIST_BEGIN (la)), la, LIST_LAST (la));
   BNODE_FOR_EACH (LIST_BEGIN (la), LIST_END (la), print_node);
 
+  assert (LIST_SWAP (lb, LIST_BEGIN (lb), la, LIST_LAST (lb)) == EXIT_FAILURE);
+  assert (LIST_SWAP (la, LIST_LAST (lb), lb, LIST_BEGIN (lb)) == EXIT_FAILURE);
+  assert (LIST_SWAP (la, LIST_BEGIN (lb), lb, LIST_LAST (lb)) == EXIT_FAILURE);
   printf ("Swap {%i} and {%i}.\n", *BNODE_VALUE (LIST_BEGIN (lb)), *BNODE_VALUE (LIST_BEGIN (la)));
   LIST_SWAP (la, LIST_BEGIN (la), lb, LIST_BEGIN (lb));
   LIST_DESTROY (lb);
