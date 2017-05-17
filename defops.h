@@ -50,8 +50,8 @@ __str_free__ (char* v)
   typedef void (*DESTROY_##TYPE##_TYPE) (TYPE);           \
   typedef int (*LESS_THAN_##TYPE##_TYPE) (TYPE, TYPE);    \
 \
-  static TYPE (*COPY_##TYPE) (TYPE) = _Generic(*(TYPE*)0, char*:__str_copy__, default:0);    \
-  static void (*DESTROY_##TYPE) (TYPE) = _Generic(*(TYPE*)0, char*:__str_free__, default:0); \
+  static TYPE (*COPY_##TYPE) (TYPE) = 0;    \
+  static void (*DESTROY_##TYPE) (TYPE) = 0; \
   static int (*LESS_THAN_##TYPE) (TYPE, TYPE) = 0;        \
 \
   static int LESS_THAN_##TYPE##_DEFAULT (TYPE a, TYPE b)  \
@@ -98,13 +98,13 @@ __str_free__ (char* v)
 #define GET_LESS_THAN_OPERATOR( TYPE ) \
   (LESS_THAN_##TYPE)
 
-#define DESTRUCTOR( TYPE ) \
+#define DESTRUCTOR_TYPE( TYPE ) \
   DESTROY_##TYPE##_TYPE
 
-#define COPY_CONSTRUCTOR ( TYPE ) \
+#define COPY_CONSTRUCTOR_TYPE( TYPE ) \
   COPY_##TYPE##_TYPE
 
-#define LESS_THAN_OPERATOR( TYPE ) \
+#define LESS_THAN_OPERATOR_TYPE( TYPE ) \
   LESS_THAN_##TYPE##_TYPE
 
 // N.B.: A generic selection '_Generic' is NOT processed at preprocessing time but is compiled as a proper expression (at compile time).
@@ -158,6 +158,10 @@ __str_free__ (char* v)
   char*:              __ltstring,                 \
   default:            LESS_THAN_##TYPE##_DEFAULT  \
   )
+
+#define COPY_DEFAULT(TYPE) _Generic(*(TYPE*)0, char*:__str_copy__, default:(COPY_##TYPE##_TYPE)0)
+
+#define DESTROY_DEFAULT(TYPE) _Generic(*(TYPE*)0, char*:__str_free__, default:(DESTROY_##TYPE##_TYPE)0)
 
 #define PRINT_FORMAT(TYPE) _Generic(*(TYPE *)0, \
   char:               "%c",           \

@@ -5,7 +5,8 @@ And templates for all ! Template containers (lists, sets and maps) for C languag
 
 Templates are about generating code at compile time.
 Languages such as C++ offer a powerful framework for template programming and usage.
-Nevertheless, Randy Gaul has demonstrated in 2012 [1] that the C macro preprocessor permits to implement a template mechanism in C.
+
+Nevertheless, templates do not require runtime polymorphism, and can be implemented in C language. As such, Randy Gaul has demonstrated in 2012 [1] that the C macro preprocessor permits to implement a template mechanism in C.
 
 The idea here is to exploit this feature to create template collections such as lists, sets and maps.
 
@@ -531,19 +532,34 @@ This container represents a collection of keys and values that is maintained in 
 Look at a complete [example](examples/map_example.c).
 
 ## Memory managment
-_Optional_ operators can be assigned to types managed by collections:
+Collections can manage their own memory for the data held into the elements.
+For basic standard types, the default copy constructor is the `=` operator.
+For strings (`char *`), a default constructor is defined as `strdup` and a default destructor is defined as `free`.
 
-- `SET_DESTRUCTOR(type, destructor)` where `destructor` is a pointer to function with type `void (*destructor) (type arg)`
-- `SET_COPY_CONSTRUCTOR(type, constructor)` where `constructor` is a pointer to function with type `type (*constructor) (type arg)`
+For user defined types *T*, _optional_ operators can be assigned to types contained into collections using:
 
-Default creators et destructors are applied for basic types ans strings (`char *`).
+- `SET_COPY_CONSTRUCTOR(T, constructor)` where `constructor` is a pointer to function with type `T (*constructor) (T v)`
+- `SET_DESTRUCTOR(T, destructor)` where `destructor` is a pointer to function with type `void (*destructor) (T v)`
+
+Theses operators can be reset passing 0 to `SET_DESTRUCTOR` and `SET_COPY_CONSTRUCTOR`.
 
 ## Ordering and equality
-_Optional_ operators can be assigned to types managed by collections:
+Sets, maps as well as `LIST_SORT` require a strict weak ordering.
+Sets, maps as well as `LIST_FIND` and `LIST_UNIQUE` require equality operator.
 
-- `SET_LESS_THAN_OPERATOR(type, operator)` where `operator` is a pointer to function with type `type (*operator) (type arg1, type arg2)`. This function should return 1 if `arg1` < `arg2`, 0 otherwise.
+For basic standard types, the standard operator `<` is defined and used by default.
+For strings (`char *`), a default operator is defined with `strcoll`.
+For other types, a default less than operator id defind as a bytewise comparator.
 
-For basic standard types, standard operators are defined and used by default.
+_Optional_ operators can be assigned to user defined types managed by collections using:
+
+- `SET_LESS_THAN_OPERATOR(T, operator)` where `operator` is a pointer to function with type `T (*operator) (T arg1, T arg2)`. This function should return 1 if `arg1` < `arg2`, 0 otherwise.
+
+Two values `arg1` and `arg2` are supposed to be equal when neither `arg1` < `arg2`, nor `arg1` > `arg2`.
+
+For sets and maps, less than operators can be specified when the collection is created (see `SET_CREATE` and `MAP_CREATE`).
+
+For lists, a less than operator can be specified as the second argument of `LIST_SORT` and `LIST_UNIQUE`.
 
 ## Algorithmic complexity
 
@@ -551,10 +567,11 @@ For basic standard types, standard operators are defined and used by default.
 
 |                     | List | Set | Map |
 |:--------------------|:----:|:---:|:---:|
-|Insert               | O(1) | O(log N) | O(log N) |
+|Insert               | O(log N) | O(log N) | O(log N) |
 |Remove               |      |     |     |
 |Move                 |      |     |     |
 |Next                 |      |     |     |
+|Index                | O(log N) |     |     |
 |Previous             |      |     |     |
 |Go to begining       |      |     |     |
 |Go to end            |      |     |     |
@@ -573,6 +590,16 @@ Lists, sets and maps are internally constructed and organized upon binary trees.
 Those complexities rely on perfectly balanced trees.
 
 ## Tree self-balancing
+
+Internal data in lists, sets and maps are organized into self-balancing binary trees.
+This allows to reduce algorithmic complexity to O(*log* N) for most operations.
+
+The self-balacing strategy is relaxed:
+
+- it is applied at insertion, in order to keep the branch into which the element is inserted not longer than the sibling breanch.
+- it is not applied when an element is removed. The branch where the element is removed can get shorter than its sibling branch.
+
+This strategy garanties than the tree depth is always lower or equal to (*log* Nmax)/(*log* 2), where Nmax is the larger size of the collections.
 
 ## Tips and pitfalls
 Template declarations can not apply directly on compound types such as `char *`, `unsigned long` or `struct foo`.

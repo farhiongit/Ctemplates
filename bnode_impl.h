@@ -93,7 +93,7 @@
     BNODE_##K##_##T *newNode = malloc( sizeof( *newNode ) );    \
     if (!newNode)                                               \
       return 0;                                                 \
-    newNode->key = COPY_##K ? COPY_##K(key) : key;              \
+    newNode->key = COPY_##K ? COPY_##K(key) : COPY_DEFAULT(K) ? COPY_DEFAULT(K)(key) : key ;\
     static T __zero__;                                          \
     newNode->data = __zero__;                                   \
     newNode->vtable = &BNODE_VTABLE_##K##_##T;                  \
@@ -278,7 +278,7 @@
   static BNODE_##K##_##T *BNODE_COPY_##K##_##T( BNODE_##K##_##T *self )        \
   {                                                                            \
     BNODE_##K##_##T *ret = BNODE_CREATE_##K##_##T (self->key, self->unique);   \
-    ret->data = COPY_##T ? COPY_##T(self->data) : self->data;                  \
+    ret->data = COPY_##T ? COPY_##T(self->data) : COPY_DEFAULT(T) ? COPY_DEFAULT(T)(self->data) : self->data ; \
     return ret;                                                                \
   }                                                                            \
 \
@@ -304,8 +304,13 @@
                                                                \
     if(DESTROY_##K)                                            \
       DESTROY_##K( node->key );                                \
+    else if(DESTROY_DEFAULT(K))                                \
+      DESTROY_DEFAULT(K)( node->key );                         \
+                                                               \
     if(DESTROY_##T)                                            \
       DESTROY_##T( node->data );                               \
+    else if(DESTROY_DEFAULT(T))                                \
+      DESTROY_DEFAULT(T)( node->data );                        \
                                                                \
     free( node );                                              \
   }                                                            \
@@ -462,7 +467,9 @@
     {                                                              \
       if (DESTROY_##T)                                             \
         DESTROY_##T( node->data );                                 \
-      node->data = COPY_##T ? COPY_##T(data) : data;               \
+      else if (DESTROY_DEFAULT(T))                                 \
+        DESTROY_DEFAULT(T)( node->data );                          \
+      node->data = COPY_##T ? COPY_##T(data) : COPY_DEFAULT(T) ? COPY_DEFAULT(T)(data) : data;               \
     }                                                              \
     return node;                                                   \
   }                                                                \
