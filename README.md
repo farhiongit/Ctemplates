@@ -1,7 +1,7 @@
 # Ctemplates --- templates for C
 And templates for all ! Template containers (lists, sets and maps) for C language (why not ?).
 
-(c) 2017 Laurent Farhi
+(c) 2017 Laurent Farhi (lrspam at sfr.fr).
 
 Templates are about generating code at compile time.
 Languages such as C++ offer a powerful framework for template programming and usage.
@@ -16,6 +16,8 @@ The solution is a combination of several techniques:
 - virtual tables to implement static polymorphism
 - binary tree structure and operations
 - function overloading Overloading on number of arguments (but not type though)
+
+Let me know if you encounter any bug.
 
 ## Definition and declaration of template collections
 Prior to any usage of template collections,
@@ -51,13 +53,15 @@ If collections are intended to be used in a library,
 
 ## Lists
 This container represents a strongly typed list of objects that can be accessed by index.
+
 ### Type
 LIST(*T*), where *T* denotes the type contained in the list.
 
 The type is denoted as *L* below.
+
 ### Elements
 Elements are place-holders of values of type *T*.
-Thoses eleemnts allow to navigate through the container.
+Thoses elements allow to navigate through the container.
 #### Element type
 LNODE(*T*)
 
@@ -69,13 +73,13 @@ The returned value should not be freed by the caller.
 Modifies the value hold be the element n with the value v..
 A *copy* of T is assigned to the element.
 #### Move forward: *N* \*LNODE_NEXT(*N* \*n)
-Returns a pointer to the next element in the list or LIST_END(*L*). Compelexity: O(*log* N)
+Returns a pointer to the next element in the list or LIST_END(*L*). Complexity: O(*log* N)
 #### Move backward: *N* \*LNODE_PREVIOUS(*N* \*n)
-Returns a pointer to the previous elemnt in the list or LIST_END(*L*). Compelexity: O(*log* N)
+Returns a pointer to the previous elemnt in the list or LIST_END(*L*). Complexity: O(*log* N)
 
 ### Functions
 #### `LIST_CREATE`
-##### **Syntax:** *L* \*LIST-CREATE(*T*)
+##### **Syntax:** *L* \*LIST_CREATE(*T*)
 ##### **Description:** Creates a new list. This list must be destroyed by LIST_DESTROY after usage.
 ##### **Return value:** A pointer to the created list, or 0 in case of memory allocation error.
 ##### **Errors:** ENOMEM Out of memory.
@@ -136,7 +140,7 @@ Returns a pointer to the previous elemnt in the list or LIST_END(*L*). Compelexi
 ###### void LIST_TRAVERSE(*L* \*l, int (\*callback)( *N* \*, void \*), void \*param)
 ###### void LIST_TRAVERSE(*L* \*l, int (\*callback)( *N* \*, void \*), void \*param, int until)
 Arguments `param` and `until` are optional. Default values are respectively l and EXIT_FAILURE.
-##### **Description:** Applies a function `callback` to every element of the list sequentially, from beginning to end, until `callback` returns `until`. Elements are passed sequentially as the first argument of `callback`. `param` is oassed as the second argument to each call of `callback`.
+##### **Description:** Applies a function `callback` to every element of the list sequentially, from beginning to end, until `callback` returns `until`. `callback` is called with element as the first argument. `param` is oassed as the second argument to each call of `callback`.
 ##### **Note:** The list must not be modified (insertion or deletion of elements) during traversal.
 ##### **Return value:** None.
 ##### **Errors:** None.
@@ -174,7 +178,7 @@ Arguments `param`, `until`, `begin` and `end` are optional. Default values are r
 ##### **Syntax:** *N* \*LIST_END(*L* \*l)
 ##### **Description:** Yields the past-the-end element of a list.
 ##### **Note:** The returned element must not be dereferenced.
-##### **Return value:** Past-the-end element of list l, or LIST_END(l) if l is empty.
+##### **Return value:** Past-the-end element of list l.
 ##### **Errors:** None.
 ##### **Complexity:** O(1)
 
@@ -258,133 +262,201 @@ If `op` is not specified, the standard less than operator is used.
 ##### **Complexity:** O(N *1og* N)
 
 ### Example
+```c
+typedef char *T;
+DECLARE_LIST (T)
+DEFINE_OPERATORS (T)
+DEFINE_LIST (T)
+
+int main (void)
+{
+  LIST (T) * mylist = LIST_CREATE (T);
+
+  LIST_APPEND (mylist, "A");
+  LIST_INSERT (mylist, LIST_LAST (mylist), "aaa");
+  LIST_INSERT (mylist, LIST_BEGIN (mylist), "bbbb");
+  LIST_INSERT (mylist, 1), "f");
+
+  LIST_SORT (mylist);
+  LIST_REVERSE (mylist);
+
+  LNODE_ASSIGN (LIST_BEGIN (mylist), "zzzz");
+
+  LIST_DESTROY (mylist);
+}
+```
 Look at a complete [example](examples/list_example.c).
 
 ## Sets
 This container represents a collection of objects that is maintained in sorted order.
 ### Type
+SET(*K*), where *K* denotes the type contained in the set.
+
+The type is denoted as *S* below.
 ### Unicity
+Sets can either contain unique elements or not, depending on the parameters passed at creation.
 
 ### Elements
+Elements are place-holders of values of type *K*.
+Thoses elements allow to navigate through the container.
 #### Element type
-#### Get value
-#### Move forward
-#### Move backward
+SNODE(*K*)
+
+The type is denoted as *N* below.
+#### Get value: *K* \*SNODE_KEY(*N* \*n)
+Dereferences the value of the element n.
+The returned value should not be freed by the caller.
+#### Move forward: *N* \*SNODE_NEXT(*N* \*n)
+Returns a pointer to the next element in the list or SET_END(*L*). Complexity: O(*log* N)
+
+#### Move backward: *N* \*SNODE_PREVIOUS(*N* \*n)
+Returns a pointer to the previous elemnt in the list or SET_END(*L*). Complexity: O(*log* N)
 
 ### Functions
 #### `SET_CREATE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *S* \* SET_CREATE(*K*, [int (*less_than_operator) (K, K)=0], [int unicity=1])
+Parameters between square bracket are optional.
+##### **Description:** Creates a new set. This set must be destroyed by SET_DESTROY after usage.
+##### **Return value:** A pointer to the created set, or 0 in case of memory allocation error.
+##### **Errors:** ENOMEM Out of memory.
+##### **Complexity:** O(1)
 
 #### `SET_DESTROY`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** void SET_DESTROY(*S* \*s)
+##### **Description:** Desallocates all elements in the set and desallocates the set. The destructor of type *K* is called for each element of the set. The set must not be used afterwards.
+##### **Return value:** None
+##### **Errors:** None
+##### **Complexity:** O(N)
 
 #### `SET_INSERT`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *N* \*SET_INSERT(*S* \*s, *K* k)
+##### **Description:** Inserts an element containing the value k
+##### **Return value:** A pointer to the created element in case of success, or 0 otherwise.
+##### **Errors:** ENOMEM in case of memory allocation error.
+##### **Complexity:** O(*1og* N)
 
 #### `SET_REMOVE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** int SET_REMOVE(*S* \*s, *N* \*n)
+##### **Description:** Removes the element n from the set `s`. The value hold by the eleemnt is destroyed. `n` should not be dereferenced afterwards.
+##### **Return value:** EXIT_SUCCESS on success, EXIT_FAILURE otherwise.
+##### **Errors:** EINVAL if `n` is not an element of the set `s`.
+##### **Complexity:** O(1)
 
 #### `SET_CLEAR`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** void SET_CLEAR(*S* \*s)
+##### **Description:** Desallocates all elements in the set. The destructor of type *K* is called for each element of the set. The set can still be used afterwards.
+##### **Return value:** None
+##### **Errors:** None
+##### **Complexity:** O(N)
 
 #### `SET_SIZE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** size_t SET_SIZE(*S* \*s)
+##### **Description:** Returns the number of elements in set `s`.
+##### **Return value:** The number of elements in set `s`
+##### **Errors:** None
+##### **Complexity:** O(1)
 
 #### `SET_IS_EMPTY`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** int SET_IS_EMPTY(*S* \*s)
+##### **Description:** Indicates if the set is empty.
+##### **Return value:** 1 if the set is empty, 0 otherwise
+##### **Errors:** None
+##### **Complexity:** O(1)
 
 #### `SET_TRAVERSE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:**
+###### void SET_TRAVERSE(*S* \*s, int (\*callback)( *N* \*, void \*))
+###### void SET_TRAVERSE(*S* \*s, int (\*callback)( *N* \*, void \*), void \*param)
+###### void SET_TRAVERSE(*S* \*s, int (\*callback)( *N* \*, void \*), void \*param, int until)
+Arguments `param` and `until` are optional. Default values are respectively `s` and EXIT_FAILURE.
+##### **Description:** Applies a function `callback` to every element of the set sequentially, from beginning to end, until `callback` returns `until`. `callback` is called with element as the first argument. `param` is oassed as the second argument to each call of `callback`.
+##### **Note:** The set must not be modified (insertion or deletion of elements) during traversal.
+##### **Return value:** None.
+##### **Errors:** None.
+##### **Complexity:** O(N)
 
 #### `SET_FOR_EACH`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:**
+###### void SET_FOR_EACH(*S* \*s, int (\*callback)(*N* \*, void \*))
+###### void SET_FOR_EACH(*S* \*s, int (\*callback)(*N* \*, void \*), void \*param)
+###### void SET_FOR_EACH(*S* \*s, int (\*callback)(*N* \*, void \*), void \*param, int until)
+###### void SET_FOR_EACH(*S* \*s, *N* \*begin, int (\*callback)(*N* \*, void \*), void \*param, int until)
+###### void SET_FOR_EACH(*S* \*s, *N* \*begin, *N* \*end, int (\*callback)(*N* \*, void \*), void \*param, int until)
+Arguments `param`, `until`, `begin` and `end` are optional. Default values are respectively `s`, EXIT_FAILURE, SET_BEGIN(s) and SET_END(s).
+##### **Description:** Applies a function `callback` to every element of the set sequentially, from `begin` (included) to `end` (excluded), until `callback` returns `until`. `callback` is called with element as the first argument of `callback`. `param` is oassed as the second argument to each call of `callback`.
+##### **Note:** The set *can be modified* (insertion or deletion of elements) during traversal.
+##### **Return value:** None.
+##### **Errors:** None.
+##### **Complexity:** O(N *log* N)
 
 #### `SET_BEGIN`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *N* \*SET_BEGIN(*S* \*s)
+##### **Description:** Yields the first element of a set.
+##### **Return value:** First element of set `s`, or SET_END(l) if `s` is empty.
+##### **Errors:** None.
+##### **Complexity:** O(1)
 
 #### `SET_LAST`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *N* \*SET_LAST(*S* \*s)
+##### **Description:** Yields the last element of a set.
+##### **Return value:** Last element of set `s`, or SET_END(l) if `s` is empty.
+##### **Errors:** None.
+##### **Complexity:** O(1)
 
 #### `SET_END`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *N* \*SET_END(*S* \*s)
+##### **Description:** Yields the past-the-end element of a set.
+##### **Note:** The returned element must not be dereferenced.
+##### **Return value:** Past-the-end element of set `s`.
+##### **Errors:** None.
+##### **Complexity:** O(1)
 
 #### `SET_KEY`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *N* \*SET_KEY(*S* \*s, *K* k)
+##### **Description:** Returns the first element which value is equal to k.
+##### **Return value:** The first element which value is equal to k, or SET_END(s) if no element are found.
+##### **Errors:** None.
+##### **Complexity:** O(*log* N)
 
 #### `SET_INDEX`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *N* \*SET_INDEX(*S* \*s, size_t index)
+##### **Description:** Yields the *i*th element of a set.
+##### **Return value:** The *i*th element of set `s`, *i* is a 0-based index.
+##### **Errors:** None.
+##### **Note:** `s` should not be empty and index should be positive and strictly less than SET_SIZE(s).
+##### **Complexity:** O(*1og* N)
 
 #### `SET_FIND`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *N* \*SET_FIND(*S* \*s, [*N* \*n=SET_BEGIN(s)], *K* k)
+The second argument is optional.
+##### **Description:** Returns the first element after n (included) which value is equal to k.
+##### **Return value:** The first element after n (included) which value is equal to k.
+##### **Errors:** None.
+##### **Complexity:** O(*1og* N) if the second argument is not specified, O(N *1og* N) otherwise.
 
 #### `SET_MOVE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** int SET_MOVE(*S* \*to, *S* \*from, *N* \*herefrom)
+##### **Description:** Moves element `herefrom` of set `from` into set `to`.
+##### **Return value:** EXIT_SUCCESS in case of success, EXIT_FAILURE otherwise.
+##### **Errors:** EINVAL if `herefrom` does not belong to the set `from`.
+##### **Complexity:** O(*1og* N)
 
 ### Example
+```c
+typedef char *T;
+DECLARE_SET (T)
+DEFINE_OPERATORS (T)
+DEFINE_SET (T)
+
+int main (void)
+{
+  SET (T) * myset = SET_CREATE (T);
+  SET_INSERT (myset, "b");
+  SET_INSERT (myset, "c");
+  SET_INSERT (myset, "a");
+  SET_DESTROY (myset);
+}
+```
 Look at a complete [example](examples/set_example.c).
 
 ## Maps
@@ -534,32 +606,44 @@ Look at a complete [example](examples/map_example.c).
 ## Memory managment
 Collections can manage their own memory for the data held into the elements.
 For basic standard types, the default copy constructor is the `=` operator.
-For strings (`char *`), a default constructor is defined as `strdup` and a default destructor is defined as `free`.
+For strings (`char *`), the default constructor is defined as `strdup` and the default destructor is defined as `free`.
 
 For user defined types *T*, _optional_ operators can be assigned to types contained into collections using:
 
 - `SET_COPY_CONSTRUCTOR(T, constructor)` where `constructor` is a pointer to function with type `T (*constructor) (T v)`
 - `SET_DESTRUCTOR(T, destructor)` where `destructor` is a pointer to function with type `void (*destructor) (T v)`
 
-Theses operators can be reset passing 0 to `SET_DESTRUCTOR` and `SET_COPY_CONSTRUCTOR`.
+Theses operators can be reset to their default value by passing 0 to `SET_DESTRUCTOR` and `SET_COPY_CONSTRUCTOR`.
+
+`GET_DESTRUCTOR(T)` and `GET_COPY_CONSTRUCTOR(T)` allow to return pointers to previously defined destructor and copy constructor for type *T*.
+
+For convenience, `COPY_CONSTRUCTOR_TYPE(T)` and `DESTRUCTOR_TYPE(T)` are the predefined types for pointer functions to copy constructor and destructor for type *T*. For instance, one can thus write
+
+```c
+COPY_CONSTRUCTOR_TYPE(T) cptor = GET_COPY_CONSTRUCTOR(T);
+```
 
 ## Ordering and equality
 Sets, maps as well as `LIST_SORT` require a strict weak ordering.
 Sets, maps as well as `LIST_FIND` and `LIST_UNIQUE` require equality operator.
 
 For basic standard types, the standard operator `<` is defined and used by default.
-For strings (`char *`), a default operator is defined with `strcoll`.
-For other types, a default less than operator id defind as a bytewise comparator.
+For strings (`char *`), a default operator is defined from `strcoll`.
+For other types, a default less than operator is defind as a bytewise comparator (something similar to `memcmp`).
 
 _Optional_ operators can be assigned to user defined types managed by collections using:
 
 - `SET_LESS_THAN_OPERATOR(T, operator)` where `operator` is a pointer to function with type `T (*operator) (T arg1, T arg2)`. This function should return 1 if `arg1` < `arg2`, 0 otherwise.
 
-Two values `arg1` and `arg2` are supposed to be equal when neither `arg1` < `arg2`, nor `arg1` > `arg2`.
+`GET_LESS_THAN_OPERATOR(T)` returns the pointer to the less than operator previously defined for type T.
 
-For sets and maps, less than operators can be specified when the collection is created (see `SET_CREATE` and `MAP_CREATE`).
+For convenience, `LESS_THAN_OPERATOR_TYPE(T)` is the predefined type for pointer function to less than operator for type *T*.
 
-For lists, a less than operator can be specified as the second argument of `LIST_SORT` and `LIST_UNIQUE`.
+Two values `arg1` and `arg2` are considered to be equal when neither `arg1` < `arg2`, nor `arg1` > `arg2`.
+
+For sets and maps, less than operators can also be optionally specified when the collection is created (see `SET_CREATE` and `MAP_CREATE`). If not, the less than operator tied to type *T* will be used.
+
+For lists, a less than operator can also be specified as the optional second argument of `LIST_SORT` and `LIST_UNIQUE`. If not, the less than operator tied to type *T* will be used.
 
 ## Algorithmic complexity
 
