@@ -71,7 +71,7 @@ Dereferences the value of the element n.
 The returned value should not be freed by the caller.
 #### Assign value: void LNODE_ASSIGN(*N* \*n, *T* v)
 Modifies the value hold be the element n with the value v..
-A *copy* of T is assigned to the element.
+A *copy* of v is assigned to the element.
 #### Move forward: *N* \*LNODE_NEXT(*N* \*n)
 Returns a pointer to the next element in the list or LIST_END(*L*). Complexity: O(*log* N)
 #### Move backward: *N* \*LNODE_PREVIOUS(*N* \*n)
@@ -331,6 +331,7 @@ Parameters between square bracket are optional.
 #### `SET_INSERT`
 ##### **Syntax:** *N* \*SET_INSERT(*S* \*s, *K* k)
 ##### **Description:** Inserts an element containing the value k
+##### **Note:** No insertion is performed if an element with the same value is already in the set, and unicity is required.
 ##### **Return value:** A pointer to the created element in case of success, or 0 otherwise.
 ##### **Errors:** ENOMEM in case of memory allocation error.
 ##### **Complexity:** O(*1og* N)
@@ -369,7 +370,7 @@ Parameters between square bracket are optional.
 ###### void SET_TRAVERSE(*S* \*s, int (\*callback)( *N* \*, void \*), void \*param)
 ###### void SET_TRAVERSE(*S* \*s, int (\*callback)( *N* \*, void \*), void \*param, int until)
 Arguments `param` and `until` are optional. Default values are respectively `s` and EXIT_FAILURE.
-##### **Description:** Applies a function `callback` to every element of the set sequentially, from beginning to end, until `callback` returns `until`. `callback` is called with element as the first argument. `param` is oassed as the second argument to each call of `callback`.
+##### **Description:** Applies a function `callback` to every element of the set sequentially, from beginning to end, until `callback` returns `until`. `callback` is called with element as the first argument. `param` is passed as the second argument to each call of `callback`.
 ##### **Note:** The set must not be modified (insertion or deletion of elements) during traversal.
 ##### **Return value:** None.
 ##### **Errors:** None.
@@ -383,7 +384,7 @@ Arguments `param` and `until` are optional. Default values are respectively `s` 
 ###### void SET_FOR_EACH(*S* \*s, *N* \*begin, int (\*callback)(*N* \*, void \*), void \*param, int until)
 ###### void SET_FOR_EACH(*S* \*s, *N* \*begin, *N* \*end, int (\*callback)(*N* \*, void \*), void \*param, int until)
 Arguments `param`, `until`, `begin` and `end` are optional. Default values are respectively `s`, EXIT_FAILURE, SET_BEGIN(s) and SET_END(s).
-##### **Description:** Applies a function `callback` to every element of the set sequentially, from `begin` (included) to `end` (excluded), until `callback` returns `until`. `callback` is called with element as the first argument of `callback`. `param` is oassed as the second argument to each call of `callback`.
+##### **Description:** Applies a function `callback` to every element of the set sequentially, from `begin` (included) to `end` (excluded), until `callback` returns `until`. `callback` is called with element as the first argument of `callback`. `param` is passed as the second argument to each call of `callback`.
 ##### **Note:** The set *can be modified* (insertion or deletion of elements) during traversal.
 ##### **Return value:** None.
 ##### **Errors:** None.
@@ -392,14 +393,14 @@ Arguments `param`, `until`, `begin` and `end` are optional. Default values are r
 #### `SET_BEGIN`
 ##### **Syntax:** *N* \*SET_BEGIN(*S* \*s)
 ##### **Description:** Yields the first element of a set.
-##### **Return value:** First element of set `s`, or SET_END(l) if `s` is empty.
+##### **Return value:** First element of set `s`, or SET_END(s) if `s` is empty.
 ##### **Errors:** None.
 ##### **Complexity:** O(1)
 
 #### `SET_LAST`
 ##### **Syntax:** *N* \*SET_LAST(*S* \*s)
 ##### **Description:** Yields the last element of a set.
-##### **Return value:** Last element of set `s`, or SET_END(l) if `s` is empty.
+##### **Return value:** Last element of set `s`, or SET_END(s) if `s` is empty.
 ##### **Errors:** None.
 ##### **Complexity:** O(1)
 
@@ -460,145 +461,190 @@ int main (void)
 Look at a complete [example](examples/set_example.c).
 
 ## Maps
-This container represents a collection of keys and values that is maintained in sorted order by keys.
+This container represents a collection of pairs of keys and values that is maintained in sorted order of keys.
 ### Type
+MAP(*K*, *T*), where *K* denotes the key type contained in the map, and *T* the value type assiciated to the keys.
+
+The type is denoted as *M* below.
 ### Unicity
+Maps can either contain unique elements or not, depending on the parameters passed at creation.
 
 ### Elements
+Elements are place-holders of pairs (key, value) of type (*K*, *T*).
+Thoses elements allow to navigate through the container.
 #### Element type
-#### Get key
-#### Get value
-#### Assign value
-#### Move forward
-#### Move backward
+BNODE(*K*, *T*)
+
+The type is denoted as *N* below.
+#### Get key: *K* \*BNODE_KEY(*N* \*n)
+Dereferences the key of the element n.
+The returned value should not be freed by the caller.
+#### Get value: *T* \*BNODE_VALUE(*N* \*n)
+Dereferences the value of the element n.
+The returned value should not be freed by the caller.
+#### Assign value: void BNODE_ASSIGN(*N* \*n, *T* v)
+Modifies the value hold be the element n with the value v..
+A *copy* of v is assigned to the element.
+
+#### Move forward: *N* \*BNODE_NEXT(*N* \*n)
+Returns a pointer to the next element in the list or MAP_END(*L*). Complexity: O(*log* N)
+#### Move backward: *N* \*BNODE_PREVIOUS(*N* \*n)
+Returns a pointer to the previous elemnt in the list or MAP_END(*L*). Complexity: O(*log* N)
 
 ### Functions
 #### `MAP_CREATE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *M* \* MAP_CREATE(*K*, [int (*less_than_operator) (K, K)=0], [int unicity=1])
+Parameters between square bracket are optional.
+##### **Description:** Creates a new map. This set must be destroyed by MAP_DESTROY after usage.
+##### **Return value:** A pointer to the created map, or 0 in case of memory allocation error.
+##### **Errors:** ENOMEM Out of memory.
+##### **Complexity:** O(1)
 
 #### `MAP_DESTROY`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** void MAP_DESTROY(*M* \*m)
+##### **Description:** Desallocates all elements in the map and desallocates the map. The destructor of types *K* and *T* are called for each element of the map
+##### **Note:** The map must not be used destruction.
+##### **Return value:** None
+##### **Errors:** None
+##### **Complexity:** O(N)
 
 #### `MAP_INSERT`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-
-#### `MAP_REMOVE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_CLEAR`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_SIZE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_IS_EMPTY`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_TRAVERSE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_FOR_EACH`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_BEGIN`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_LAST`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_END`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_KEY`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_INDEX`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_FIND_KEY`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_FIND_VALUE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
-
-#### `MAP_MOVE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *N* \*MAP_INSERT(*M* \*m, *K* k, *T* v)
+##### **Description:** Inserts an element containing the key-value pair (k, v).
+##### **Note:** No insertion is performed if an element with the same key is already in the map, and unicity is required.
+##### **Return value:** A pointer to the created element in case of success, or 0 otherwise.
+##### **Errors:** ENOMEM in case of memory allocation error.
+##### **Complexity:** O(*1og* N)
 
 #### `MAP_SET_VALUE`
-##### **Syntax:** 
-##### **Description:** 
-##### **Return value:** 
-##### **Errors:** 
-##### **Complexity:** 
+##### **Syntax:** *N* \*MAP_SET_VALUE(*M* \*m, *K* k, *T* v)
+##### **Description:** Modifies the value associated with the key k in the map : the associated value is set to the value v.
+##### **Note:** An element is inserted if no element with the same key is already in the map, or if unicity is not required.
+##### **Return value:** A pointer to the modiied element in case of success, or 0 otherwise.
+##### **Errors:** ENOMEM in case of memory allocation error.
+##### **Complexity:** O(*1og* N)
+
+#### `MAP_REMOVE`
+##### **Syntax:** int MAP_REMOVE(*M* \*m, *N* \*n)
+##### **Description:** Removes the element n from the map `m`. The pair hold by the element is destroyed. `n` should not be dereferenced afterwards.
+##### **Return value:** EXIT_SUCCESS on success, EXIT_FAILURE otherwise.
+##### **Errors:** EINVAL if `n` is not an element of the map `m`.
+##### **Complexity:** O(1)
+
+#### `MAP_CLEAR`
+##### **Syntax:** void MAP_CLEAR(*S* \*s)
+##### **Description:** Desallocates all elements in the map. The destructors of types *K* and *T* are called for each element of the map. The map can still be used afterwards.
+##### **Return value:** None
+##### **Errors:** None
+##### **Complexity:** O(N)
+
+#### `MAP_SIZE`
+##### **Syntax:** size_t MAP_SIZE(*M* \*m)
+##### **Description:** Returns the number of elements in map `m`.
+##### **Return value:** The number of elements in map `m`
+##### **Errors:** None
+##### **Complexity:** O(1)
+
+#### `MAP_IS_EMPTY`
+##### **Syntax:** int MAP_IS_EMPTY(*M* \*m)
+##### **Description:** Indicates if the map is empty.
+##### **Return value:** 1 if the map is empty, 0 otherwise
+##### **Errors:** None
+##### **Complexity:** O(1)
+
+#### `MAP_TRAVERSE`
+##### **Syntax:**
+###### void MAP_TRAVERSE(*M* \*m, int (\*callback)( *N* \*, void \*))
+###### void MAP_TRAVERSE(*M* \*m, int (\*callback)( *N* \*, void \*), void \*param)
+###### void MAP_TRAVERSE(*M* \*m, int (\*callback)( *N* \*, void \*), void \*param, int until)
+Arguments `param` and `until` are optional. Default values are respectively `m` and EXIT_FAILURE.
+##### **Description:** Applies a function `callback` to every element of the map sequentially, from beginning to end, until `callback` returns `until`. `callback` is called with element as the first argument. `param` is passed as the second argument to each call of `callback`.
+##### **Note:** The map must not be modified (insertion or deletion of elements) during traversal.
+##### **Return value:** None.
+##### **Errors:** None.
+##### **Complexity:** O(N)
+
+#### `MAP_FOR_EACH`
+##### **Syntax:**
+###### void MAP_FOR_EACH(*M* \*m, int (\*callback)(*N* \*, void \*))
+###### void MAP_FOR_EACH(*M* \*m, int (\*callback)(*N* \*, void \*), void \*param)
+###### void MAP_FOR_EACH(*M* \*m, int (\*callback)(*N* \*, void \*), void \*param, int until)
+###### void MAP_FOR_EACH(*M* \*m, *N* \*begin, int (\*callback)(*N* \*, void \*), void \*param, int until)
+###### void MAP_FOR_EACH(*M* \*m, *N* \*begin, *N* \*end, int (\*callback)(*N* \*, void \*), void \*param, int until)
+Arguments `param`, `until`, `begin` and `end` are optional. Default values are respectively `m`, EXIT_FAILURE, MAP_BEGIN(m) and MAP_END(m).
+##### **Description:** Applies a function `callback` to every element of the map sequentially, from `begin` (included) to `end` (excluded), until `callback` returns `until`. `callback` is called with element as the first argument of `callback`. `param` is passed as the second argument to each call of `callback`.
+##### **Note:** The map *can be modified* (insertion or deletion of elements) during traversal.
+##### **Return value:** None.
+##### **Errors:** None.
+##### **Complexity:** O(N *log* N)
+
+#### `MAP_BEGIN`
+##### **Syntax:** *N* \*MAP_BEGIN(*M* \*m)
+##### **Description:** Yields the first element of a map.
+##### **Return value:** First element of map `m`, or MAP_END(m) if `m` is empty.
+##### **Errors:** None.
+##### **Complexity:** O(1)
+
+#### `MAP_LAST`
+##### **Syntax:** *N* \*MAP_LAST(*M* \*m)
+##### **Description:** Yields the last element of a map.
+##### **Return value:** Last element of map `m`, or MAP_END(m) if `m` is empty.
+##### **Errors:** None.
+##### **Complexity:** O(1)
+
+#### `MAP_END`
+##### **Syntax:** *N* \*MAP_END(*M* \*m)
+##### **Description:** Yields the past-the-end element of a map.
+##### **Note:** The returned element must not be dereferenced.
+##### **Return value:** Past-the-end element of map `m`.
+##### **Errors:** None.
+##### **Complexity:** O(1)
+
+#### `MAP_KEY`
+##### **Syntax:** *N* \*MAP_KEY(*M* \*m, *K* k)
+##### **Description:** Returns the first element which key is equal to k.
+##### **Return value:** The first element which key is equal to k, or MAP_END(m) if no element are found.
+##### **Errors:** None.
+##### **Complexity:** O(*log* N)
+
+#### `MAP_INDEX`
+##### **Syntax:** *N* \*MAP_INDEX(*M* \*m, size_t index)
+##### **Description:** Yields the *i*th element of a map.
+##### **Return value:** The *i*th element of map `m`, *i* is a 0-based index.
+##### **Errors:** None.
+##### **Note:** `m` should not be empty and index should be positive and strictly less than MAP_SIZE(s).
+##### **Complexity:** O(*1og* N)
+
+#### `MAP_FIND_KEY`
+##### **Syntax:** *N* \*MAP_FIND_KEY(*M* \*m, [*N* \*n=MAP_BEGIN(m)], *K* k)
+The second argument is optional.
+##### **Description:** Returns the first element after n (included) which key is equal to k.
+##### **Return value:** The first element after n (included) which key is equal to k.
+##### **Errors:** None.
+##### **Complexity:** O(*1og* N) if the second argument is not specified, O(N *1og* N) otherwise.
+
+#### `MAP_FIND_VALUE`
+##### **Syntax:** *N* \*MAP_FIND_VALUE(*M* \*m, [*N* \*n=MAP_BEGIN(m)], *T* v)
+The second argument is optional.
+##### **Description:** Returns the first element after n (included) which value is equal to v.
+##### **Return value:** The first element after n (included) which value is equal to v.
+##### **Errors:** None.
+##### **Complexity:** O(N *1og* N).
+
+#### `MAP_SET_LESS_THAN_VALUE_OPERATOR`
+##### **Syntax:** void MAP_SET_LESS_THAN_VALUE_OPERATOR(*M* \*m, int (*less_than_operator) (T, T))
+##### **Description:** Defines a less than operator tied to the map `m`.
+##### **Note:** If no operator is specified for the map `m`, the operator attached to type *T* is used, or the default less than operator for type *T*.
+##### **Return value:** None.
+##### **Errors:** None.
+##### **Complexity:** O(1).
+
+#### `MAP_MOVE`
+##### **Syntax:** int MAP_MOVE(*M* \*to, *M* \*from, *N* \*herefrom)
+##### **Description:** Moves element `herefrom` of map `from` into map `to`.
+##### **Return value:** EXIT_SUCCESS in case of success, EXIT_FAILURE otherwise.
+##### **Errors:** EINVAL if `herefrom` does not belong to the map `from`.
+##### **Complexity:** O(*1og* N)
 
 ### Example
 Look at a complete [example](examples/map_example.c).

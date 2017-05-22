@@ -84,6 +84,35 @@ range_value (LNODE (myint) * n, void *param)
     ((Range *) param)->max ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
+void
+phaseI_insert (LIST (myint) * l, size_t D)
+{
+  size_t N = 1;
+
+  for (size_t i = 0; i < D; i++)
+    N *= 2;
+  N--;
+
+  for (size_t i = 0; i < N; i++)
+    LIST_APPEND (l, (myint) i);
+}
+
+void
+phaseII_removal (LIST (myint) * l)
+{
+  size_t N = l->root->higher_child->size;
+
+  for (size_t i = 0; i < N; i++)
+    LIST_REMOVE (l, LIST_LAST (l));
+}
+
+void
+phaseIII_reinsert (LIST (myint) * l, size_t N)
+{
+  for (size_t i = 0; i < N; i++)
+    LIST_APPEND (l, (myint) LIST_SIZE (l));
+}
+
 int
 main (void)
 {
@@ -304,10 +333,37 @@ main (void)
   LIST_INSERT (lp, LIST_BEGIN (lp), p2);
 
   // Using default (kind of memcmp) less than operator.
-  for (LNODE(Range) * p = LIST_BEGIN (lp) ; p != LIST_END (lp) ; p = LNODE_NEXT (p))
+  for (LNODE (Range) * p = LIST_BEGIN (lp); p != LIST_END (lp); p = LNODE_NEXT (p))
     printf ("{ %i, %i }\n", BNODE_VALUE (p)->min, BNODE_VALUE (p)->max);
   LIST_SORT (lp);
-  for (LNODE(Range) * p = LIST_BEGIN (lp) ; p != LIST_END (lp) ; p = LNODE_NEXT (p))
+  for (LNODE (Range) * p = LIST_BEGIN (lp); p != LIST_END (lp); p = LNODE_NEXT (p))
     printf ("{ %i, %i }\n", BNODE_VALUE (p)->min, BNODE_VALUE (p)->max);
   LIST_DESTROY (lp);
+
+  printf ("------\n");
+  SET_DESTRUCTOR (myint, 0);
+  SET_COPY_CONSTRUCTOR (myint, 0);
+  LIST (myint) * perf = LIST_CREATE (myint);
+
+  size_t D = 19;
+
+  phaseI_insert (perf, D);
+  printf ("N=%1$lu, D=%2$lu [%3$lu ^ %4$lu]\n", LIST_SIZE (perf), perf->root->depth,
+          perf->root->lower_child ? perf->root->lower_child->depth : 0,
+          perf->root->higher_child ? perf->root->higher_child->depth : 0);
+
+  size_t N = LIST_SIZE (perf);
+
+  phaseII_removal (perf);
+  printf ("N=%1$lu, D=%2$lu [%3$lu ^ %4$lu]\n", LIST_SIZE (perf), perf->root->depth,
+          perf->root->lower_child ? perf->root->lower_child->depth : 0,
+          perf->root->higher_child ? perf->root->higher_child->depth : 0);
+
+  phaseIII_reinsert (perf, N / 16);
+  printf ("N=%1$lu, D=%2$lu [%3$lu ^ %4$lu]\n", LIST_SIZE (perf), perf->root->depth,
+          perf->root->lower_child ? perf->root->lower_child->depth : 0,
+          perf->root->higher_child ? perf->root->higher_child->depth : 0);
+
+  LIST_DESTROY (perf);
+  printf ("------\n");
 }

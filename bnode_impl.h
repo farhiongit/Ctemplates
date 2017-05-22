@@ -221,7 +221,7 @@
       {                                                                   \
         BNODE_##K##_##T *sibling = n->parent->higher_child;               \
         if (n->depth > (sibling ? sibling->depth + 1 : 1))                \
-        {                                                                 \
+        {   /* balancing required */                                      \
           BNODE_##K##_##T *parent = n->parent;                            \
           BNODE_##K##_##T *grandparent = n->parent->parent;               \
           if (grandparent)                                                \
@@ -248,7 +248,7 @@
       {                                                                   \
         BNODE_##K##_##T *sibling = n->parent->lower_child;                \
         if (n->depth > (sibling ? sibling->depth + 1 : 1))                \
-        {                                                                 \
+        {   /* balancing required */                                      \
           BNODE_##K##_##T *parent = n->parent;                            \
           BNODE_##K##_##T *grandparent = n->parent->parent;               \
           if (grandparent)                                                \
