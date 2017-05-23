@@ -55,17 +55,17 @@ If collections are intended to be used in a library,
 This container represents a strongly typed list of objects that can be accessed by index.
 
 ### Type
-LIST(*T*), where *T* denotes the type contained in the list.
+The type of a list is LIST(*T*), where *T* denotes the type contained in the list.
 
-The type is denoted as *L* below.
+This type is noted as *L* below.
 
 ### Elements
 Elements are place-holders of values of type *T*.
 Thoses elements allow to navigate through the container.
 #### Element type
-LNODE(*T*)
+The type of the elements of a list is LNODE(*T*).
 
-The type is denoted as *N* below.
+This type is noted as *N* below.
 #### Get value: *T* \*LNODE_VALUE(*N* \*n)
 Dereferences the value of the element n.
 The returned value should not be freed by the caller.
@@ -290,19 +290,19 @@ Look at a complete [example](examples/list_example.c).
 ## Sets
 This container represents a collection of objects that is maintained in sorted order.
 ### Type
-SET(*K*), where *K* denotes the type contained in the set.
+The type of a set is SET(*K*), where *K* denotes the type contained in the set.
 
-The type is denoted as *S* below.
+This type is noted as *S* below.
 ### Unicity
-Sets can either contain unique elements or not, depending on the parameters passed at creation.
+Sets can either contain unique elements or not, depending on the third parameters passed at creation (`SET_CREATE`).
 
 ### Elements
 Elements are place-holders of values of type *K*.
 Thoses elements allow to navigate through the container.
 #### Element type
-SNODE(*K*)
+The type of the elements of a set is SNODE(*K*)
 
-The type is denoted as *N* below.
+This type is noted as *N* below.
 #### Get value: *K* \*SNODE_KEY(*N* \*n)
 Dereferences the value of the element n.
 The returned value should not be freed by the caller.
@@ -463,19 +463,19 @@ Look at a complete [example](examples/set_example.c).
 ## Maps
 This container represents a collection of pairs of keys and values that is maintained in sorted order of keys.
 ### Type
-MAP(*K*, *T*), where *K* denotes the key type contained in the map, and *T* the value type assiciated to the keys.
+The type of a map is MAP(*K*, *T*), where *K* denotes the key type contained in the map, and *T* the value type assiciated to the keys.
 
-The type is denoted as *M* below.
+This type is noted as *M* below.
 ### Unicity
-Maps can either contain unique elements or not, depending on the parameters passed at creation.
+Maps can either contain unique elements or not, depending on the third parameters passed at creation (`MAP_CREATE`).
 
 ### Elements
 Elements are place-holders of pairs (key, value) of type (*K*, *T*).
 Thoses elements allow to navigate through the container.
 #### Element type
-BNODE(*K*, *T*)
+The type of the elements of a map is BNODE(*K*, *T*)
 
-The type is denoted as *N* below.
+This type is noted as *N* below.
 #### Get key: *K* \*BNODE_KEY(*N* \*n)
 Dereferences the key of the element n.
 The returned value should not be freed by the caller.
@@ -647,6 +647,81 @@ The second argument is optional.
 ##### **Complexity:** O(*1og* N)
 
 ### Example
+```c
+typedef struct
+{
+  int l, w, h;
+} Dimensions;
+DEFINE_OPERATORS (pchar)
+DEFINE_OPERATORS (Dimensions)
+
+DECLARE_MAP (pchar, Dimensions)
+DEFINE_MAP (pchar, Dimensions)
+
+static int
+print_car (BNODE (pchar, Dimensions) * car, void *arg)
+{
+  (void) arg;
+  printf ("%s (%d, %d, %d)\n", *BNODE_KEY (car), BNODE_VALUE (car)->l, BNODE_VALUE (car)->w, BNODE_VALUE (car)->h);
+
+  return EXIT_SUCCESS;
+}
+
+int
+main (void)
+{
+  MAP (pchar, Dimensions) * cars = MAP_CREATE (pchar, Dimensions);
+
+  Dimensions rt = {.l = 3595,.w = 1647,.h = 1557 };
+  Dimensions cc1 = {.l = 3466,.w = 1615,.h = 1460 };
+  Dimensions p108 = {.l = 3475,.w = 1615,.h = 1460 };
+  MAP_INSERT (cars, "Renault Twingo", cc1);     // Inserts and sets value
+  MAP_SET_VALUE (cars, "Renault Twingo", rt);   // Does not insert but sets value
+  MAP_SET_VALUE (cars, "Citroën C1", cc1);     // Inserts and sets value
+  MAP_INSERT (cars, "Citroën C1", rt); // Does neither insert nor modify value
+  MAP_SET_VALUE (cars, "Peugeot 108", cc1);     // Inserts and sets value
+  MAP_SET_VALUE (cars, "Peugeot 108", p108);    // Does not insert but sets value
+
+  MAP (pchar, Dimensions) * fiat = MAP_CREATE (pchar, Dimensions);
+
+  Dimensions mini3 = {.l = 3821,.w = 1727,.h = 1415 };
+  MAP_SET_VALUE (fiat, "Mini Cooper", mini3);
+  Dimensions f500 = {.l = 3546,.w = 1627,.h = 1488 };
+  MAP_SET_VALUE (fiat, "Fiat 500", f500);
+
+  MAP_MOVE (cars, fiat, MAP_KEY (fiat, "Fiat 500"));
+  MAP_REMOVE (fiat, MAP_KEY (fiat, "Mini Cooper"));
+  printf ("%lu elements in fiat\n", MAP_SIZE (fiat));
+
+  MAP_DESTROY (fiat);
+
+  MAP_TRAVERSE (cars, print_car);
+
+  // Find keys in the set
+  char *alicia[2] = { "Fiat 500", "Mini Cooper" };
+  for (size_t i = 0; i < sizeof (alicia) / sizeof (*alicia); i++)
+    if (MAP_FIND_KEY (cars, alicia[i]))
+      printf ("%s is in cars.\n", alicia[i]);
+    else
+      printf ("%s is NOT in cars.\n", alicia[i]);
+
+  Dimensions d = {.l = 3546,.w = 1627,.h = 1488 };
+
+  BNODE (pchar, Dimensions) * c = MAP_FIND_VALUE (cars, d);
+  if (c)
+    printf ("%s\n", *BNODE_KEY (c));
+
+  c = MAP_INDEX (cars, 1);
+  if (c)
+    printf ("%s\n", *BNODE_KEY (c));
+
+  c = MAP_LAST (cars);
+  if (c)
+    printf ("%s\n", *BNODE_KEY (c));
+
+  MAP_DESTROY (cars);
+}
+```
 Look at a complete [example](examples/map_example.c).
 
 ## Memory managment
@@ -670,6 +745,7 @@ COPY_CONSTRUCTOR_TYPE(T) cptor = GET_COPY_CONSTRUCTOR(T);
 ```
 
 ## Ordering and equality
+### Ordering
 Sets, maps as well as `LIST_SORT` require a strict weak ordering.
 Sets, maps as well as `LIST_FIND` and `LIST_UNIQUE` require equality operator.
 
@@ -677,7 +753,7 @@ For basic standard types, the standard operator `<` is defined and used by defau
 For strings (`char *`), a default operator is defined from `strcoll`.
 For other types, a default less than operator is defind as a bytewise comparator (something similar to `memcmp`).
 
-_Optional_ operators can be assigned to user defined types managed by collections using:
+User defined operators can _optionally_ replace default operators using:
 
 - `SET_LESS_THAN_OPERATOR(T, operator)` where `operator` is a pointer to function with type `T (*operator) (T arg1, T arg2)`. This function should return 1 if `arg1` < `arg2`, 0 otherwise.
 
@@ -685,39 +761,14 @@ _Optional_ operators can be assigned to user defined types managed by collection
 
 For convenience, `LESS_THAN_OPERATOR_TYPE(T)` is the predefined type for pointer function to less than operator for type *T*.
 
+For sets and maps, less than operators can also be optionally specified when the collection is created (see `SET_CREATE` and `MAP_CREATE`). If not, the less than operator tied to type *T* will be used (either the user defined or defualt one).
+
+For lists, a less than operator can also be specified as the optional second argument of `LIST_SORT` and `LIST_UNIQUE`. If not, the less than operator tied to type *T* will be used (either the user defined or defualt one).
+
+### Equality
+Equality is required for key or data matching (using finctions `...FIND...`) and unicity (during insertion or for `LIST_UNIQUE`).
+
 Two values `arg1` and `arg2` are considered to be equal when neither `arg1` < `arg2`, nor `arg1` > `arg2`.
-
-For sets and maps, less than operators can also be optionally specified when the collection is created (see `SET_CREATE` and `MAP_CREATE`). If not, the less than operator tied to type *T* will be used.
-
-For lists, a less than operator can also be specified as the optional second argument of `LIST_SORT` and `LIST_UNIQUE`. If not, the less than operator tied to type *T* will be used.
-
-## Algorithmic complexity
-
-
-
-|                     | List | Set | Map |
-|:--------------------|:----:|:---:|:---:|
-|Insert               | O(log N) | O(log N) | O(log N) |
-|Remove               |      |     |     |
-|Move                 |      |     |     |
-|Next                 |      |     |     |
-|Index                | O(log N) |     |     |
-|Previous             |      |     |     |
-|Go to begining       |      |     |     |
-|Go to end            |      |     |     |
-|Go to index          |      |     |     |
-|Search key           |      |     |     |
-|Search value         |      |     |     |
-|Traverse             |      |     |     |
-|For_each             |      |     |     |
-|Swap                 |      |     |     |
-|Reverse              |      |     |     |
-|Sort                 |      |     |     |
-|Rotate left or right |      |     |     |
-|Clear or destroy     |      |     |     |
-
-Lists, sets and maps are internally constructed and organized upon binary trees.
-Those complexities rely on perfectly balanced trees.
 
 ## Tree self-balancing
 
@@ -730,6 +781,26 @@ The self-balacing strategy is relaxed:
 - it is not applied when an element is removed. The branch where the element is removed can get shorter than its sibling branch.
 
 This strategy garanties than the tree depth is always lower or equal to (*log* Nmax)/(*log* 2), where Nmax is the larger size of the collections.
+
+## Algorithmic complexity
+The complexity in worst case is compared in the following table.
+
+|                     | List | Set | Map |
+|:--------------------|:----:|:---:|:---:|
+|Insert               | O(log N) | O(log N) | O(log N) |
+|Remove               | O(1) | O(1) | O(1) |
+|Move                 | O(log N) | O(log N) | O(log N) |
+|Index                | O(log N) | O(log N) | O(log N) |
+|Go to Previous       | O(log N) | O(log N) | O(log N) |
+|Go to Next           | O(log N) | O(log N) | O(log N) |
+|Go to begining       | O(1) | O(1) | O(1) |
+|Go to end            | O(1) | O(1) | O(1) |
+|Go to index          | O(log N) | O(log N) | O(log N) |
+|Search key           | - | O(log N) | O(log N) |
+|Search value         | O(N) | - | O(N) |
+|Traverse             | O(N) | O(N) | O(N) |
+|For_each             | O(N log N) | O(N log N) | O(N log N) |
+|Clear or destroy     | O(N) | O(N) | O(N) |
 
 ## Tips and pitfalls
 Template declarations can not apply directly on compound types such as `char *`, `unsigned long` or `struct foo`.
@@ -754,6 +825,13 @@ Prefer
 ## Examples
 Look at examples in directory [`examples`](examples).
 
+## Tests
+Lists, sets and maps functionnalities have been thoroughly tested as well as self-balancing algorithm.
+`valgrind` has been used to check the execution of thoses tests is memory leajs free.
+
+Look at full tests in directory [`test`](test).
+
+## References
 [1] Randy Gaul's Game Programming Blog - Generic Programming in C (http://www.randygaul.net/2012/08/10/generic-programming-in-c/)
 
 [2] The C Preprocessor - Duplication of Side Effects (https://gcc.gnu.org/onlinedocs/cpp/Duplication-of-Side-Effects.html#Duplication-of-Side-Effects)

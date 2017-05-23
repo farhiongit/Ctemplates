@@ -10,7 +10,7 @@
 typedef char *pchar;
 typedef struct
 {
-  double l, w, h;
+  int l, w, h;
 } Dimensions;
 
 /* *INDENT-OFF* */
@@ -25,15 +25,9 @@ static int
 print_car (BNODE (pchar, Dimensions) * car, void *arg)
 {
   (void) arg;
-  printf ("%s (%g, %g, %g)\n", *BNODE_KEY (car), BNODE_VALUE (car)->l, BNODE_VALUE (car)->w, BNODE_VALUE (car)->h);
+  printf ("%s (%d, %d, %d)\n", *BNODE_KEY (car), BNODE_VALUE (car)->l, BNODE_VALUE (car)->w, BNODE_VALUE (car)->h);
 
   return EXIT_SUCCESS;
-}
-
-int
-Dimensions_lt (Dimensions a, Dimensions b)
-{
-  return a.l < b.l || (a.l == b.l && a.w < b.w) || (a.l == b.l && a.w == b.w && a.h < b.h);
 }
 
 int
@@ -80,13 +74,12 @@ main (void)
   char *alicia[2] = { "Fiat 500", "Mini Cooper" };
   for (size_t i = 0; i < sizeof (alicia) / sizeof (*alicia); i++)
     if (MAP_FIND_KEY (cars, alicia[i]))
-      printf ("%s is in the map.\n", alicia[i]);
+      printf ("%s is in cars.\n", alicia[i]);
     else
-      printf ("%s is in NOT the map.\n", alicia[i]);
+      printf ("%s is NOT in cars.\n", alicia[i]);
 
   Dimensions d = {.l = 3546,.w = 1627,.h = 1488 };
 
-  MAP_SET_LESS_THAN_VALUE_OPERATOR (cars, Dimensions_lt);
   BNODE (pchar, Dimensions) * c = MAP_FIND_VALUE (cars, d);
   if (c)
     printf ("%s\n", *BNODE_KEY (c));
@@ -100,6 +93,4 @@ main (void)
     printf ("%s\n", *BNODE_KEY (c));
 
   MAP_DESTROY (cars);
-
-  //TODO: - define equality operator for lists, sets, maps (keys and values)
 }

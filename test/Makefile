@@ -2,8 +2,10 @@ CC=clang
 #CC=gcc
 CFLAGS += -g -Wall -Wextra -pedantic -Werror -I..
 CFLAGS += -fmacro-backtrace-limit=0
+#CFLAGS += -pg
 #CFLAGS += -fdebug-cpp
 LDFLAGS += -pthread
+#LDFLAGS += -pg
 
 all: tests main
 

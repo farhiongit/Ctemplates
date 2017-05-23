@@ -18,14 +18,17 @@ typedef struct
 DEFINE_OPERATORS (int)
 DEFINE_OPERATORS (pchar)
 DEFINE_OPERATORS (Range)
+DEFINE_OPERATORS (double)
 
 DECLARE_SET (int)
 DECLARE_SET (pchar)
 DECLARE_SET (Range)
+DECLARE_SET (double)
 
 DEFINE_SET (int)
 DEFINE_SET (pchar)
 DEFINE_SET (Range)
+DEFINE_SET (double)
 /* *INDENT-ON* */
 
 static int
@@ -73,6 +76,33 @@ range_value (SNODE (int) * n, void *param)
 {
   return *BNODE_KEY (n) < ((Range *) param)->min ? EXIT_FAILURE : *BNODE_KEY (n) >=
     ((Range *) param)->max ? EXIT_FAILURE : EXIT_SUCCESS;
+}
+
+void
+phaseI_insert (SET (double) * l, size_t D)
+{
+  size_t N = 1;
+
+  for (size_t i = 0; i < D; i++)
+    N *= 2;
+  N--;
+
+  for (size_t i = 0; i < N; i++)
+    SET_INSERT (l, (i * 1.0) / N);      // Tree balancing is required here
+}
+
+void
+phaseII_removal (SET (double) * l)
+{
+  while (SET_LAST (l) && SET_LAST (l) != l->root)
+    SET_REMOVE (l, SET_LAST (l));       // Tree balancing is NOT required here
+}
+
+void
+phaseIII_reinsert (SET (double) * l, size_t N)
+{
+  for (size_t i = 0; i < N; i++)
+    SET_INSERT (l, l->root->key + drand48 ());  // Tree balancing is sparsely required here (since the right branch is already randomly balanced, and because it is shorter than left one, the left branch is unaffected.)
 }
 
 int
@@ -192,4 +222,29 @@ main (void)
     printf ("{ %i, %i }\n", SNODE_KEY (p)->min, SNODE_KEY (p)->max);
 
   SET_DESTROY (sp);
+
+  printf ("------\n");
+  SET (double) * perf = SET_CREATE (double, 0, 0);
+
+  size_t D = 19;
+
+  phaseI_insert (perf, D);
+  printf ("N=%1$lu, D=%2$lu [%3$lu ^ %4$lu]\n", SET_SIZE (perf), perf->root->depth,
+          perf->root->lower_child ? perf->root->lower_child->depth : 0,
+          perf->root->higher_child ? perf->root->higher_child->depth : 0);
+
+  size_t N = SET_SIZE (perf);
+
+  phaseII_removal (perf);
+  printf ("N=%1$lu, D=%2$lu [%3$lu ^ %4$lu]\n", SET_SIZE (perf), perf->root->depth,
+          perf->root->lower_child ? perf->root->lower_child->depth : 0,
+          perf->root->higher_child ? perf->root->higher_child->depth : 0);
+
+  phaseIII_reinsert (perf, (N - SET_SIZE (perf)) / 16);
+  printf ("N=%1$lu, D=%2$lu [%3$lu ^ %4$lu]\n", SET_SIZE (perf), perf->root->depth,
+          perf->root->lower_child ? perf->root->lower_child->depth : 0,
+          perf->root->higher_child ? perf->root->higher_child->depth : 0);
+
+  SET_DESTROY (perf);
+  printf ("------\n");
 }

@@ -94,7 +94,7 @@ phaseI_insert (LIST (myint) * l, size_t D)
   N--;
 
   for (size_t i = 0; i < N; i++)
-    LIST_APPEND (l, (myint) i);
+    LIST_APPEND (l, (myint) i); // Tree balancing is required here
 }
 
 void
@@ -103,14 +103,14 @@ phaseII_removal (LIST (myint) * l)
   size_t N = l->root->higher_child->size;
 
   for (size_t i = 0; i < N; i++)
-    LIST_REMOVE (l, LIST_LAST (l));
+    LIST_REMOVE (l, LIST_LAST (l));     // Tree balancing is NOT required here
 }
 
 void
 phaseIII_reinsert (LIST (myint) * l, size_t N)
 {
   for (size_t i = 0; i < N; i++)
-    LIST_APPEND (l, (myint) LIST_SIZE (l));
+    LIST_APPEND (l, (myint) LIST_SIZE (l));     // Tree balancing is required here, but only for the right branch of the tree root (because the right branch is shorter than left one, the left branch is unaffected.)
 }
 
 int
