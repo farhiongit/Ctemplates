@@ -93,18 +93,10 @@ DEFINE_OPERATORS(__set_dummy__)
       return 0;                                                            \
     }                                                                      \
                                                                            \
-    K key = COPY_##K ? COPY_##K(*BNODE_KEY (node)) : COPY_DEFAULT(K) ? COPY_DEFAULT(K)(*BNODE_KEY (node)) : *BNODE_KEY (node);    \
-    BNODE_##K##___set_dummy__ *ret =                                       \
-           !self->root ?                                                   \
+    return !self->root ?                                                   \
              self->root = node :                                           \
              BNODE_TREE_ADD_##K##___set_dummy__ (&(self->root), node, self->LessThanKey) ?         \
                node : 0;                                                   \
-                                                                           \
-    if (DESTROY_##K)                                                       \
-      DESTROY_##K (key);                                                   \
-    else if (DESTROY_DEFAULT(K))                                           \
-      DESTROY_DEFAULT(K) (key);                                            \
-    return ret;                                                            \
   }                                                                        \
 \
   static int SET_REMOVE_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node )   \

@@ -15,31 +15,30 @@ The solution is a combination of several techniques:
 - macros to generate collection for any type and structure
 - virtual tables to implement static polymorphism
 - binary tree structure and operations
-- function overloading Overloading on number of arguments (but not type though)
+- function overloading on number of arguments (but not type though)
 
-Let me know if you encounter any bug.
+Let me know if you encounter any bug, or have any comment or suggestion.
 
 ## Definition and declaration of template collections
-Prior to any usage of template collections,
-
-Header files should be included in source files :
+Prior to any usage of template collections, header files should be included in source files :
 
 - `#include "defops.h"`
 - `#include "list_impl.h"`, `#include "set_impl.h"` or `#include "map_impl.h"` whether lists, sets or maps will be used.
 
 Once header files are included, the template have to be instanciated for each type to be used in collections.
 
-Templates are declared in global scope by:
+Templates are **declared** in global scope by (note the absence of trailing `;`):
 
     DECLARE_LIST (type)
     DECLARE_SET (type)
     DECLARE_MAP (key_type, value_type)
 
-For each type, some helpers have to be defined to allow declaration od copy constructors, destructors and inequality operator `<`. This is done in global scope by:
+For each type, some helpers have to be defined to allow declaration of copy constructors, destructors and inequality operator `<`.
+This is done in global scope by:
 
     DEFINE_OPERATORS (type)
 
-Templates are the defined in global scope by:
+Templates **are defined** in global scope by:
 
     DEFINE_LIST (type)
     DEFINE_SET (type)
@@ -50,6 +49,8 @@ If collections are intended to be used in a library,
 - the library header file should include files defining the interface of template : `#include "list.h"`, `#include "set.h"` or `#include "map.h"` whether lists, sets or maps will be used.
 - Declarations of templates should appear in the library header file.
 - Definitions of operators and templates should appear in library source file.
+
+Three common types of containers are provided: lists, sets and maps.
 
 ## Lists
 This container represents a strongly typed list of objects that can be accessed by index.
@@ -493,9 +494,9 @@ Returns a pointer to the previous elemnt in the list or MAP_END(*L*). Complexity
 
 ### Functions
 #### `MAP_CREATE`
-##### **Syntax:** *M* \* MAP_CREATE(*K*, [int (*less_than_operator) (K, K)=0], [int unicity=1])
+##### **Syntax:** *M* \* MAP_CREATE(*K*, *T*, [int (*less_than_operator) (K, K)=0], [int unicity=1])
 Parameters between square bracket are optional.
-##### **Description:** Creates a new map. This set must be destroyed by MAP_DESTROY after usage.
+##### **Description:** Creates a new map of pairs (*K*, *T*). This map must be destroyed by MAP_DESTROY after usage.
 ##### **Return value:** A pointer to the created map, or 0 in case of memory allocation error.
 ##### **Errors:** ENOMEM Out of memory.
 ##### **Complexity:** O(1)

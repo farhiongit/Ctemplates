@@ -60,7 +60,7 @@ typedef enum {
                                       T value, int (*lt)(T, T), BNODE_DIRECTION direction );         \
     struct _BNODE_##K##_##T *(*Previous) ( struct _BNODE_##K##_##T *n );                             \
     struct _BNODE_##K##_##T *(*Next) ( struct _BNODE_##K##_##T *n );                                 \
-    int (*Add) ( struct _BNODE_##K##_##T **self, struct _BNODE_##K##_##T *node, int (*lt)(K, K) );   \
+    size_t (*Add) ( struct _BNODE_##K##_##T **self, struct _BNODE_##K##_##T *node, int (*lt)(K, K) );\
     int (*Insert) ( struct _BNODE_##K##_##T **self, struct _BNODE_##K##_##T *here, struct _BNODE_##K##_##T *newNode); \
     struct _BNODE_##K##_##T *(*Index) ( struct _BNODE_##K##_##T *n, size_t index);                   \
     struct _BNODE_##K##_##T *(*Key) ( struct _BNODE_##K##_##T *n, K key, int (*lt)(K, K));           \

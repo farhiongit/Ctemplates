@@ -56,8 +56,8 @@
                                          T value, int (*lt)(T, T), BNODE_DIRECTION direction );      \
   static BNODE_##K##_##T * BNODE_PREVIOUS_##K##_##T( BNODE_##K##_##T *node );                        \
   static BNODE_##K##_##T * BNODE_NEXT_##K##_##T( BNODE_##K##_##T *node );                            \
-  static int BNODE_TREE_ADD_##K##_##T( BNODE_##K##_##T **self, BNODE_##K##_##T *newNode,             \
-                                       int (*lt)(K, K) );                                            \
+  static size_t BNODE_TREE_ADD_##K##_##T( BNODE_##K##_##T **self, BNODE_##K##_##T *newNode,          \
+                                          int (*lt)(K, K) );                                         \
   static int BNODE_TREE_INSERT_BEFORE_##K##_##T( BNODE_##K##_##T **self, BNODE_##K##_##T *here,      \
                                                  BNODE_##K##_##T *newNode);                          \
   static BNODE_##K##_##T * BNODE_INDEX_##K##_##T ( BNODE_##K##_##T *self, size_t index );            \
@@ -548,14 +548,14 @@
     return EXIT_SUCCESS;                                                  \
   }                                                                       \
 \
-  static int BNODE_TREE_ADD_##K##_##T(BNODE_##K##_##T **self,             \
+  static size_t BNODE_TREE_ADD_##K##_##T(BNODE_##K##_##T **self,          \
                                       BNODE_##K##_##T *newNode,           \
                                       int (*lt)(K, K))                    \
   {                                                                       \
     if (newNode->parent || newNode == *self)                              \
     {                                                                     \
       errno = EINVAL;                                                     \
-      return EXIT_FAILURE;                                                \
+      return 0;                                                           \
     }                                                                     \
                                                                           \
     BNODE_##K##_##T *lower = newNode->lower_child;                        \
@@ -567,7 +567,7 @@
     newNode->size = newNode->depth = 1;                                   \
                                                                           \
     /* Add newNode in the tree */                                         \
-    int ret = 0;                                                          \
+    size_t ret = 0;                                                       \
     /* Go to leaf */                                                      \
     BNODE_##K##_##T *leaf = *self;                                        \
     while (1)                                                             \

@@ -97,18 +97,10 @@
       return 0;                                                            \
     }                                                                      \
                                                                            \
-    K key = COPY_##K ? COPY_##K(*BNODE_KEY (node)) : COPY_DEFAULT(K) ? COPY_DEFAULT(K)(*BNODE_KEY (node)) : *BNODE_KEY (node); \
-    BNODE_##K##_##T *ret =                                                 \
-           !self->root ?                                                   \
+    return !self->root ?                                                   \
              self->root = node :                                           \
              BNODE_TREE_ADD_##K##_##T(&(self->root), node, self->LessThanKey) ?         \
                node : 0;                                                   \
-                                                                           \
-    if (DESTROY_##K)                                                       \
-      DESTROY_##K (key);                                                   \
-    else if (DESTROY_DEFAULT(K))                                           \
-      DESTROY_DEFAULT(K) (key);                                            \
-    return ret;                                                            \
   }                                                                        \
 \
   static BNODE_##K##_##T *MAP_SET_##K##_##T ( MAP_##K##_##T *self, K key, T value ) \
