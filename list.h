@@ -151,7 +151,7 @@ typedef int __list_dummy__ ;
 #define LIST_UNIQUE(...) VFUNC(LIST_UNIQUE, __VA_ARGS__)
 
 #define LIST_SORT2( listSelf, less_than ) \
-  do { listSelf->vtable->Sort ( listSelf, less_than ) ; } while(0)
+  do { (listSelf)->vtable->Sort ( (listSelf), (less_than) ) ; } while(0)
 
 #define LIST_SORT1( listSelf ) LIST_SORT2( listSelf, 0 )
 
