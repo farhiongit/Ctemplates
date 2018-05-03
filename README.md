@@ -4,17 +4,18 @@ And templates for all ! Template containers (lists, sets and maps) for C languag
 (c) 2017 Laurent Farhi (lrspam at sfr.fr).
 
 Dreaming of templates for C, such as
-'''c
+
+```c
 LIST (int) * mylist = LIST_CREATE (int);
 LIST_APPEND (mylist, 2);
 LIST_APPEND (mylist, 1);
 LIST_SORT (mylist);
-'''
+```
 ?
 
 Make your dream come true, read on !
 
-This project is about turning theoretical ideas of Randy Gaul on [his excellent blog](http://www.randygaul.net/2012/08/10/generic-programming-in-c/) into operational template containeers.
+This project is about turning theoretical ideas of Randy Gaul on [his excellent blog](http://www.randygaul.net/2012/08/10/generic-programming-in-c/) into operational template containers.
 
 Templates are about generating code at compile time.
 Languages such as C++ offer a powerful framework for template programming and usage.
