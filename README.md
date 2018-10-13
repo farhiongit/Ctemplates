@@ -41,22 +41,22 @@ Prior to any usage of template collections, header files should be included in s
 
 Once header files are included, the template have to be instanciated for each type to be used in collections.
 
-Templates are **declared** in global scope by (note the absence of trailing `;`):
+Templates are **declared** in global scope by:
 
-    DECLARE_LIST (type)
-    DECLARE_SET (type)
-    DECLARE_MAP (key_type, value_type)
+    DECLARE_LIST (type);
+    DECLARE_SET (type);
+    DECLARE_MAP (key_type, value_type);
 
 For each type, some helpers have to be defined to allow declaration of copy constructors, destructors and inequality operator `<`.
 This is done in global scope by:
 
-    DEFINE_OPERATORS (type)
+    DEFINE_OPERATORS (type);
 
 Templates **are defined** in global scope by:
 
-    DEFINE_LIST (type)
-    DEFINE_SET (type)
-    DEFINE_MAP (key_type, value_type)
+    DEFINE_LIST (type);
+    DEFINE_SET (type);
+    DEFINE_MAP (key_type, value_type);
 
 If collections are intended to be used in a library,
 
@@ -279,9 +279,9 @@ If `op` is not specified, the standard less than operator is used.
 ### Example
 ```c
 typedef char *T;
-DECLARE_LIST (T)
-DEFINE_OPERATORS (T)
-DEFINE_LIST (T)
+DECLARE_LIST (T);
+DEFINE_OPERATORS (T);
+DEFINE_LIST (T);
 
 int main (void)
 {
@@ -460,9 +460,9 @@ The second argument is optional.
 ### Example
 ```c
 typedef char *T;
-DECLARE_SET (T)
-DEFINE_OPERATORS (T)
-DEFINE_SET (T)
+DECLARE_SET (T);
+DEFINE_OPERATORS (T);
+DEFINE_SET (T);
 
 int main (void)
 {
@@ -667,11 +667,11 @@ typedef struct
 {
   int l, w, h;
 } Dimensions;
-DEFINE_OPERATORS (pchar)
-DEFINE_OPERATORS (Dimensions)
+DEFINE_OPERATORS (pchar);
+DEFINE_OPERATORS (Dimensions);
 
-DECLARE_MAP (pchar, Dimensions)
-DEFINE_MAP (pchar, Dimensions)
+DECLARE_MAP (pchar, Dimensions);
+DEFINE_MAP (pchar, Dimensions);
 
 static int
 print_car (BNODE (pchar, Dimensions) * car, void *arg)

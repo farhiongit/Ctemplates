@@ -1,13 +1,13 @@
 CC=clang
 #CC=gcc
-CFLAGS += -g -Wall -Wextra -pedantic -Werror -I..
+CFLAGS += -Wall -Wextra -pedantic -Werror -I..
 CFLAGS += -fmacro-backtrace-limit=0
 #CFLAGS += -pg
 #CFLAGS += -fdebug-cpp
 LDFLAGS += -pthread
 #LDFLAGS += -pg
 
-all: tests main
+all: tests main gol
 
 .PHONY: test_list.expand
 test_list.expand: test_list.c
@@ -29,8 +29,12 @@ test_list.o: test_list.c ../defops.h ../list_impl.h ../bnode_impl.h ../bnode.h .
 test_set.o: test_set.c ../set_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../set.h ../defops.h
 test_tree.o: test_tree.c ../defops.h ../bnode_impl.h ../bnode.h ../vfunc.h
 test_map.o: test_map.c ../defops.h ../map_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../map.h
+gol.o: gol.c ../set_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../set.h ../defops.h ../map_impl.h ../map.h
+
+gol: CFLAGS += -O3
 
 .PHONY: tests
+tests: CFLAGS += -g
 tests: test_list test_set test_tree test_map
 	valgrind -q ./test_list > ./test_list.tmp 2>&1 || :
 	diff -q ./test_list.tmp ./test_list.log

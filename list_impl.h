@@ -35,7 +35,7 @@
 #include "list.h"
 #include "defops.h"
 
-DEFINE_OPERATORS(__list_dummy__)
+DEFINE_OPERATORS(__list_dummy__);
 
 //
 // DEFINE_LIST
@@ -43,7 +43,7 @@ DEFINE_OPERATORS(__list_dummy__)
 //
 #define DEFINE_LIST( TYPE )                              \
 \
-  DEFINE_BNODE(__list_dummy__, TYPE)                     \
+  DEFINE_BNODE(__list_dummy__, TYPE);                    \
 \
   static void LIST_CLEAR_##TYPE ( LIST_##TYPE *self );                                                               \
   static BNODE___list_dummy___##TYPE *LIST_INSERT_##TYPE ( LIST_##TYPE *self, BNODE___list_dummy___##TYPE *here, BNODE___list_dummy___##TYPE *node );             \
@@ -277,5 +277,6 @@ DEFINE_OPERATORS(__list_dummy__)
     (void)self;                                                            \
     return 0;                                                              \
   }                                                                        \
+  struct __useless_struct_LIST_IMPL_##TYPE##_IMPL
 
 #endif

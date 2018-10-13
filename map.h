@@ -37,7 +37,7 @@
 //
 #define DECLARE_MAP( K, T )     \
 \
-  DECLARE_BNODE(K, T)           \
+  DECLARE_BNODE(K, T);          \
 \
   struct _MAP_##K##_##T;        \
 \
@@ -64,6 +64,7 @@
   } MAP_##K##_##T;                          \
 \
   MAP_##K##_##T *MAP_CREATE_##K##_##T( int (*less_than_operator) (K, K), int unique );  \
+  struct __useless_struct_MAP_##K##_##T
 
 #define MAP_CREATE4( K, T, less_than_operator, unique ) \
   MAP_CREATE_##K##_##T((less_than_operator), (unique))

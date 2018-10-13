@@ -3,11 +3,11 @@
 #include "map_impl.h"
 
 /* *INDENT-OFF* */
-DEFINE_OPERATORS (int)
-DEFINE_OPERATORS (pchar)
-DEFINE_OPERATORS (double)
-DEFINE_SET (int)
-DEFINE_MAP (pchar, double)
+DEFINE_OPERATORS (int);
+DEFINE_OPERATORS (pchar);
+DEFINE_OPERATORS (double);
+DEFINE_SET (int);
+DEFINE_MAP (pchar, double);
 /* *INDENT-ON* */
 
 int

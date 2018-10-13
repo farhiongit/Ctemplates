@@ -4,9 +4,9 @@
 #include "map.h"
 
 /* *INDENT-OFF* */
-DECLARE_SET (int)
+DECLARE_SET (int);
 typedef char *pchar;
-DECLARE_MAP (pchar, double)
+DECLARE_MAP (pchar, double);
 
 int libfunction (SET (int) **);
 /* *INDENT-ON* */

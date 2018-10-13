@@ -45,18 +45,18 @@ typedef struct
 } Point;
 
 /* *INDENT-OFF* */
-DECLARE_MAP (int, int)
-DECLARE_MAP (pchar, double)
-DECLARE_MAP (Point, int)
+DECLARE_MAP (int, int);
+DECLARE_MAP (pchar, double);
+DECLARE_MAP (Point, int);
 
-DEFINE_OPERATORS (pchar)
-DEFINE_OPERATORS (int)
-DEFINE_OPERATORS (double)
-DEFINE_OPERATORS (Point)
+DEFINE_OPERATORS (pchar);
+DEFINE_OPERATORS (int);
+DEFINE_OPERATORS (double);
+DEFINE_OPERATORS (Point);
 
-DEFINE_MAP (int, int)
-DEFINE_MAP (pchar, double)
-DEFINE_MAP (Point, int)
+DEFINE_MAP (int, int);
+DEFINE_MAP (pchar, double);
+DEFINE_MAP (Point, int);
 /* *INDENT-ON* */
 
 static void

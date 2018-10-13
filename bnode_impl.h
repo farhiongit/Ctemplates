@@ -785,5 +785,6 @@
                                                                                   \
     return 0;                                                                     \
   }                                                                               \
-  
+  struct __useless_struct_BNODE_IMPL_##K##_##T
+
 #endif

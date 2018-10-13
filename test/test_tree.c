@@ -10,12 +10,12 @@
 typedef char *pchar;
 
 /* *INDENT-OFF* */
-DECLARE_BNODE (pchar, int)
+DECLARE_BNODE (pchar, int);
 
-DEFINE_OPERATORS (pchar)
-DEFINE_OPERATORS (int)
+DEFINE_OPERATORS (pchar);
+DEFINE_OPERATORS (int);
 
-DEFINE_BNODE (pchar, int)
+DEFINE_BNODE (pchar, int);
 /* *INDENT-ON* */
 
 static void

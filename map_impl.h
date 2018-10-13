@@ -41,7 +41,7 @@
 //
 #define DEFINE_MAP( K, T )                              \
 \
-  DEFINE_BNODE(K, T)                                    \
+  DEFINE_BNODE(K, T);                                   \
 \
   static void MAP_CLEAR_##K##_##T ( MAP_##K##_##T *self );                                             \
   static BNODE_##K##_##T *MAP_INSERT_##K##_##T ( MAP_##K##_##T *self, BNODE_##K##_##T *node );         \
@@ -185,5 +185,6 @@
     (void)self;                                                 \
     return 0;                                                   \
   }                                                             \
+  struct __useless_struct_MAP_IMPL_##K##_##T
 
 #endif

@@ -70,6 +70,7 @@ __str_free__ (char* v)
                                                \
     return 0;           /* a = b */            \
   }                                            \
+  struct __useless_struct_OPS_##TYPE
 
 /// Declares a destructor associated to type TYPE
 /// @param [in] TYPE typename

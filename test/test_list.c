@@ -15,21 +15,19 @@ typedef struct
 
 typedef int16_t myint;
 
-/* *INDENT-OFF* */
-DECLARE_LIST (myint)
-DECLARE_LIST (pchar)
-DECLARE_LIST (Range)
+DECLARE_LIST (myint);
+DECLARE_LIST (pchar);
+DECLARE_LIST (Range);
 
 //DEFINE_DEFAULT_LESS_THAN_OPERATOR
 
-DEFINE_OPERATORS (myint)
-DEFINE_OPERATORS (pchar)
-DEFINE_OPERATORS (Range)
+DEFINE_OPERATORS (myint);
+DEFINE_OPERATORS (pchar);
+DEFINE_OPERATORS (Range);
 
-DEFINE_LIST (myint)
-DEFINE_LIST (pchar)
-DEFINE_LIST (Range)
-/* *INDENT-ON* */
+DEFINE_LIST (myint);
+DEFINE_LIST (pchar);
+DEFINE_LIST (Range);
 
 static void
 sigabort_handler (int signum)

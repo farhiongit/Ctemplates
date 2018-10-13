@@ -39,7 +39,7 @@ typedef int __set_dummy__ ;
 //
 #define DECLARE_SET( K )       \
 \
-  DECLARE_BNODE(K, __set_dummy__)  \
+  DECLARE_BNODE(K, __set_dummy__);  \
 \
   struct _SET_##K;             \
 \
@@ -63,6 +63,7 @@ typedef int __set_dummy__ ;
   } SET_##K;                         \
 \
   SET_##K *SET_CREATE_##K( int (*less_than_operator) (K, K), int unique );              \
+  struct __useless_struct_SET_##K
 
 #define SET_CREATE3( K, less_than_operator, unique ) \
   SET_CREATE_##K((less_than_operator), (unique))

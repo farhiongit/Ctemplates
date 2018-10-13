@@ -41,7 +41,7 @@ typedef int __list_dummy__ ;
 //
 #define DECLARE_LIST( TYPE )     \
 \
-  DECLARE_BNODE(__list_dummy__, TYPE)            \
+  DECLARE_BNODE(__list_dummy__, TYPE);            \
 \
   struct _LIST_##TYPE;           \
 \
@@ -68,6 +68,7 @@ typedef int __list_dummy__ ;
   } LIST_##TYPE;                       \
 \
   LIST_##TYPE *LIST_CREATE_##TYPE( void );                                  \
+  struct __useless_struct_LIST_##TYPE
 
 /// Creates and returns a new list object of specified type.
 /// @param [in] TYPE typename of elements hold in the list.
@@ -80,7 +81,8 @@ typedef int __list_dummy__ ;
 /// @param [in] data Value of type TYPE to be inserted in the list.
 /// @returns Pointer to the inserted node, or 0 in case of failure (errno set to ENOMEM).
 #define LIST_INSERT(listSelf, here, data) \
-  ((listSelf)->vtable->Insert ((listSelf), (here), (listSelf)->null->vtable->Assign((listSelf)->vtable->CreateNode (0, 0), data)))
+  ((listSelf)->vtable->Insert ((listSelf), (here), \
+                               (listSelf)->null->vtable->Assign((listSelf)->vtable->CreateNode (0, 0), data)))
 
 #define LIST_APPEND(listSelf, data) \
   LIST_INSERT (listSelf, LIST_END (listSelf), data)

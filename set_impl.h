@@ -35,7 +35,7 @@
 #include "set.h"
 #include "defops.h"
 
-DEFINE_OPERATORS(__set_dummy__)
+DEFINE_OPERATORS(__set_dummy__);
 
 //
 // DEFINE_SET
@@ -43,7 +43,7 @@ DEFINE_OPERATORS(__set_dummy__)
 //
 #define DEFINE_SET( K )                              \
 \
-  DEFINE_BNODE( K, __set_dummy__ )                       \
+  DEFINE_BNODE( K, __set_dummy__ );                  \
 \
   static void SET_CLEAR_##K ( SET_##K *self );                                                 \
   static BNODE_##K##___set_dummy__ *SET_INSERT_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node ); \
@@ -169,5 +169,6 @@ DEFINE_OPERATORS(__set_dummy__)
     (void)self;                                                 \
     return 0;                                                   \
   }                                                             \
+  struct __useless_struct_SET_IMPL_##K
 
 #endif

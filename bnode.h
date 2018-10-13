@@ -85,7 +85,8 @@ typedef enum {
   } BNODE_##K##_##T;                       \
 \
   BNODE_##K##_##T *BNODE_CREATE_##K##_##T( K key, int unique );                               \
-  
+  struct __useless_struct_BNODE_##K##_##T
+
 #define BNODE_CREATE( K, T ) \
   BNODE_CREATE_##K##_##T
 

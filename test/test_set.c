@@ -15,20 +15,20 @@ typedef struct
 } Range;
 
 /* *INDENT-OFF* */
-DEFINE_OPERATORS (int)
-DEFINE_OPERATORS (pchar)
-DEFINE_OPERATORS (Range)
-DEFINE_OPERATORS (double)
+DEFINE_OPERATORS (int);
+DEFINE_OPERATORS (pchar);
+DEFINE_OPERATORS (Range);
+DEFINE_OPERATORS (double);
 
-DECLARE_SET (int)
-DECLARE_SET (pchar)
-DECLARE_SET (Range)
-DECLARE_SET (double)
+DECLARE_SET (int);
+DECLARE_SET (pchar);
+DECLARE_SET (Range);
+DECLARE_SET (double);
 
-DEFINE_SET (int)
-DEFINE_SET (pchar)
-DEFINE_SET (Range)
-DEFINE_SET (double)
+DEFINE_SET (int);
+DEFINE_SET (pchar);
+DEFINE_SET (Range);
+DEFINE_SET (double);
 /* *INDENT-ON* */
 
 static int
