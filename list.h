@@ -148,7 +148,7 @@ typedef int __list_dummy__ ;
 
 /// Removes redundant consecutive elements from a list.
 /// @param [in] listSelf pointer to list.
-/// @param [in, optional] less than operator. By default, the less than operator associated to the list, or to the type is used. 
+/// @param [in, optional] less than operator. By default, the less than operator associated to the list, or to the type is used.
 /// @returns The number of removed redundant elements.
 #define LIST_UNIQUE(...) VFUNC(LIST_UNIQUE, __VA_ARGS__)
 
@@ -159,7 +159,7 @@ typedef int __list_dummy__ ;
 
 /// Sorts elements in a list.
 /// @param [in] listSelf pointer to list.
-/// @param [in, optional] less than operator. By default, the less than operator associated to the list, or to the type is used. 
+/// @param [in, optional] less than operator. By default, the less than operator associated to the list, or to the type is used.
 #define LIST_SORT(...) VFUNC(LIST_SORT, __VA_ARGS__)
 
 /// Defines a less than operator associated to a list.

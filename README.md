@@ -840,6 +840,8 @@ Prefer
 ## Examples
 Look at examples in directory [`examples`](examples).
 
+`gol.c` is a conventional but fast implementation of the Conway's Game Of Life using lists, sets and maps..
+
 ## Tests
 Lists, sets and maps functionnalities have been thoroughly tested as well as self-balancing algorithm.
 `valgrind` has been used to check the execution of thoses tests is memory leajs free.

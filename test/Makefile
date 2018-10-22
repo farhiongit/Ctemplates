@@ -1,7 +1,6 @@
-CC=clang
+CC=clang -fmacro-backtrace-limit=0
 #CC=gcc
 CFLAGS += -Wall -Wextra -pedantic -Werror -I..
-CFLAGS += -fmacro-backtrace-limit=0
 #CFLAGS += -pg
 #CFLAGS += -fdebug-cpp
 LDFLAGS += -pthread
@@ -31,7 +30,20 @@ test_tree.o: test_tree.c ../defops.h ../bnode_impl.h ../bnode.h ../vfunc.h
 test_map.o: test_map.c ../defops.h ../map_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../map.h
 gol.o: gol.c ../set_impl.h ../bnode_impl.h ../bnode.h ../vfunc.h ../set.h ../defops.h ../map_impl.h ../map.h
 
-gol: CFLAGS += -O3
+gol_slow: CFLAGS += -DXXL
+gol_slow: CFLAGS += -O3
+gol_slow: CFLAGS += -DDEBUG=2
+
+gol: CFLAGS += -DXXL
+#gol: CFLAGS += -O3
+#gol: CFLAGS += -g
+gol: CFLAGS += -g -pg
+gol: CFLAGS += -DDEBUG=1
+gol: LDFLAGS += -pg
+
+.PHONY: run_gol
+run_gol: gol
+	./gol
 
 .PHONY: tests
 tests: CFLAGS += -g

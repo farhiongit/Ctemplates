@@ -107,7 +107,7 @@
   {                                                                        \
     BNODE_##K##_##T * ret = 0;                                             \
     if (!self->root ||                                                     \
-        !(ret = BNODE_FIND_KEY(BNODE_FIRST(self->root), key, self->LessThanKey)))  \
+        !(ret = BNODE_GET_KEY(self->root, key, self->LessThanKey)))        \
       ret = MAP_INSERT (self, key, value);                                 \
     else                                                                   \
       BNODE_ASSIGN (ret, value);                                           \
