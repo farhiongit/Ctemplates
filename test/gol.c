@@ -6,15 +6,25 @@
 #include <inttypes.h>
 #include <limits.h>
 #include <ctype.h>
+#include <unistd.h>
+#include <regex.h>
+#include <locale.h>
 
 #include "list_impl.h"
 #include "set_impl.h"
 #include "map_impl.h"
 
+__attribute__ ((__unused__))
+     static void nop (const char *format, ...)
+{
+  (void) format;
+}
+
+#define NOP(...) do { nop (__VA_ARGS__); } while (0)
 #if DEBUG >= 1
-#  define PRINT(...) printf(__VA_ARGS__)
+#  define PRINT(...) do { fprintf(stderr, __VA_ARGS__) ; fflush (stderr) ; } while (0)
 #else
-#  define PRINT(...) sizeof ((__VA_ARGS__))
+#  define PRINT(...) NOP(__VA_ARGS__)
 #endif
 
 #define WHERESTR  "[file %s, function %s, line %d]: "
@@ -29,25 +39,34 @@ do { \
     if (!__str__ || !*__str__) \
       __str__ = "Fatal error"; \
     FATALPRINT ("%s (condition '%s' is false.)\n", __str__, #cond); \
-    exit(0) ; \
+    exit(EXIT_FAILURE) ; \
+  } \
+} while(0)
+
+#define IFNOTEXIT(cond, ...) \
+do { \
+  if (!(cond)) \
+  { \
+    fprintf (stderr, "" __VA_ARGS__); \
+    fprintf (stderr, "\n"); \
+    exit (EXIT_FAILURE); \
   } \
 } while(0)
 
 #if DEBUG >= 2
-#  define PRINT2(...)      fprintf(stderr, __VA_ARGS__)
+#  define PRINT2(...)      PRINT (__VA_ARGS__)
 #  define ASSERT(cond,msg) FATAL(cond,msg)
 #else
-#  define PRINT2(...)      sizeof ((__VA_ARGS__))
+#  define PRINT2(...)      NOP(__VA_ARGS__)
 #  define ASSERT(cond,msg) do { if ((cond)){} } while(0)
 #endif
 
-/// Macro de contrôle d'allocation mémoire à l'exécution.
 #define CHECK_ALLOC(ptr) FATAL(ptr, "Memory allocation error.")
 
 #ifdef XXL
 // Using intmax_t for a space as large as possible.
 #  define XYPOS_TYPE intmax_t
-#  define XYPOS_FORMAT PRIiMAX
+#  define XYPOS_FORMAT "ji"
 #  define XYPOS_MIN INTMAX_MIN
 #  define XYPOS_MAX INTMAX_MAX
 #else
@@ -70,7 +89,7 @@ typedef struct
 /* *INDENT-OFF* */
 DECLARE_LIST (XYPos);
 DECLARE_MAP (XYPos, Status);
-typedef BNODE (XYPos, Status) *Node;
+typedef BNODE (XYPos, Status) *Node;   // Iterator of a MAP (XYPos, Status)
 DECLARE_LIST (Node);
 DECLARE_SET (Node);
 
@@ -84,24 +103,22 @@ DEFINE_LIST (Node);
 DEFINE_SET (Node);
 /* *INDENT-ON* */
 
-__attribute__ ((__unused__))
-     static int less_than (XYPos a, XYPos b)
+static int
+less_than (XYPos a, XYPos b)
 {
   return a.x < b.x || (a.x == b.x && a.y < b.y);
 }
 
 typedef struct
 {
-  struct
-  {
-    XYPos xymin, xymax;
-  } extension;
-  int B, S;
+  unsigned int B, S;
   size_t generation, nb_cells, max_cells;
-    MAP (XYPos, Status) * neighbourhood_positions;
-    LIST (XYPos) * born;
-    LIST (Node) * dead;
-    SET (Node) * modified_neighborhood;
+/* *INDENT-OFF* */
+  MAP (XYPos, Status) * neighbourhood_positions;
+  LIST (XYPos) * born;
+  LIST (Node) * dead;
+  SET (Node) * modified_neighborhood;
+/* *INDENT-ON* */
 } GameOfLife;
 
 static int
@@ -114,16 +131,6 @@ increment_nine_fields (LNODE (XYPos) * birth, void *g)
   GameOfLife *gol = g;
   PRINT2 ("+ (%+" XYPOS_FORMAT ", %+" XYPOS_FORMAT ")\n", p->x, p->y);
   FATAL (gol->nb_cells++ < SIZE_MAX, "Overflow");       // Check that nb_cells does not exceed size_t maximum value before increment.
-
-  if (p->x > gol->extension.xymax.x)
-    gol->extension.xymax.x = p->x;
-  else if (p->x < gol->extension.xymin.x)
-    gol->extension.xymin.x = p->x;
-
-  if (p->y > gol->extension.xymax.y)
-    gol->extension.xymax.y = p->y;
-  else if (p->y < gol->extension.xymin.y)
-    gol->extension.xymin.y = p->y;
 
   // Cell will count for 1 in each of the nine positions around cell.
   for (int dx = -1; dx <= 1; dx++)
@@ -216,7 +223,7 @@ find_changes (SNODE (Node) * pos, void *g)
       PRINT2 ("! (%+" XYPOS_FORMAT ", %+" XYPOS_FORMAT ") has %i neighbors > -\n", p->x, p->y, s->nb_neighbors);
     }
   }
-  else
+  else  // if (!s->alive)
   {
     if (!s->nb_neighbors)
     {
@@ -244,18 +251,18 @@ GOL_next_generation (GameOfLife * gol)
   // Each generation is a pure function of the preceding one.
   SET_CLEAR (gol->modified_neighborhood);
   LIST_TRAVERSE (gol->born /* XYPos */ , increment_nine_fields, gol);
+  PRINT (".");
   LIST_TRAVERSE (gol->dead /* Node  */ , decrement_nine_fields, gol);
+  PRINT (".");
 
   if (gol->nb_cells > gol->max_cells)
     gol->max_cells = gol->nb_cells;
 
-  PRINT ("Generation %zu has %zu cells (maximum %zu cells over [%+" XYPOS_FORMAT ";%+" XYPOS_FORMAT "] x [%+"
-         XYPOS_FORMAT ";%+" XYPOS_FORMAT "]).\n", gol->generation, gol->nb_cells, gol->max_cells,
-         gol->extension.xymin.x, gol->extension.xymax.x, gol->extension.xymin.y, gol->extension.xymax.y);
+  PRINT ("Generation %zu has %'zu cells (maximum %'zu cells).\n", gol->generation, gol->nb_cells, gol->max_cells);
 
   FATAL (gol->generation++ < SIZE_MAX, "Overflow");
 
-  PRINT ("%zu / %zu = %.1f %% of the universe is modified.\n",
+  PRINT ("%'zu / %'zu = %.1f %% of the active cells and their neighborhoods are modified.\n",
          SET_SIZE (gol->modified_neighborhood), MAP_SIZE (gol->neighbourhood_positions),
          100. * SET_SIZE (gol->modified_neighborhood) / MAP_SIZE (gol->neighbourhood_positions));
 
@@ -263,6 +270,7 @@ GOL_next_generation (GameOfLife * gol)
   LIST_CLEAR (gol->dead);
   // Each generation is created by applying the game rules simultaneously to every cell in the seed; births and deaths occur simultaneously.
   SET_TRAVERSE (gol->modified_neighborhood /* Node */ , find_changes, gol);
+  PRINT (".");
 
   return gol->nb_cells;
 }
@@ -270,14 +278,13 @@ GOL_next_generation (GameOfLife * gol)
 static GameOfLife *
 GOL_init (void)
 {
-  //SET_LESS_THAN_OPERATOR (XYPos, less_than);
+  SET_LESS_THAN_OPERATOR (XYPos, less_than);
 
   GameOfLife *gol;
   CHECK_ALLOC (gol = malloc (sizeof (*gol)));
 
   gol->generation = 0;
   gol->nb_cells = gol->max_cells = 0;
-  gol->extension.xymin.x = gol->extension.xymin.y = gol->extension.xymax.x = gol->extension.xymax.y = 0;
   //B3/S23
   gol->B = 1 << 3;
   gol->S = (1 << 2) | (1 << 3);
@@ -301,118 +308,236 @@ GOL_destroy (GameOfLife * gol)
 }
 
 static size_t
-RLE_read (LIST (XYPos) * l, const char *RLE)
+RLE_readfile (GameOfLife * gol, FILE * f, XYPOS_TYPE x, XYPOS_TYPE y, int header)
 {
-  XYPOS_TYPE x = 0;
-  XYPOS_TYPE y = 0;
-  size_t length = 0;
-  long int counter = 1;
-
-  LIST_CLEAR (l);
-
-  const char *c = RLE;
-  while (*c && *c != '!')
+  if (header)
   {
-    switch (*c)
+    char *line = 0;
+    size_t length;
+    do
+    {
+      if (getline (&line, &length, f) < 0)
+      {
+        free (line);
+        line = 0;
+      }
+    }
+    while (line && *line == '#');
+
+    IFNOTEXIT (line, "Missing header line");
+
+    regex_t regex;
+    ASSERT (regcomp (&regex, " *([[:alnum:]]+) *= *([^ ,]+) *,?", REG_EXTENDED | REG_ICASE) == 0,
+            "Invalid ERE. Comma separated parameters of the form 'var=value' expected.");
+    regmatch_t match[3];
+    for (size_t offset = 0;
+         regexec (&regex, line + offset, sizeof (match) / sizeof (*match), match, REG_NOTBOL | REG_NOTEOL) == 0;
+         offset += match[0].rm_eo)
+    {
+      if (!strncmp ("rule", line + offset + match[1].rm_so, match[1].rm_eo - match[1].rm_so))
+      {
+        ASSERT (regcomp (&regex, "B([[:digit:]]+)/S([[:digit:]]+)", REG_EXTENDED | REG_ICASE) == 0, "Invalid ERE");
+        regmatch_t matchBS[3];
+        IFNOTEXIT (regexec
+                   (&regex, line + offset + match[2].rm_so, sizeof (matchBS) / sizeof (*matchBS), matchBS,
+                    REG_NOTBOL | REG_NOTEOL) == 0, "Invalid format for 'rule'. Format 'rule=Bnnn/Snnn' expected.");
+
+        gol->B = gol->S = 0;
+        for (const char *c = line + offset + match[2].rm_so + matchBS[1].rm_so;
+             c < line + offset + match[2].rm_so + matchBS[1].rm_eo; c++)
+        {
+          IFNOTEXIT (isdigit (*c), "Invalid number '%c' for rule B", *c);
+          gol->B |= 1 << (*c - '0');
+        }
+        for (const char *c = line + offset + match[2].rm_so + matchBS[2].rm_so;
+             c < line + offset + match[2].rm_so + matchBS[2].rm_eo; c++)
+        {
+          IFNOTEXIT (isdigit (*c), "Invalid number '%c' for rule S", *c);
+          gol->S |= 1 << (*c - '0');
+        }
+      }
+    }
+    free (line);
+  }
+
+  long unsigned int counter = 1;
+
+  LIST_CLEAR (gol->born);
+
+  for (int c = 0; (c = fgetc (f)) && c != '!' && c != EOF;)
+  {
+    PRINT2 ("%c", c);
+    switch (c)
     {
       case 'O':                // alive cell
       case 'X':                // alive cell
       case 'o':                // alive cell
+      case 'x':                // alive cell
         for (; counter >= 1; counter--)
         {
           // *INDENT-OFF*
-          LIST_APPEND (l, ((XYPos){.x = x,.y = y}));
+          LIST_APPEND (gol->born, ((XYPos){.x = x,.y = y}));
           // *INDENT-ON*
           FATAL (x++ < XYPOS_MAX, "Overflow");
         }
-        c++;
         counter = 1;
         break;
       case '.':                // dead cell
       case 'b':                // dead cell
+      case 'B':                // dead cell
         for (; counter >= 1; counter--)
           FATAL (x++ < XYPOS_MAX, "Overflow");
-        c++;
         counter = 1;
         break;
       case '$':                // end of line
         for (; counter >= 1; counter--)
           FATAL (y-- > XYPOS_MIN, "Overflow");
         x = 0;
-        c++;
         counter = 1;
         break;
       default:
-        if (isdigit (*c))
+        if (isdigit (c))
         {
-          char *endptr = 0;
+          ungetc (c, f);
           errno = 0;
-          counter = strtol (c, &endptr, 10);
-          ASSERT (endptr > c && errno == 0 && counter >= 1, "Invalid number");
-          c = endptr;
+          IFNOTEXIT (fscanf (f, "%lu", &counter) == 1, "Invalid character '%c'", c);
         }
         else
-        {
-          // ignore
-        }
+          IFNOTEXIT (isblank (c) || iscntrl (c), "Invalid character '%c'", c);
         break;
     }
   }
 
-  return length;
+  return LIST_SIZE (gol->born);
 }
 
 int
-main (void)
+main (int argc, char *const argv[])
 {
-  PRINT ("Space size is [%+" XYPOS_FORMAT ";%+" XYPOS_FORMAT "] x [%+" XYPOS_FORMAT ";%+" XYPOS_FORMAT "].\n",
-         XYPOS_MIN, XYPOS_MAX, XYPOS_MIN, XYPOS_MAX);
+  setlocale (LC_ALL, "");
+
+  int opt;
+  XYPOS_TYPE x = 0;
+  XYPOS_TYPE y = 0;
+  size_t MAX_GENERATIONS = 0;
+  const char *optstring = ":Hg:x:y:B:S:";
+  char *endptr = 0;
+  long int li = 0;
+  int header = 0, B = 0, S = 0;
+  while ((opt = getopt (argc, argv, optstring)) != -1)
+  {
+    switch (opt)
+    {
+      case 'H':
+        header = 1;
+        break;
+      case 'x':
+        errno = 0;
+        x = strtol (optarg, &endptr, 10);
+        IFNOTEXIT (optarg && *optarg && *endptr == 0, "Invalid number %s for option '-%c'", optarg, opt);
+        break;
+      case 'y':
+        errno = 0;
+        y = strtol (optarg, &endptr, 10);
+        IFNOTEXIT (optarg && *optarg && *endptr == 0, "Invalid number %s for option '-%c'", optarg, opt);
+        break;
+      case 'B':
+        B = 0;
+        for (const char *c = optarg; optarg && *c; c++)
+        {
+          IFNOTEXIT (isdigit (*c), "Invalid number %c for option '-%c'", *c, opt);
+          B |= 1 << (*c - '0');
+        }
+        break;
+      case 'S':
+        S = 0;
+        for (const char *c = optarg; *c; c++)
+        {
+          IFNOTEXIT (isdigit (*c), "Invalid number %c for option '-%c'", *c, opt);
+          S |= 1 << (*c - '0');
+        }
+        break;
+      case 'g':
+        errno = 0;
+        li = strtol (optarg, &endptr, 10);
+        IFNOTEXIT (optarg && *optarg && *endptr == 0 && li >= 0, "Invalid number %s for option '-%c'", optarg, opt);
+        break;
+      case '?':
+        fprintf (stderr, "Known options are:");
+        for (const char *c = optstring; *c; c++)
+          if (isalnum (*c))
+          {
+            fprintf (stderr, " -%c", *c);
+            if (*(c + 1) == ':')
+              fprintf (stderr, " arg");
+          }
+
+        fprintf (stderr, "\n");
+        IFNOTEXIT (0, "Unknown option '-%c'", optopt);
+        break;
+      case ':':
+        IFNOTEXIT (0, "Missing argument for option '-%c'", optopt);
+        break;
+    }
+  }
+
+  FILE *f = 0;
+  if (optind < argc)
+  {
+    IFNOTEXIT (f = fopen (argv[optind], "r"), "Can not read file '%s'", argv[optind]);
+    PRINT ("%s: ", argv[optind]);
+  }
+  else
+  {
+    f = stdin;
+
+    int c;
+    if ((c = fgetc (f)) != EOF)
+      ungetc (c, f);
+    else
+    {
+      //const char *pattern = "9bo12b$7bobo12b$6bobo13b$2o3bo2bo11b2o$2o4bobo11b2o$7bobo12b$9bo!";  // Queen bee shuttle, period 30:
+      //const char *pattern = "24bo11b$22bobo11b$12b2o6b2o12b2o$11bo3bo4b2o12b2o$2o8bo5bo3b2o14b$2o8bo3bob2o4bobo11b$10bo5bo7bo11b$11bo3bo20b$12b2o!";      // Gosper glider gun:
+      //const char *pattern = ".XX$XX$.X";  // R-pentomino, stabilizes at generation 1103 with 116 cells, including one escaped glider at generation 69:
+      //const char *pattern = "10X";        // Pentadecathlon (period 15):
+      //const char *pattern = "3X"; // Blinker:
+      //const char *pattern = ".X.$..X$XXX";        // Glider:
+      //const char *pattern = "bo5b$3bo3b$2o2b3o!"; // Acorn, takes 5206 generations to stabilize to 633 cells, including 13 escaped gliders:
+      //const char *pattern = "XXX$.X.";    // Tee or Tetromino, stabilizes to 12 cells in a 9x9 square at 10th generation.
+      //const char *pattern = "......X$XX$.X...XXX";        // Die-hard, eventually disappears after 130 generations
+      //const char *pattern = "......X$....X.XX$....X.X$....X$..X$X.X";     // Infinite growth, block-laying switch engine that leaves behind two-by-two still life blocks as its translates itself across the game's universe.
+      //const char *pattern = "77bo$77bo$77bo21$3o20$3bo$3bo$3bo5$20b3o$9b3o10bo$22bo$21bo!";       // 18-cell 40514-generation methuselah. The stable pattern that results from 40514M (excluding 70 escaping gliders) has 3731 cells and consists of 248 blinkers (including 21 traffic lights), 218 blocks, 163 beehives (including nine honey farms), 56 loaves, 39 boats, 10 ships, nine tubs, five ponds, four beacons, two toads, one barge, one eater 1 and one long boat.
+      const char *pattern = "10001o!";
+      //const char *pattern = "15366bo$15366bo$15364boo$15363bo$15363bo$15363bo$15363bo6$15393bo$" "15392boo$15390bobbo$$15390bobo$15391bo133$15568boo$15569boo$15569bo29$" "15554bo$15553bobo$15555bo$15556bo507$59722boo$59721boo$59722bo29$" "59737bo$59736bobo$59736bo$59735bo13907$bo3bo$bbobo$obbo$o$o21$33bo$32b" "o$31bo$32bo$33bo$29b3o!";       // Metacatacryst, exhibits quadratic growth.
+
+      PRINT ("Reading unit test pattern...\n");
+      IFNOTEXIT (f = fmemopen ((void *) pattern, strlen (pattern), "r"), "Can not read pattern");
+    }
+  }
 
   GameOfLife *gol = GOL_init ();
+  size_t nb_cells = 0;
+  PRINT ("The colony has %'zu cells.\n", nb_cells = RLE_readfile (gol, f, x, y, header));
+  fclose (f);
+  IFNOTEXIT (nb_cells, "The space is empty.");
+  PRINT ("Space size is [%'+" XYPOS_FORMAT ";%'+" XYPOS_FORMAT "] x [%'+" XYPOS_FORMAT ";%'+" XYPOS_FORMAT "].\n",
+         XYPOS_MIN, XYPOS_MAX, XYPOS_MIN, XYPOS_MAX);
 
-  const char *pattern =
-    // Queen bee shuttle, period 30:
-    //"9bo12b$7bobo12b$6bobo13b$2o3bo2bo11b2o$2o4bobo11b2o$7bobo12b$9bo!";
-    // Gosper glider gun:
-    //"24bo11b$22bobo11b$12b2o6b2o12b2o$11bo3bo4b2o12b2o$2o8bo5bo3b2o14b$2o8bo3bob2o4bobo11b$10bo5bo7bo11b$11bo3bo20b$12b2o!";
-    // R-pentomino, stabilizes at generation 1103 with 116 cells, including one escaped glider at generation 69:
-    //".XX$XX$.X";
-    // Pentadecathlon (period 15):
-    //"10X";
-    // Blinker:
-    //"3X";
-    // Glider:
-    //".X.$..X$XXX";
-    // Acorn, takes 5206 generations to stabilize to 633 cells, including 13 escaped gliders:
-    //"bo5b$3bo3b$2o2b3o!";
-  // Tee or Tetromino, stabilizes to 12 cells in a 9x9 square at 10th generation.
-  //"XXX$.X.";
-  // Die-hard, eventually disappears after 130 generations
-  //"......X$XX$.X...XXX";
-  // Infinite growth, block-laying switch engine that leaves behind two-by-two still life blocks as its translates itself across the game's universe.
-  //"......X$....X.XX$....X.X$....X$..X$X.X";
-  // 18-cell 40514-generation methuselah. The stable pattern that results from 40514M (excluding 70 escaping gliders) has 3381 cells and consists of 248 blinkers (including 21 traffic lights), 218 blocks, 163 beehives (including nine honey farms), 56 loaves, 39 boats, 10 ships, nine tubs, five ponds, four beacons, two toads, one barge, one eater 1 and one long boat.
-  "77bo$77bo$77bo21$3o20$3bo$3bo$3bo5$20b3o$9b3o10bo$22bo$21bo!";
+  if (B)
+    gol->B = B;
+  if (S)
+    gol->S = S;
+  MAX_GENERATIONS = li;
 
-  RLE_read (gol->born, pattern);
+  PRINT2 ("B%i/S%i\n", gol->B, gol->S);
 
-  const size_t MAX_GENERATIONS = 10000;
   while ((!MAX_GENERATIONS || gol->generation <= MAX_GENERATIONS) && GOL_next_generation (gol))
   {
     /* nothing */
   }
 
-  GOL_destroy (gol);
-}
+  printf ("Generation %zu has %'zu cells (maximum %'zu cells).\n", gol->generation - 1, gol->nb_cells, gol->max_cells);
 
-/*
-TODO:
-  - curses display
-  - informations: number of cells, generation rank
-  - center of the window
-  - active arrows or sliders forward outside cells on left, right,top, bottom.
-  - grid, cells
-  - play, pause button
-  - add and remove cells with mouse click.
-  - programmable drift of the center of the window (dx moves horizontally and dy moves vertically every n generation).
-*/
+  GOL_destroy (gol);
+  PRINT ("Done.\n");
+}

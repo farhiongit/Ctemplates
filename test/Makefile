@@ -35,11 +35,11 @@ gol_slow: CFLAGS += -O3
 gol_slow: CFLAGS += -DDEBUG=2
 
 gol: CFLAGS += -DXXL
-#gol: CFLAGS += -O3
+gol: CFLAGS += -O3
 #gol: CFLAGS += -g
-gol: CFLAGS += -g -pg
+#gol: CFLAGS += -g -pg
 gol: CFLAGS += -DDEBUG=1
-gol: LDFLAGS += -pg
+#gol: LDFLAGS += -pg
 
 .PHONY: run_gol
 run_gol: gol
