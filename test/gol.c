@@ -89,7 +89,7 @@ typedef struct
 /* *INDENT-OFF* */
 DECLARE_LIST (XYPos);
 DECLARE_MAP (XYPos, Status);
-typedef BNODE (XYPos, Status) *Node;   // Iterator of a MAP (XYPos, Status)
+typedef void *Node;   // Iterator of a MAP (XYPos, Status)
 DECLARE_LIST (Node);
 DECLARE_SET (Node);
 
@@ -104,7 +104,7 @@ DEFINE_SET (Node);
 /* *INDENT-ON* */
 
 static int
-less_than (XYPos a, XYPos b)
+less_than_xypos (XYPos a, XYPos b)
 {
   return a.x < b.x || (a.x == b.x && a.y < b.y);
 }
@@ -114,10 +114,10 @@ typedef struct
   unsigned int B, S;
   size_t generation, nb_cells, max_cells;
 /* *INDENT-OFF* */
-  MAP (XYPos, Status) * neighbourhood_positions;
-  LIST (XYPos) * born;
-  LIST (Node) * dead;
-  SET (Node) * modified_neighborhood;
+  MAP (XYPos, Status) * neighbourhood_positions;   // Dictionary of populated positions and their status
+  LIST (XYPos) * born;                             // Temporary list of born cells for the next generation
+  LIST (Node) * dead;                              // Temporary list of dead cells for the next generation
+  SET (Node) * modified_neighborhood;              // Temporary set of cells which neighborhood is modified by the current generation
 /* *INDENT-ON* */
 } GameOfLife;
 
@@ -140,7 +140,7 @@ increment_nine_fields (LNODE (XYPos) * birth, void *g)
       neighbour.x = p->x + dx;
       neighbour.y = p->y + dy;
 
-      Node neighbour_pos;
+      BNODE (XYPos, Status) * neighbour_pos;
       if ((neighbour_pos = MAP_KEY (gol->neighbourhood_positions, neighbour)) != MAP_END (gol->neighbourhood_positions))
       {
         if (dx == 0 && dy == 0)
@@ -169,7 +169,7 @@ increment_nine_fields (LNODE (XYPos) * birth, void *g)
 static int
 decrement_nine_fields (LNODE (Node) * death, void *g)
 {
-  XYPos *p = BNODE_KEY (*LNODE_VALUE (death));  // Position of the cell.
+  XYPos *p = BNODE_KEY ((BNODE (XYPos, Status) *) * LNODE_VALUE (death));       // Position of the cell.
   FATAL (p->x != XYPOS_MIN && p->y != XYPOS_MIN && p->x != XYPOS_MAX
          && p->y != XYPOS_MAX, "Space boundaries were reached !!!\n");
 
@@ -185,7 +185,7 @@ decrement_nine_fields (LNODE (Node) * death, void *g)
       neighbour.x = p->x + dx;
       neighbour.y = p->y + dy;
 
-      Node neighbour_pos;
+      BNODE (XYPos, Status) * neighbour_pos;
       ASSERT ((neighbour_pos =
                MAP_KEY (gol->neighbourhood_positions, neighbour)) != MAP_END (gol->neighbourhood_positions), 0);
       if (dx == 0 && dy == 0)
@@ -206,8 +206,8 @@ static int
 find_changes (SNODE (Node) * pos, void *g)
 {
   GameOfLife *gol = g;
-  XYPos *p = BNODE_KEY (*SNODE_KEY (pos));
-  Status *s = BNODE_VALUE (*SNODE_KEY (pos));
+  XYPos *p = BNODE_KEY ((BNODE (XYPos, Status) *) * SNODE_KEY (pos));
+  Status *s = BNODE_VALUE ((BNODE (XYPos, Status) *) * SNODE_KEY (pos));
 
   if (s->alive)
   {
@@ -223,7 +223,7 @@ find_changes (SNODE (Node) * pos, void *g)
       PRINT2 ("! (%+" XYPOS_FORMAT ", %+" XYPOS_FORMAT ") has %i neighbors > -\n", p->x, p->y, s->nb_neighbors);
     }
   }
-  else  // if (!s->alive)
+  else                          // if (!s->alive)
   {
     if (!s->nb_neighbors)
     {
@@ -250,27 +250,29 @@ GOL_next_generation (GameOfLife * gol)
 {
   // Each generation is a pure function of the preceding one.
   SET_CLEAR (gol->modified_neighborhood);
+  PRINT ("_");
   LIST_TRAVERSE (gol->born /* XYPos */ , increment_nine_fields, gol);
-  PRINT (".");
-  LIST_TRAVERSE (gol->dead /* Node  */ , decrement_nine_fields, gol);
-  PRINT (".");
+  PRINT ("\bo_");
+  LIST_TRAVERSE (gol->dead /* Node */ , decrement_nine_fields, gol);
+  PRINT ("\bl");
 
   if (gol->nb_cells > gol->max_cells)
     gol->max_cells = gol->nb_cells;
 
-  PRINT ("Generation %zu has %'zu cells (maximum %'zu cells).\n", gol->generation, gol->nb_cells, gol->max_cells);
+  PRINT (">Generation #%'zu has %'zu cells [+%zu-%zu] (maximum being %'zu cells).\n", gol->generation, gol->nb_cells, LIST_SIZE (gol->born), LIST_SIZE (gol->dead), gol->max_cells);
 
   FATAL (gol->generation++ < SIZE_MAX, "Overflow");
 
-  PRINT ("%'zu / %'zu = %.1f %% of the active cells and their neighborhoods are modified.\n",
+  PRINT ("    (%'zu / %'zu = %.1f %% of the active cells and their neighborhoods are modified.)\n",
          SET_SIZE (gol->modified_neighborhood), MAP_SIZE (gol->neighbourhood_positions),
          100. * SET_SIZE (gol->modified_neighborhood) / MAP_SIZE (gol->neighbourhood_positions));
 
   LIST_CLEAR (gol->born);
   LIST_CLEAR (gol->dead);
   // Each generation is created by applying the game rules simultaneously to every cell in the seed; births and deaths occur simultaneously.
+  PRINT ("_");
   SET_TRAVERSE (gol->modified_neighborhood /* Node */ , find_changes, gol);
-  PRINT (".");
+  PRINT ("\bg");
 
   return gol->nb_cells;
 }
@@ -278,7 +280,7 @@ GOL_next_generation (GameOfLife * gol)
 static GameOfLife *
 GOL_init (void)
 {
-  SET_LESS_THAN_OPERATOR (XYPos, less_than);
+  SET_LESS_THAN_OPERATOR (XYPos, less_than_xypos);
 
   GameOfLife *gol;
   CHECK_ALLOC (gol = malloc (sizeof (*gol)));
@@ -536,7 +538,7 @@ main (int argc, char *const argv[])
     /* nothing */
   }
 
-  printf ("Generation %zu has %'zu cells (maximum %'zu cells).\n", gol->generation - 1, gol->nb_cells, gol->max_cells);
+  printf (">Generation #%'zu has %'zu cells.\n", gol->generation - 1, gol->nb_cells);
 
   GOL_destroy (gol);
   PRINT ("Done.\n");

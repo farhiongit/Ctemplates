@@ -141,6 +141,7 @@ __str_free__ (char* v)
   static int __ltdouble(double a, double b) { return a < b ; }
   static int __ltldouble(long double a, long double b) { return a < b ; }
   static int __ltstring(const char* a, const char* b) { return strcoll (a, b) < 0; }
+  static int __ltptr(void* a, void* b) { return a < b; }
 
 #define LESS_THAN_DEFAULT(TYPE) _Generic(*(TYPE *)0, \
   char:               __ltchar,                   \
@@ -157,6 +158,7 @@ __str_free__ (char* v)
   double:             __ltdouble,                 \
   long double:        __ltldouble,                \
   char*:              __ltstring,                 \
+  void*:              __ltptr,                    \
   default:            LESS_THAN_##TYPE##_DEFAULT  \
   )
 

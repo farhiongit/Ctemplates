@@ -840,7 +840,8 @@ Prefer
 ## Examples
 Look at examples in directory [`examples`](examples).
 
-`gol.c` is a naîve, slow and conventional implementation of the Conway's Game Of Life using lists, sets and maps.
+`gol.c` is a naïve, slow and conventional implementation (neither pattern recognition nor time compression,
+as in hashlife algorithm) of the Conway's Game Of Life using lists, sets and maps.
 
 ## Tests
 Lists, sets and maps functionnalities have been thoroughly tested as well as self-balancing algorithm.
