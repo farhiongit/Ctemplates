@@ -14,13 +14,16 @@
 #include "set_impl.h"
 #include "map_impl.h"
 
+#if !(DEBUG >= 1 && DEBUG >= 2)
 __attribute__ ((__unused__))
      static void nop (const char *format, ...)
 {
   (void) format;
 }
 
-#define NOP(...) do { nop (__VA_ARGS__); } while (0)
+  #define NOP(...) do { nop (__VA_ARGS__); } while (0)
+#endif
+
 #if DEBUG >= 1
 #  define PRINT(...) do { fprintf(stderr, __VA_ARGS__) ; fflush (stderr) ; } while (0)
 #else
@@ -328,20 +331,21 @@ RLE_readfile (GameOfLife * gol, FILE * f, XYPOS_TYPE x, XYPOS_TYPE y, int header
 
     IFNOTEXIT (line, "Missing header line");
 
-    regex_t regex;
-    ASSERT (regcomp (&regex, " *([[:alnum:]]+) *= *([^ ,]+) *,?", REG_EXTENDED | REG_ICASE) == 0,
+    regex_t regvar;
+    ASSERT (regcomp (&regvar, " *([[:alnum:]]+) *= *([^ ,]+) *,?", REG_EXTENDED | REG_ICASE) == 0,
             "Invalid ERE. Comma separated parameters of the form 'var=value' expected.");
     regmatch_t match[3];
     for (size_t offset = 0;
-         regexec (&regex, line + offset, sizeof (match) / sizeof (*match), match, REG_NOTBOL | REG_NOTEOL) == 0;
+         regexec (&regvar, line + offset, sizeof (match) / sizeof (*match), match, REG_NOTBOL | REG_NOTEOL) == 0;
          offset += match[0].rm_eo)
     {
       if (!strncmp ("rule", line + offset + match[1].rm_so, match[1].rm_eo - match[1].rm_so))
       {
-        ASSERT (regcomp (&regex, "B([[:digit:]]+)/S([[:digit:]]+)", REG_EXTENDED | REG_ICASE) == 0, "Invalid ERE");
+        regex_t regrule;
+        ASSERT (regcomp (&regrule, "B([[:digit:]]+)/S([[:digit:]]+)", REG_EXTENDED | REG_ICASE) == 0, "Invalid ERE");
         regmatch_t matchBS[3];
         IFNOTEXIT (regexec
-                   (&regex, line + offset + match[2].rm_so, sizeof (matchBS) / sizeof (*matchBS), matchBS,
+                   (&regrule, line + offset + match[2].rm_so, sizeof (matchBS) / sizeof (*matchBS), matchBS,
                     REG_NOTBOL | REG_NOTEOL) == 0, "Invalid format for 'rule'. Format 'rule=Bnnn/Snnn' expected.");
 
         gol->B = gol->S = 0;
@@ -357,9 +361,11 @@ RLE_readfile (GameOfLife * gol, FILE * f, XYPOS_TYPE x, XYPOS_TYPE y, int header
           IFNOTEXIT (isdigit (*c), "Invalid number '%c' for rule S", *c);
           gol->S |= 1 << (*c - '0');
         }
+        regfree (&regrule);
       }
     }
     free (line);
+    regfree (&regvar);
   }
 
   long unsigned int counter = 1;
@@ -503,13 +509,13 @@ main (int argc, char *const argv[])
       //const char *pattern = ".XX$XX$.X";  // R-pentomino, stabilizes at generation 1103 with 116 cells, including one escaped glider at generation 69:
       //const char *pattern = "10X";        // Pentadecathlon (period 15):
       //const char *pattern = "3X"; // Blinker:
-      //const char *pattern = ".X.$..X$XXX";        // Glider:
+      //const char *pattern = ".o.$..o$ooo";        // Glider:
       //const char *pattern = "bo5b$3bo3b$2o2b3o!"; // Acorn, takes 5206 generations to stabilize to 633 cells, including 13 escaped gliders:
-      //const char *pattern = "XXX$.X.";    // Tee or Tetromino, stabilizes to 12 cells in a 9x9 square at 10th generation.
-      //const char *pattern = "......X$XX$.X...XXX";        // Die-hard, eventually disappears after 130 generations
+      //const char *pattern = "ooo$.o.";    // Tee or Tetromino, stabilizes to 12 cells in a 9x9 square at 10th generation.
+      const char *pattern = "......o$oo$.o...ooo";        // Die-hard, eventually disappears after 130 generations
       //const char *pattern = "......X$....X.XX$....X.X$....X$..X$X.X";     // Infinite growth, block-laying switch engine that leaves behind two-by-two still life blocks as its translates itself across the game's universe.
       //const char *pattern = "77bo$77bo$77bo21$3o20$3bo$3bo$3bo5$20b3o$9b3o10bo$22bo$21bo!";       // 18-cell 40514-generation methuselah. The stable pattern that results from 40514M (excluding 70 escaping gliders) has 3731 cells and consists of 248 blinkers (including 21 traffic lights), 218 blocks, 163 beehives (including nine honey farms), 56 loaves, 39 boats, 10 ships, nine tubs, five ponds, four beacons, two toads, one barge, one eater 1 and one long boat.
-      const char *pattern = "10001o!";
+      //const char *pattern = "10001o!";
       //const char *pattern = "15366bo$15366bo$15364boo$15363bo$15363bo$15363bo$15363bo6$15393bo$" "15392boo$15390bobbo$$15390bobo$15391bo133$15568boo$15569boo$15569bo29$" "15554bo$15553bobo$15555bo$15556bo507$59722boo$59721boo$59722bo29$" "59737bo$59736bobo$59736bo$59735bo13907$bo3bo$bbobo$obbo$o$o21$33bo$32b" "o$31bo$32bo$33bo$29b3o!";       // Metacatacryst, exhibits quadratic growth.
 
       PRINT ("Reading unit test pattern...\n");
@@ -535,10 +541,15 @@ main (int argc, char *const argv[])
 
   while ((!MAX_GENERATIONS || gol->generation <= MAX_GENERATIONS) && GOL_next_generation (gol))
   {
+#if ! DEBUG >= 1
+    fprintf (stderr, ".");
+    fflush (stderr);
+#else
     /* nothing */
+#endif
   }
 
-  printf (">Generation #%'zu has %'zu cells.\n", gol->generation - 1, gol->nb_cells);
+  printf ("\n>Generation #%'zu has %'zu cells.\n", gol->generation - 1, gol->nb_cells);
 
   GOL_destroy (gol);
   PRINT ("Done.\n");
