@@ -12,14 +12,14 @@ typedef char *T;
 
 /* *INDENT-OFF* */
 // Prerequisite declarations before template usage for type T SET(T)
-DECLARE_SET (T)
-DEFINE_OPERATORS (T)
-DEFINE_SET (T)
+DECLARE_SET (T);
+DEFINE_OPERATORS (T);
+DEFINE_SET (T);
 
 // Prerequisite declarations before template usage for type int SET(int)
-DECLARE_SET (int)
-DEFINE_OPERATORS (int)
-DEFINE_SET (int)
+DECLARE_SET (int);
+DEFINE_OPERATORS (int);
+DEFINE_SET (int);
 /* *INDENT-ON* */
 
 // Prints the content of a node
@@ -77,15 +77,15 @@ main (void)
   set_print (myset);
   SET_FIND (myset, "aa");
 
-  SET_INSERT (myset, "cccccccc");
-  SET_INSERT (myset, "f");
-  SET_INSERT (myset, "aaa");
-  SET_INSERT (myset, "bbbb");
-  SET_INSERT (myset, "e");
+  SET_ADD (myset, "cccccccc");
+  SET_ADD (myset, "f");
+  SET_ADD (myset, "aaa");
+  SET_ADD (myset, "bbbb");
+  SET_ADD (myset, "e");
   // Uniqueness: the element bbbb is not inserted
-  SET_INSERT (myset, "bbbb");
-  SET_INSERT (myset, "dd");     // e;f;dd;aaa;bbbb;cccccccc;
-  SET_INSERT (myset, "ZZZ");    // e;f;dd;ZZZ;aaa;bbbb;cccccccc;
+  SET_ADD (myset, "bbbb");
+  SET_ADD (myset, "dd");        // e;f;dd;aaa;bbbb;cccccccc;
+  SET_ADD (myset, "ZZZ");       // e;f;dd;ZZZ;aaa;bbbb;cccccccc;
   set_print (myset);
 
   // Remove all (1) elements 'ZZZ'
@@ -110,12 +110,12 @@ main (void)
       printf ("%s is in NOT the set.\n", alicia[i]);
 
   SET (T) * altset = SET_CREATE (T, 0, 0);
-  SET_INSERT (altset, "AAA");
-  SET_INSERT (altset, "BB");
-  SET_INSERT (altset, "Baobab");
-  SET_INSERT (altset, "CCCC");
+  SET_ADD (altset, "AAA");
+  SET_ADD (altset, "BB");
+  SET_ADD (altset, "Baobab");
+  SET_ADD (altset, "CCCC");
   // No uniqueness: the element BB is inserted a second time
-  SET_INSERT (altset, "BB");
+  SET_ADD (altset, "BB");
   set_print (altset);
 
   SET_MOVE (myset, altset, SET_FIND (altset, "Baobab"));
@@ -129,12 +129,12 @@ main (void)
   if (SET_IS_EMPTY (myset))
     printf ("myset is empty.\n");;
 
-  SET_INSERT (myset, "AAA");
-  SET_INSERT (myset, "BB");
-  SET_INSERT (myset, "Baobab");
-  SET_INSERT (myset, "CCCC");
+  SET_ADD (myset, "AAA");
+  SET_ADD (myset, "BB");
+  SET_ADD (myset, "Baobab");
+  SET_ADD (myset, "CCCC");
   // Uniqueness: the element BB is inserted a second time
-  SET_INSERT (myset, "BB");
+  SET_ADD (myset, "BB");
   set_print (myset);
 
   SET_DESTROY (myset);
@@ -142,7 +142,7 @@ main (void)
   SET (int) * si = SET_CREATE (int);
 
   for (int i = 110; i > 0; i--)
-    SET_INSERT (si, i - 1);
+    SET_ADD (si, i - 1);
 
   // Apply skim for each element from 1 to 107 included.
   // skim removes some elements from the set.

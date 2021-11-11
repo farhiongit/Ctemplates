@@ -21,7 +21,7 @@ __attribute__ ((__unused__))
   (void) format;
 }
 
-  #define NOP(...) do { nop (__VA_ARGS__); } while (0)
+#  define NOP(...) do { nop (__VA_ARGS__); } while (0)
 #endif
 
 #if DEBUG >= 1
@@ -128,8 +128,7 @@ static int
 increment_nine_fields (LNODE (XYPos) * birth, void *g)
 {
   XYPos *p = LNODE_VALUE (birth);       // Position of the cell.
-  FATAL (p->x != XYPOS_MIN && p->y != XYPOS_MIN && p->x != XYPOS_MAX
-         && p->y != XYPOS_MAX, "Space boundaries were reached !!!\n");
+  FATAL (p->x != XYPOS_MIN && p->y != XYPOS_MIN && p->x != XYPOS_MAX && p->y != XYPOS_MAX, "Space boundaries were reached !!!\n");
 
   GameOfLife *gol = g;
   PRINT2 ("+ (%+" XYPOS_FORMAT ", %+" XYPOS_FORMAT ")\n", p->x, p->y);
@@ -160,10 +159,10 @@ increment_nine_fields (LNODE (XYPos) * birth, void *g)
         else
           s = (Status){.alive = 0,.nb_neighbors = 1};
         /* *INDENT-ON* */
-        neighbour_pos = MAP_SET_VALUE (gol->neighbourhood_positions, neighbour, s);     // CPU consuming, due to XYPos comparisons
+        neighbour_pos = MAP_ADD (gol->neighbourhood_positions, neighbour, s);   // CPU consuming, due to XYPos comparisons
       }
 
-      SET_INSERT (gol->modified_neighborhood, neighbour_pos);
+      SET_ADD (gol->modified_neighborhood, neighbour_pos);
     }
 
   return EXIT_SUCCESS;
@@ -173,8 +172,7 @@ static int
 decrement_nine_fields (LNODE (Node) * death, void *g)
 {
   XYPos *p = BNODE_KEY ((BNODE (XYPos, Status) *) * LNODE_VALUE (death));       // Position of the cell.
-  FATAL (p->x != XYPOS_MIN && p->y != XYPOS_MIN && p->x != XYPOS_MAX
-         && p->y != XYPOS_MAX, "Space boundaries were reached !!!\n");
+  FATAL (p->x != XYPOS_MIN && p->y != XYPOS_MIN && p->x != XYPOS_MAX && p->y != XYPOS_MAX, "Space boundaries were reached !!!\n");
 
   GameOfLife *gol = g;
   PRINT2 ("- (%+" XYPOS_FORMAT ", %+" XYPOS_FORMAT ")\n", p->x, p->y);
@@ -189,8 +187,7 @@ decrement_nine_fields (LNODE (Node) * death, void *g)
       neighbour.y = p->y + dy;
 
       BNODE (XYPos, Status) * neighbour_pos;
-      ASSERT ((neighbour_pos =
-               MAP_KEY (gol->neighbourhood_positions, neighbour)) != MAP_END (gol->neighbourhood_positions), 0);
+      ASSERT ((neighbour_pos = MAP_KEY (gol->neighbourhood_positions, neighbour)) != MAP_END (gol->neighbourhood_positions), 0);
       if (dx == 0 && dy == 0)
         BNODE_VALUE (neighbour_pos)->alive = 0;
       else
@@ -199,7 +196,7 @@ decrement_nine_fields (LNODE (Node) * death, void *g)
         BNODE_VALUE (neighbour_pos)->nb_neighbors--;
       }
 
-      SET_INSERT (gol->modified_neighborhood, neighbour_pos);
+      SET_ADD (gol->modified_neighborhood, neighbour_pos);
     }
 
   return EXIT_SUCCESS;
@@ -262,13 +259,13 @@ GOL_next_generation (GameOfLife * gol)
   if (gol->nb_cells > gol->max_cells)
     gol->max_cells = gol->nb_cells;
 
-  PRINT (">Generation #%'zu has %'zu cells [+%zu-%zu] (maximum being %'zu cells).\n", gol->generation, gol->nb_cells, LIST_SIZE (gol->born), LIST_SIZE (gol->dead), gol->max_cells);
+  PRINT (">Generation #%'zu has [+%zu-%zu=]%'zu cells (maximum being %'zu cells).\n", gol->generation, LIST_SIZE (gol->born), LIST_SIZE (gol->dead), gol->nb_cells, gol->max_cells);
 
   FATAL (gol->generation++ < SIZE_MAX, "Overflow");
 
-  PRINT ("    (%'zu / %'zu = %.1f %% of the active cells and their neighborhoods are modified.)\n",
-         SET_SIZE (gol->modified_neighborhood), MAP_SIZE (gol->neighbourhood_positions),
-         100. * SET_SIZE (gol->modified_neighborhood) / MAP_SIZE (gol->neighbourhood_positions));
+  PRINT
+    ("    (%'zu / %'zu = %.1f %% of the active cells and their neighborhoods are modified.)\n",
+     SET_SIZE (gol->modified_neighborhood), MAP_SIZE (gol->neighbourhood_positions), 100. * SET_SIZE (gol->modified_neighborhood) / MAP_SIZE (gol->neighbourhood_positions));
 
   LIST_CLEAR (gol->born);
   LIST_CLEAR (gol->dead);
@@ -332,12 +329,9 @@ RLE_readfile (GameOfLife * gol, FILE * f, XYPOS_TYPE x, XYPOS_TYPE y, int header
     IFNOTEXIT (line, "Missing header line");
 
     regex_t regvar;
-    ASSERT (regcomp (&regvar, " *([[:alnum:]]+) *= *([^ ,]+) *,?", REG_EXTENDED | REG_ICASE) == 0,
-            "Invalid ERE. Comma separated parameters of the form 'var=value' expected.");
+    ASSERT (regcomp (&regvar, " *([[:alnum:]]+) *= *([^ ,]+) *,?", REG_EXTENDED | REG_ICASE) == 0, "Invalid ERE. Comma separated parameters of the form 'var=value' expected.");
     regmatch_t match[3];
-    for (size_t offset = 0;
-         regexec (&regvar, line + offset, sizeof (match) / sizeof (*match), match, REG_NOTBOL | REG_NOTEOL) == 0;
-         offset += match[0].rm_eo)
+    for (size_t offset = 0; regexec (&regvar, line + offset, sizeof (match) / sizeof (*match), match, REG_NOTBOL | REG_NOTEOL) == 0; offset += match[0].rm_eo)
     {
       if (!strncmp ("rule", line + offset + match[1].rm_so, match[1].rm_eo - match[1].rm_so))
       {
@@ -345,18 +339,16 @@ RLE_readfile (GameOfLife * gol, FILE * f, XYPOS_TYPE x, XYPOS_TYPE y, int header
         ASSERT (regcomp (&regrule, "B([[:digit:]]+)/S([[:digit:]]+)", REG_EXTENDED | REG_ICASE) == 0, "Invalid ERE");
         regmatch_t matchBS[3];
         IFNOTEXIT (regexec
-                   (&regrule, line + offset + match[2].rm_so, sizeof (matchBS) / sizeof (*matchBS), matchBS,
-                    REG_NOTBOL | REG_NOTEOL) == 0, "Invalid format for 'rule'. Format 'rule=Bnnn/Snnn' expected.");
+                   (&regrule, line + offset + match[2].rm_so,
+                    sizeof (matchBS) / sizeof (*matchBS), matchBS, REG_NOTBOL | REG_NOTEOL) == 0, "Invalid format for 'rule'. Format 'rule=Bnnn/Snnn' expected.");
 
         gol->B = gol->S = 0;
-        for (const char *c = line + offset + match[2].rm_so + matchBS[1].rm_so;
-             c < line + offset + match[2].rm_so + matchBS[1].rm_eo; c++)
+        for (const char *c = line + offset + match[2].rm_so + matchBS[1].rm_so; c < line + offset + match[2].rm_so + matchBS[1].rm_eo; c++)
         {
           IFNOTEXIT (isdigit (*c), "Invalid number '%c' for rule B", *c);
           gol->B |= 1 << (*c - '0');
         }
-        for (const char *c = line + offset + match[2].rm_so + matchBS[2].rm_so;
-             c < line + offset + match[2].rm_so + matchBS[2].rm_eo; c++)
+        for (const char *c = line + offset + match[2].rm_so + matchBS[2].rm_so; c < line + offset + match[2].rm_so + matchBS[2].rm_eo; c++)
         {
           IFNOTEXIT (isdigit (*c), "Invalid number '%c' for rule S", *c);
           gol->S |= 1 << (*c - '0');
@@ -512,7 +504,7 @@ main (int argc, char *const argv[])
       //const char *pattern = ".o.$..o$ooo";        // Glider:
       //const char *pattern = "bo5b$3bo3b$2o2b3o!"; // Acorn, takes 5206 generations to stabilize to 633 cells, including 13 escaped gliders:
       //const char *pattern = "ooo$.o.";    // Tee or Tetromino, stabilizes to 12 cells in a 9x9 square at 10th generation.
-      const char *pattern = "......o$oo$.o...ooo";        // Die-hard, eventually disappears after 130 generations
+      const char *pattern = "......o$oo$.o...ooo";      // Die-hard, eventually disappears after 130 generations
       //const char *pattern = "......X$....X.XX$....X.X$....X$..X$X.X";     // Infinite growth, block-laying switch engine that leaves behind two-by-two still life blocks as its translates itself across the game's universe.
       //const char *pattern = "77bo$77bo$77bo21$3o20$3bo$3bo$3bo5$20b3o$9b3o10bo$22bo$21bo!";       // 18-cell 40514-generation methuselah. The stable pattern that results from 40514M (excluding 70 escaping gliders) has 3731 cells and consists of 248 blinkers (including 21 traffic lights), 218 blocks, 163 beehives (including nine honey farms), 56 loaves, 39 boats, 10 ships, nine tubs, five ponds, four beacons, two toads, one barge, one eater 1 and one long boat.
       //const char *pattern = "10001o!";
@@ -528,8 +520,7 @@ main (int argc, char *const argv[])
   PRINT ("The colony has %'zu cells.\n", nb_cells = RLE_readfile (gol, f, x, y, header));
   fclose (f);
   IFNOTEXIT (nb_cells, "The space is empty.");
-  PRINT ("Space size is [%'+" XYPOS_FORMAT ";%'+" XYPOS_FORMAT "] x [%'+" XYPOS_FORMAT ";%'+" XYPOS_FORMAT "].\n",
-         XYPOS_MIN, XYPOS_MAX, XYPOS_MIN, XYPOS_MAX);
+  PRINT ("Space size is [%'+" XYPOS_FORMAT ";%'+" XYPOS_FORMAT "] x [%'+" XYPOS_FORMAT ";%'+" XYPOS_FORMAT "].\n", XYPOS_MIN, XYPOS_MAX, XYPOS_MIN, XYPOS_MAX);
 
   if (B)
     gol->B = B;
@@ -549,7 +540,7 @@ main (int argc, char *const argv[])
 #endif
   }
 
-  printf ("\n>Generation #%'zu has %'zu cells.\n", gol->generation - 1, gol->nb_cells);
+  printf (">Generation #%'zu has %'zu cells.\n", gol->generation - 1, gol->nb_cells);
 
   GOL_destroy (gol);
   PRINT ("Done.\n");

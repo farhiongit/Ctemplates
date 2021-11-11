@@ -2,16 +2,15 @@
  * Copyright 2017 Laurent Farhi
  *
  *  This file is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, version 3.
  *
  *  This file is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this file.  If not, see <http://www.gnu.org/licenses/>.
  *****/
 
@@ -44,7 +43,6 @@
   DEFINE_BNODE(K, T);                                   \
 \
   static void MAP_CLEAR_##K##_##T ( MAP_##K##_##T *self );                                             \
-  static BNODE_##K##_##T *MAP_INSERT_##K##_##T ( MAP_##K##_##T *self, BNODE_##K##_##T *node );         \
   static int MAP_REMOVE_##K##_##T ( MAP_##K##_##T *self, BNODE_##K##_##T *node );                      \
   static int MAP_MOVE_##K##_##T ( MAP_##K##_##T *to, MAP_##K##_##T *from, BNODE_##K##_##T *herefrom ); \
   static BNODE_##K##_##T *MAP_SET_##K##_##T ( MAP_##K##_##T *self, K key, T value );                   \
@@ -56,14 +54,13 @@
   {                                                        \
     BNODE_CREATE_##K##_##T,                                \
     MAP_CLEAR_##K##_##T,                                   \
-    MAP_INSERT_##K##_##T,                                  \
     MAP_REMOVE_##K##_##T,                                  \
     MAP_MOVE_##K##_##T,                                    \
     MAP_SET_##K##_##T,                                     \
     MAP_END_##K##_##T,                                     \
   };                                                       \
 \
-  MAP_##K##_##T *MAP_CREATE_##K##_##T( int (*less_than_operator) (K, K), int unique )        \
+  MAP_##K##_##T *MAP_CREATE_##K##_##T ( int (*less_than_operator) (K, K), int unique )        \
   {                                                                          \
     MAP_##K##_##T *linkedList = malloc( sizeof( *linkedList ) );             \
     if (!linkedList)                                                         \
@@ -99,18 +96,17 @@
                                                                            \
     return !self->root ?                                                   \
              self->root = node :                                           \
-             BNODE_TREE_ADD_##K##_##T(&(self->root), node, self->LessThanKey) ?         \
+             BNODE_TREE_ADD_##K##_##T(&(self->root), node, self->LessThanKey) ?     \
                node : 0;                                                   \
   }                                                                        \
 \
   static BNODE_##K##_##T *MAP_SET_##K##_##T ( MAP_##K##_##T *self, K key, T value ) \
   {                                                                        \
     BNODE_##K##_##T * ret = 0;                                             \
-    if (!self->root ||                                                     \
+    if (!self->root || !self->unique ||                                    \
         !(ret = BNODE_GET_KEY(self->root, key, self->LessThanKey)))        \
-      ret = MAP_INSERT (self, key, value);                                 \
-    else                                                                   \
-      BNODE_ASSIGN (ret, value);                                           \
+      ret = MAP_INSERT_##K##_##T (self, BNODE_CREATE_##K##_##T (key, self->unique));\
+    BNODE_ASSIGN_##K##_##T (ret, value);                                   \
                                                                            \
     return ret;                                                            \
   }                                                                        \

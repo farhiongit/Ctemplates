@@ -47,7 +47,7 @@ run_gol: gol
 
 .PHONY: tests
 tests: CFLAGS += -g
-tests: test_list test_set test_tree test_map
+tests: test_list test_set test_tree test_map test_vla
 	valgrind -q ./test_list > ./test_list.tmp 2>&1 || :
 	diff -q ./test_list.tmp ./test_list.log
 	rm -f ./test_list.tmp
@@ -57,9 +57,12 @@ tests: test_list test_set test_tree test_map
 	valgrind -q ./test_tree > ./test_tree.tmp 2>&1 || :
 	diff -q ./test_tree.tmp ./test_tree.log
 	rm -f ./test_tree.tmp
-	valgrind -q ./test_map > ./test_map.tmp 2>&1  || :
+	valgrind -q ./test_map > ./test_map.tmp 2>&1 || :
 	diff -q ./test_map.tmp ./test_map.log
 	rm -f ./test_map.tmp
+	valgrind -q ./test_vla > ./test_vla.tmp 2>&1 || :
+	diff -q ./test_vla.tmp ./test_vla.log
+	rm -f ./test_vla.tmp
 
 mylib.o: mylib.c mylib.h ../set.h ../bnode.h ../vfunc.h ../map.h ../set_impl.h ../bnode_impl.h ../defops.h ../map_impl.h
 	$(CC) $(CFLAGS) -c mylib.c -o mylib.o

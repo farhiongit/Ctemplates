@@ -2,16 +2,15 @@
  * Copyright 2017 Laurent Farhi
  *
  *  This file is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, version 3.
  *
  *  This file is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this file.  If not, see <http://www.gnu.org/licenses/>.
  *****/
 
@@ -45,7 +44,6 @@
   {                                                                                     \
     BNODE_##K##_##T *(*CreateNode)( K key, int unique );                                \
     void (*Clear) ( struct _MAP_##K##_##T *self );                                      \
-    BNODE_##K##_##T *(*Insert) ( struct _MAP_##K##_##T *self, BNODE_##K##_##T *node );  \
     int (*Remove) ( struct _MAP_##K##_##T *self, BNODE_##K##_##T *node );               \
     int (*Move) ( struct _MAP_##K##_##T *to, struct _MAP_##K##_##T *from, BNODE_##K##_##T *herefrom ); \
     BNODE_##K##_##T *(*Set) ( struct _MAP_##K##_##T *self, K key, T value );            \
@@ -79,13 +77,6 @@
 /// @param [in, optional] less_than_operator Function defining the less than operator int (*less_than_operator) (K, K).
 /// @param [in, optional] unique If set to 1 (by default), elements are unique in the map, otherwise they can be duplicated.
 #define MAP_CREATE(...) VFUNC(MAP_CREATE, __VA_ARGS__)
-
-/// Inserts a node of specified type in the map.
-/// @param [in] listSelf Pointer to collection.
-/// @param [in] key Key of type K to be inserted in the map.
-/// @returns 1 in case of success, or 0 in case of failure (errno set to ENOMEM).
-#define MAP_INSERT(listSelf, key, value) \
-  ((listSelf)->null->vtable->Assign ((listSelf)->vtable->Insert ((listSelf), (listSelf)->vtable->CreateNode ((key), (listSelf)->unique)), value))
 
 /// Removes (deallocates) a node from a map.
 /// @param [in] listSelf Pointer to map.
@@ -146,7 +137,11 @@
 #define MAP( K, T ) \
   MAP_##K##_##T
 
-#define MAP_SET_VALUE( map, key, value ) \
+/// Inserts a node of specified type in the map.
+/// @param [in] listSelf Pointer to collection.
+/// @param [in] key Key of type K to be inserted in the map.
+/// @returns 1 in case of success, or 0 in case of failure (errno set to ENOMEM).
+#define MAP_ADD( map, key, value ) \
   ((map)->vtable->Set((map), (key), (value)))
 
 #define MAP_KEY( map, key ) \

@@ -2,16 +2,15 @@
  * Copyright 2017 Laurent Farhi
  *
  *  This file is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, version 3.
  *
  *  This file is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this file.  If not, see <http://www.gnu.org/licenses/>.
  *****/
 
@@ -47,9 +46,9 @@ typedef int __set_dummy__ ;
   {                                                                                                     \
     BNODE_##K##___set_dummy__ *(*CreateNode)( K key, int unique );                                      \
     void (*Clear) ( struct _SET_##K *self );                                                            \
-    BNODE_##K##___set_dummy__ *(*Insert) ( struct _SET_##K *self, BNODE_##K##___set_dummy__ *node );    \
     int (*Remove) ( struct _SET_##K *self, BNODE_##K##___set_dummy__ *node );                           \
     int (*Move) ( struct _SET_##K *to, struct _SET_##K *from, BNODE_##K##___set_dummy__ *herefrom );    \
+    BNODE_##K##___set_dummy__ *(*Set) ( struct _SET_##K *self, K key );                                 \
     BNODE_##K##___set_dummy__ *(*End) ( struct _SET_##K *self );                                        \
   } _SET_VTABLE_##K;                                                                                    \
 \
@@ -82,8 +81,8 @@ typedef int __set_dummy__ ;
 /// @param [in] listSelf Pointer to collection.
 /// @param [in] key Key of type K to be inserted in the map.
 /// @returns 1 in case of success, or 0 in case of failure (errno set to ENOMEM).
-#define SET_INSERT(listSelf, key) \
-  ((listSelf)->vtable->Insert ((listSelf), (listSelf)->vtable->CreateNode ((key), (listSelf)->unique)))
+#define SET_ADD(listSelf, key) \
+  ((listSelf)->vtable->Set((listSelf), (key)))
 
 /// Removes (deallocates) a node from a map.
 /// @param [in] listSelf Pointer to map.

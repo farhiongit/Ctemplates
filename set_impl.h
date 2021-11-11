@@ -2,16 +2,15 @@
  * Copyright 2017 Laurent Farhi
  *
  *  This file is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, version 3.
  *
  *  This file is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *  GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this file.  If not, see <http://www.gnu.org/licenses/>.
  *****/
 
@@ -46,18 +45,18 @@ DEFINE_OPERATORS(__set_dummy__);
   DEFINE_BNODE( K, __set_dummy__ );                  \
 \
   static void SET_CLEAR_##K ( SET_##K *self );                                                 \
-  static BNODE_##K##___set_dummy__ *SET_INSERT_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node ); \
   static int SET_REMOVE_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node );                \
   static int SET_MOVE_##K ( SET_##K *to, SET_##K *from, BNODE_##K##___set_dummy__ *herefrom ); \
+  static BNODE_##K##___set_dummy__ *SET_SET_##K ( SET_##K *self, K key );                      \
   static BNODE_##K##___set_dummy__ *SET_END_##K ( SET_##K *self );                             \
 \
   static const _SET_VTABLE_##K SET_VTABLE_##K =      \
   {                                                  \
     BNODE_CREATE_##K##___set_dummy__,                \
     SET_CLEAR_##K,                                   \
-    SET_INSERT_##K,                                  \
     SET_REMOVE_##K,                                  \
     SET_MOVE_##K,                                    \
+    SET_SET_##K,                                     \
     SET_END_##K,                                     \
   };                                                 \
 \
@@ -97,6 +96,16 @@ DEFINE_OPERATORS(__set_dummy__);
              self->root = node :                                           \
              BNODE_TREE_ADD_##K##___set_dummy__ (&(self->root), node, self->LessThanKey) ?         \
                node : 0;                                                   \
+  }                                                                        \
+\
+  static BNODE_##K##___set_dummy__ *SET_SET_##K ( SET_##K *self, K key )   \
+  {                                                                        \
+    BNODE_##K##___set_dummy__ * ret = 0;                                   \
+    if (!self->root || !self->unique ||                                    \
+        !(ret = BNODE_GET_KEY(self->root, key, self->LessThanKey)))        \
+      ret = SET_INSERT_##K (self, BNODE_CREATE_##K##___set_dummy__ (key, self->unique));\
+                                                                           \
+    return ret;                                                            \
   }                                                                        \
 \
   static int SET_REMOVE_##K ( SET_##K *self, BNODE_##K##___set_dummy__ *node )   \

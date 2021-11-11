@@ -11,7 +11,7 @@ main (void)
   SET (int) * ps;
 
   libfunction (&ps);
-  SET_INSERT (ps, 3);
+  SET_ADD (ps, 3);
 
   SNODE (int) * b = SET_BEGIN (ps);
 

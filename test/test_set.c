@@ -88,7 +88,7 @@ phaseI_insert (SET (double) * l, size_t D)
   N--;
 
   for (size_t i = 0; i < N; i++)
-    SET_INSERT (l, (i * 1.0) / N);      // Tree balancing is required here
+    SET_ADD (l, (i * 1.0) / N);      // Tree balancing is required here
 }
 
 void
@@ -102,7 +102,7 @@ void
 phaseIII_reinsert (SET (double) * l, size_t N)
 {
   for (size_t i = 0; i < N; i++)
-    SET_INSERT (l, l->root->key + drand48 ());  // Tree balancing is sparsely required here (since the right branch is already randomly balanced, and because it is shorter than left one, the left branch is unaffected.)
+    SET_ADD (l, l->root->key + drand48 ());  // Tree balancing is sparsely required here (since the right branch is already randomly balanced, and because it is shorter than left one, the left branch is unaffected.)
 }
 
 int
@@ -117,21 +117,21 @@ main (void)
 
   printf ("Size %li\n", SET_SIZE (la));
 
-  SET_INSERT (la, 4);
-  SNODE (int) * na = SET_INSERT (la, 3333);
+  SET_ADD (la, 4);
+  SNODE (int) * na = SET_ADD (la, 3333);
 
   printf ("%i peeked\n", *BNODE_KEY (SET_FIND (la, 3333)));
 
-  SET_INSERT (la, 1);
+  SET_ADD (la, 1);
   printf ("Size %li\n", SET_SIZE (la));
 
   printf ("%i peeked\n", *BNODE_KEY (SET_BEGIN (la)));
 
-  SET_INSERT (la, 2);
+  SET_ADD (la, 2);
 
   printf ("%i peeked\n", *BNODE_KEY (SET_BEGIN (la)));
 
-  SET_INSERT (la, 5);
+  SET_ADD (la, 5);
   printf ("Size %li\n", SET_SIZE (la));
 
   SET_REMOVE (la, na);
@@ -153,8 +153,8 @@ main (void)
 
   for (int i = 27; i > 16; i--)
   {
-    SET_INSERT (la, 5 * i);
-    SET_INSERT (la, 5 * i);
+    SET_ADD (la, 5 * i);
+    SET_ADD (la, 5 * i);
   }
 
   Range r = { 80, 95 };
@@ -186,10 +186,10 @@ main (void)
 
   SET (int) * lb = SET_CREATE (int, 0, 0);
 
-  SET_INSERT (lb, 1000);
-  SET_INSERT (lb, 2000);
-  SET_INSERT (lb, 1000);
-  SET_INSERT (lb, 2000);
+  SET_ADD (lb, 1000);
+  SET_ADD (lb, 2000);
+  SET_ADD (lb, 1000);
+  SET_ADD (lb, 2000);
   printf ("Size %li\n", SET_SIZE (lb));
   printf ("Move {%i}.\n", *BNODE_KEY (SET_BEGIN (lb)));
   SET_MOVE (la, lb, SET_BEGIN (lb));
@@ -213,10 +213,10 @@ main (void)
   Range p1 = { 1, 1 };
   Range p2 = { 2, 2 };
   Range p3 = { 3, 3 };
-  SET_INSERT (sp, p1);
-  SET_INSERT (sp, p3);
-  SET_INSERT (sp, p2);
-  SET_INSERT (sp, p3);
+  SET_ADD (sp, p1);
+  SET_ADD (sp, p3);
+  SET_ADD (sp, p2);
+  SET_ADD (sp, p3);
 
   for (SNODE (Range) * p = SET_BEGIN (sp); p != SET_END (sp); p = SNODE_NEXT (p))
     printf ("{ %i, %i }\n", SNODE_KEY (p)->min, SNODE_KEY (p)->max);

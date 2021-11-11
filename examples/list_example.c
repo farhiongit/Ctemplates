@@ -12,14 +12,14 @@ typedef char *T;
 
 /* *INDENT-OFF* */
 // Prerequisite declarations before template usage for type T LIST(T)
-DECLARE_LIST (T)
-DEFINE_OPERATORS (T)
-DEFINE_LIST (T)
+DECLARE_LIST (T);
+DEFINE_OPERATORS (T);
+DEFINE_LIST (T);
 
 // Prerequisite declarations before template usage for type int LIST(int)
-DECLARE_LIST (int)
-DEFINE_OPERATORS (int)
-DEFINE_LIST (int)
+DECLARE_LIST (int);
+DEFINE_OPERATORS (int);
+DEFINE_LIST (int);
 /* *INDENT-ON* */
 
 // Prints the content of a node

@@ -14,11 +14,11 @@ typedef struct
 } Dimensions;
 
 /* *INDENT-OFF* */
-DEFINE_OPERATORS (pchar)
-DEFINE_OPERATORS (Dimensions)
+DEFINE_OPERATORS (pchar);
+DEFINE_OPERATORS (Dimensions);
 
-DECLARE_MAP (pchar, Dimensions)
-DEFINE_MAP (pchar, Dimensions)
+DECLARE_MAP (pchar, Dimensions);
+DEFINE_MAP (pchar, Dimensions);
 /* *INDENT-ON* */
 
 static int
@@ -38,19 +38,19 @@ main (void)
   Dimensions rt = {.l = 3595,.w = 1647,.h = 1557 };
   Dimensions cc1 = {.l = 3466,.w = 1615,.h = 1460 };
   Dimensions p108 = {.l = 3475,.w = 1615,.h = 1460 };
-  MAP_INSERT (cars, "Renault Twingo", cc1);     // Inserts and sets value
-  MAP_SET_VALUE (cars, "Renault Twingo", rt);   // Does not insert but sets value
-  MAP_SET_VALUE (cars, "Citroën C1", cc1);     // Inserts and sets value
-  MAP_INSERT (cars, "Citroën C1", rt); // Does neither insert nor modify value
-  MAP_SET_VALUE (cars, "Peugeot 108", cc1);     // Inserts and sets value
-  MAP_SET_VALUE (cars, "Peugeot 108", p108);    // Does not insert but sets value
+  MAP_ADD (cars, "Renault Twingo", cc1);        // Inserts and sets value
+  MAP_ADD (cars, "Renault Twingo", rt); // Does not insert but sets value
+  MAP_ADD (cars, "Citroën C1", rt);    // Does neither insert nor modify value
+  MAP_ADD (cars, "Citroën C1", cc1);   // Inserts and sets value
+  MAP_ADD (cars, "Peugeot 108", cc1);   // Inserts and sets value
+  MAP_ADD (cars, "Peugeot 108", p108);  // Does not insert but sets value
 
   MAP (pchar, Dimensions) * fiat = MAP_CREATE (pchar, Dimensions);
 
   Dimensions mini3 = {.l = 3821,.w = 1727,.h = 1415 };
-  MAP_SET_VALUE (fiat, "Mini Cooper", mini3);
+  MAP_ADD (fiat, "Mini Cooper", mini3);
   Dimensions f500 = {.l = 3546,.w = 1627,.h = 1488 };
-  MAP_SET_VALUE (fiat, "Fiat 500", f500);
+  MAP_ADD (fiat, "Fiat 500", f500);
 
   MAP_MOVE (cars, fiat, MAP_KEY (fiat, "Fiat 500"));
   MAP_REMOVE (fiat, MAP_KEY (fiat, "Mini Cooper"));
@@ -61,11 +61,11 @@ main (void)
   MAP_TRAVERSE (cars, print_car);
 
   MAP (pchar, Dimensions) * minis = MAP_CREATE (pchar, Dimensions, 0, 0);       // no unicity
-  MAP_SET_VALUE (minis, "Mini Cooper 3", mini3);
-  MAP_INSERT (minis, "Mini Cooper 5", mini3);
+  MAP_ADD (minis, "Mini Cooper 3", mini3);
+  MAP_ADD (minis, "Mini Cooper 5", mini3);
   Dimensions mini5 = {.l = 4005,.w = 1727,.h = 1428 };
-  MAP_SET_VALUE (minis, "Mini Cooper 5", mini5);        // Reset value
-  MAP_INSERT (minis, "Mini Cooper 5", mini5);   // Duplicated
+  MAP_ADD (minis, "Mini Cooper 5", mini5);      // Reset value
+  MAP_ADD (minis, "Mini Cooper 5", mini5);      // Duplicated
   printf ("%lu elements in minis\n", MAP_SIZE (minis));
   MAP_TRAVERSE (minis, print_car);
   MAP_DESTROY (minis);
