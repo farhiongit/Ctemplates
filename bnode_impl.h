@@ -346,8 +346,8 @@
 \
   static int BNODE_CMP_KEY_##K##_##T(const void *a, const void *b, void* arg) \
   {                                                                                     \
-    BNODE_##K##_##T *na = *(BNODE_##K##_##T **)a;                                       \
-    BNODE_##K##_##T *nb = *(BNODE_##K##_##T **)b;                                       \
+    BNODE_##K##_##T *na = *(BNODE_##K##_##T * const *)a;                                \
+    BNODE_##K##_##T *nb = *(BNODE_##K##_##T * const *)b;                                \
     int (*less_than) (K, K) = 0;                                                        \
     if (arg)                                                                            \
       less_than = *(int (**) (K, K))arg;                                                \
@@ -357,8 +357,8 @@
 \
   static int BNODE_CMP_VALUE_##K##_##T(const void *a, const void *b, void* arg)               \
   {                                                                                           \
-    BNODE_##K##_##T *na = *(BNODE_##K##_##T **)a;                                             \
-    BNODE_##K##_##T *nb = *(BNODE_##K##_##T **)b;                                             \
+    BNODE_##K##_##T *na = *(BNODE_##K##_##T * const *)a;                                      \
+    BNODE_##K##_##T *nb = *(BNODE_##K##_##T * const *)b;                                      \
     int (*less_than) (T, T) = 0;                                                              \
     if (arg)                                                                                  \
       less_than = *(int (**) (T, T))arg;                                                      \
@@ -755,7 +755,7 @@
   {                                                                               \
     if (index >= self->size)                                                      \
     {                                                                             \
-      fprintf (stderr, "ERROR: " "Index %zi out of range [0, %zi].\n"             \
+      fprintf (stderr, "ERROR: " "Index %zu out of range [0, %zu].\n"             \
                        "ABORT  " "\n", index, self->size - 1);                    \
       fflush (0) ; raise (SIGABRT);                                               \
       return 0;                                                                   \
